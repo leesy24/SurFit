@@ -6,7 +6,7 @@ Attribute VB_Name = "modUtilita"
 ' Data............: 21/9/2001
 ' Versione........: 1.0 a 32 bits.
 ' Sistema.........: VB6 sotto Windows NT.
-' Scritto da......: F. Languasco ®
+' Scritto da......: F. Languasco
 ' E-Mail..........: MC7061@mclink.it
 ' DownLoads a.....: http://members.xoom.it/flanguasco/
 '                   http://www.flanguasco.org
@@ -567,7 +567,7 @@ Public Sub QuickSort(ByRef ValTab() As Double, ByVal Low&, ByVal High&, _
 '
 QuickSort_ERR:
     If (Err <> 0) Then
-        M$ = "Errore " & Str$(Err.Number) & vbNewLine
+        M$ = "Error " & Str$(Err.Number) & vbNewLine
         M$ = M$ & Err.Description
         MsgBox M$, vbCritical, " QuickSort"
     End If
@@ -718,8 +718,8 @@ Public Function Quadro(ByVal Foglio As PictureBox, _
 '
     On Error GoTo Quadro_ERR
     ' Verifica la correttezza delle scale:
-    If X0 >= Xn Then Err.Raise 1001, "Quadro", "Errore di scala X."
-    If Y0 > Yn Then Err.Raise 1001, "Quadro", "Errore di scala Y."
+    If X0 >= Xn Then Err.Raise 1001, "Quadro", "Error scale X."
+    If Y0 > Yn Then Err.Raise 1001, "Quadro", "Error scale Y."
 '
     ' Imposta i dati di Font dei valori
     ' degli assi:

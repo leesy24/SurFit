@@ -2,7 +2,7 @@ VERSION 5.00
 Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "RICHTX32.OCX"
 Begin VB.Form frmIstruzioni 
    AutoRedraw      =   -1  'True
-   Caption         =   " Istruzioni:"
+   Caption         =   " Instructions:"
    ClientHeight    =   3960
    ClientLeft      =   60
    ClientTop       =   345
@@ -40,7 +40,7 @@ Attribute VB_Exposed = False
 ' Data............: 15/9/1999
 ' Versione........: 1.0 a 32 bits.
 ' Sistema.........: Visual Basic 6.0 sotto Windows NT 4.0
-' Scritto da......: F. Languasco ®
+' Scritto da......: F. Languasco 
 ' E-Mail..........: MC7061@mclink.it
 ' DownLoads a.....: http://members.xoom.it/flanguasco/
 '                   http://www.flanguasco.org
@@ -103,7 +103,7 @@ Private Sub Form_Activate()
         rtfIstruzioni.LoadFile FileIstruzioni$
     Else
         MsgBox "Manca il file " & FileIstruzioni$, vbCritical _
-        , " Errore in Istruzioni"
+        , " Error in Instructions"
         Unload Me
     End If
 '
@@ -177,7 +177,7 @@ End Sub
 
 
 
-Public Sub Apri(ByVal NFileIstruzioni$, Optional ByVal Titolo$ = "Istruzioni", _
+Public Sub Apri(ByVal NFileIstruzioni$, Optional ByVal Titolo$ = "Instructions", _
     Optional ByVal NPosizione& = 2, Optional ByVal NSform As Form)
 '
 '

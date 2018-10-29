@@ -2,7 +2,7 @@ VERSION 5.00
 Object = "{5E9E78A0-531B-11CF-91F6-C2863C385E30}#1.0#0"; "MSFLXGRD.OCX"
 Begin VB.Form frmImpostazioni 
    BorderStyle     =   1  'Fixed Single
-   Caption         =   " Impostazioni"
+   Caption         =   " Settings"
    ClientHeight    =   4440
    ClientLeft      =   45
    ClientTop       =   330
@@ -16,7 +16,7 @@ Begin VB.Form frmImpostazioni
    ScaleWidth      =   6930
    StartUpPosition =   3  'Windows Default
    Begin VB.CommandButton cmdChiudi 
-      Caption         =   "&Chiudi"
+      Caption         =   "&Close"
       Height          =   315
       Left            =   3600
       TabIndex        =   50
@@ -32,7 +32,7 @@ Begin VB.Form frmImpostazioni
       Width           =   675
    End
    Begin VB.Frame zFrame4 
-      Caption         =   "Griglia di Interpolazione:"
+      Caption         =   "Interpolation grid"
       Height          =   1635
       Left            =   4800
       TabIndex        =   48
@@ -186,7 +186,7 @@ Begin VB.Form frmImpostazioni
          Height          =   285
          Left            =   3420
          TabIndex        =   30
-         ToolTipText     =   "Invio per confermare "
+         ToolTipText     =   "Enter to confirm "
          Top             =   2220
          Visible         =   0   'False
          Width           =   795
@@ -214,7 +214,7 @@ Begin VB.Form frmImpostazioni
          Height          =   285
          Left            =   2880
          TabIndex        =   21
-         ToolTipText     =   "OK o Invio per confermare "
+         ToolTipText     =   "OK or Enter to confirm "
          Top             =   1200
          Width           =   915
       End
@@ -293,7 +293,7 @@ Begin VB.Form frmImpostazioni
          Left            =   2880
          TabIndex        =   29
          TabStop         =   0   'False
-         ToolTipText     =   "Click per modificare "
+         ToolTipText     =   "Click to change "
          Top             =   1620
          Width           =   915
          _ExtentX        =   1614
@@ -529,7 +529,7 @@ Attribute VB_Exposed = False
 ' Data............: 21/9/2001
 ' Versione........: 1.0 a 32 bits.
 ' Sistema.........: VB6 sotto Windows NT.
-' Scritto da......: F. Languasco ®
+' Scritto da......: F. Languasco 
 ' E-Mail..........: MC7061@mclink.it
 ' DownLoads a.....: http://members.xoom.it/flanguasco/
 '                   http://www.flanguasco.org
@@ -537,10 +537,10 @@ Attribute VB_Exposed = False
 '
 Option Explicit
 '
-Dim ND&             ' N° di dati da interpolare.
-Dim NXI&, NYI&      ' N° di colonne e di righe nella
+Dim ND&             ' N?di dati da interpolare.
+Dim NXI&, NYI&      ' N?di colonne e di righe nella
                     ' griglia dei punti interpolati.
-Dim NLiv&           ' N° di livelli per CONREC.
+Dim NLiv&           ' N?di livelli per CONREC.
 '
 Dim Par As ParType  ' Parametri di KTB2D.
 '
@@ -954,26 +954,26 @@ Private Function Verifica() As Boolean
 '
     ' Controlli per i parametri della griglia:
     If CLng(txtNXI) < 3 Then
-        M$ = M$ & "Deve essere NXI >= 3" & vbNewLine
+        M$ = M$ & "Must be NXI >= 3" & vbNewLine
     Else
         NXI = CLng(txtNXI)
     End If
 '
     If CLng(txtNYI) < 3 Then
-        M$ = M$ & "Deve essere NYI >= 3" & vbNewLine
+        M$ = M$ & "Must be NYI >= 3" & vbNewLine
     Else
         NYI = CLng(txtNYI)
     End If
 '
     If CLng(txtNLiv) <= 0 Then
-        M$ = M$ & "Deve essere NLiv > 0" & vbNewLine
+        M$ = M$ & "Must be NLiv > 0" & vbNewLine
     Else
         NLiv = CLng(txtNLiv)
     End If
 '
     ' Controlli per i parametri di KTB2D:
     If CDbl(txtTMax) <= CDbl(txtTMin) Then
-        M$ = M$ & "Deve essere tmin < tmax" & vbNewLine
+        M$ = M$ & "Must be tmin < tmax" & vbNewLine
     Else
         Par.tmin = CDbl(txtTMin)
         Par.tmax = CDbl(txtTMax)
@@ -981,8 +981,8 @@ Private Function Verifica() As Boolean
 '
     If (CLng(txtNxdis) < 1) Or (64 / CLng(txtNydis) < CLng(txtNxdis)) _
     Or (CLng(txtNydis) < 1) Or (64 / CLng(txtNxdis) < CLng(txtNydis)) Then
-        M$ = M$ & "Deve essere 1 <= Nxdis <= 64/nydis" & vbNewLine _
-                & "e           1 <= Nydis <= 64/nxdis" & vbNewLine
+        M$ = M$ & "Must be 1 <= Nxdis <= 64/nydis" & vbNewLine _
+                & "and     1 <= Nydis <= 64/nxdis" & vbNewLine
     Else
         Par.nxdis = CLng(txtNxdis)
         Par.nydis = CLng(txtNydis)
@@ -990,90 +990,90 @@ Private Function Verifica() As Boolean
 '
     If (CLng(txtNdmin) < 1) Or (CLng(txtNdmax) <= CLng(txtNdmin)) _
     Or (120 < CLng(txtNdmax)) Then
-        M$ = M$ & "Deve essere 1 <= Ndmin < Ndmax" & vbNewLine _
-                & "e       Ndmin <  Ndmax <= 120" & vbNewLine
+        M$ = M$ & "Must be 1 <= Ndmin < Ndmax" & vbNewLine _
+                & "and       Ndmin <  Ndmax <= 120" & vbNewLine
     Else
         Par.ndmin = CLng(txtNdmin)
         Par.ndmax = CLng(txtNdmax)
     End If
 '
     If CDbl(txtRadius) <= 0 Then
-        M$ = M$ & "Deve essere radius > 0" & vbNewLine
+        M$ = M$ & "Must be radius > 0" & vbNewLine
     Else
         Par.radius = CDbl(txtRadius)
     End If
 '
     If (CLng(txtKtype) <> 0) And (CLng(txtKtype) <> 1) Then
-        M$ = M$ & "Deve essere ktype = 0 o ktype = 1" & vbNewLine
+        M$ = M$ & "Must be ktype = 0 o ktype = 1" & vbNewLine
     Else
         Par.ktype = CLng(txtKtype)
     End If
 '
     If CDbl(txtSkmean) < 0 Then
-        M$ = M$ & "Deve essere skmean >= 0" & vbNewLine
+        M$ = M$ & "Must be skmean >= 0" & vbNewLine
     Else
         Par.skmean = CDbl(txtSkmean)
     End If
 '
     If CDbl(txtC0) < 0 Then
-        M$ = M$ & "Deve essere c0 >= 0" & vbNewLine
+        M$ = M$ & "Must be c0 >= 0" & vbNewLine
     Else
         Par.c0 = CDbl(txtC0)
     End If
 '
     If (Par.Nst < 1) Or (4 < Par.Nst) Then
-        M$ = M$ & "Deve essere 1 <= nst <= 4" & vbNewLine
+        M$ = M$ & "Must be 1 <= nst <= 4" & vbNewLine
 '
     Else
         For N = 1 To Par.Nst
             If (Par.It(N) < 1) Or (4 < Par.It(N)) Then
-                M$ = M$ & "Deve essere 1 <= It(" & N & ") <= 4" & vbNewLine
+                M$ = M$ & "Must be 1 <= It(" & N & ") <= 4" & vbNewLine
             End If
 '
             If Par.cc(N) <= 0 Then
-                M$ = M$ & "Deve essere cc(" & N & ") > 0" & vbNewLine
+                M$ = M$ & "Must be cc(" & N & ") > 0" & vbNewLine
             End If
 '
             If (Par.ang(N) < 0) Or (360 < Par.ang(N)) Then
-                M$ = M$ & "Deve essere 0 <= ang(" & N & ") <= 360" & vbNewLine
+                M$ = M$ & "Must be 0 <= ang(" & N & ") <= 360" & vbNewLine
             End If
 '
             If (Par.It(N) = 4) And ((Par.AA(N) <= 0) Or (2 <= Par.AA(N))) Then
-                M$ = M$ & "Deve essere 0 < aa(" & N & ") < 2" & vbNewLine
+                M$ = M$ & "Must be 0 < aa(" & N & ") < 2" & vbNewLine
             ElseIf (Par.AA(N) <= 0) Then
-                M$ = M$ & "Deve essere 0 < aa(" & N & ")" & vbNewLine
+                M$ = M$ & "Must be 0 < aa(" & N & ")" & vbNewLine
             End If
 '
             If Par.a2(N) <= 0 Then
-                M$ = M$ & "Deve essere a2(" & N & ") > 0" & vbNewLine
+                M$ = M$ & "Must be a2(" & N & ") > 0" & vbNewLine
             End If
         Next N
     End If
 '
     ' Controlli per i parametri di MASUB:
     If CDbl(txtTP) < 0 Then
-        M$ = M$ & "Deve essere TP >= 0" & vbNewLine
+        M$ = M$ & "Must be TP >= 0" & vbNewLine
     Else
         TP = CDbl(txtTP)
     End If
 '
     ' Controlli per i parametri di QSHEP2D:
     If (CLng(txtNQ) < 5) Or (MIN0(40, ND - 1) < CLng(txtNQ)) Then
-        M$ = M$ & "Deve essere 5 <= NQ <= " & MIN0(40, ND - 1) _
+        M$ = M$ & "Must be 5 <= NQ <= " & MIN0(40, ND - 1) _
                 & " = MIN(40, ND - 1)" & vbNewLine
     Else
         NQ = CLng(txtNQ)
     End If
 '
     If (CLng(txtNW) < 1) Or (MIN0(40, ND - 1) < CLng(txtNW)) Then
-        M$ = M$ & "Deve essere 1 <= NW <= " & MIN0(40, ND - 1) _
+        M$ = M$ & "Must be 1 <= NW <= " & MIN0(40, ND - 1) _
                 & " = MIN(40, ND - 1)" & vbNewLine
     Else
         NW = CLng(txtNW)
     End If
 '
     If (CLng(txtNR) < 1) Then
-        M$ = M$ & "Deve essere NR > 0" & vbNewLine
+        M$ = M$ & "Must be NR > 0" & vbNewLine
     Else
         NR = CLng(txtNR)
     End If

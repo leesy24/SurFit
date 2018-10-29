@@ -2,7 +2,7 @@ VERSION 5.00
 Object = "{86CF1D34-0C5F-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCT2.OCX"
 Begin VB.Form frm3D 
    BorderStyle     =   1  'Fixed Single
-   Caption         =   " Vista 3D assonometrica"
+   Caption         =   " 3D isometric view"
    ClientHeight    =   6825
    ClientLeft      =   45
    ClientTop       =   330
@@ -14,14 +14,14 @@ Begin VB.Form frm3D
    ScaleMode       =   3  'Pixel
    ScaleWidth      =   634
    Begin VB.Frame zFrame2 
-      Caption         =   "Rotazione:"
+      Caption         =   "Rotation:"
       Height          =   615
       Left            =   2160
       TabIndex        =   23
       Top             =   0
       Width           =   3435
       Begin VB.CommandButton cmdPausa 
-         Caption         =   "&Pausa"
+         Caption         =   "&Pause"
          Enabled         =   0   'False
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -39,7 +39,7 @@ Begin VB.Form frm3D
          Width           =   555
       End
       Begin VB.CommandButton cmdRuota 
-         Caption         =   "&Ruota"
+         Caption         =   "&Rotate"
          BeginProperty Font 
             Name            =   "Small Fonts"
             Size            =   6.75
@@ -79,7 +79,7 @@ Begin VB.Form frm3D
       End
       Begin VB.Label zLabel06 
          Alignment       =   1  'Right Justify
-         Caption         =   "é[Grd]:"
+         Caption         =   "[Degree]:"
          BeginProperty Font 
             Name            =   "Terminal"
             Size            =   9
@@ -114,7 +114,7 @@ Begin VB.Form frm3D
       End
    End
    Begin VB.Frame zFrame1 
-      Caption         =   "Viste:"
+      Caption         =   "Views:"
       Height          =   615
       Left            =   240
       TabIndex        =   22
@@ -134,7 +134,7 @@ Begin VB.Form frm3D
          Height          =   240
          Left            =   1200
          TabIndex        =   2
-         ToolTipText     =   "Vista laterale "
+         ToolTipText     =   "Side view "
          Top             =   240
          Width           =   435
       End
@@ -152,7 +152,7 @@ Begin VB.Form frm3D
          Height          =   240
          Left            =   660
          TabIndex        =   1
-         ToolTipText     =   "Vista frontale "
+         ToolTipText     =   "Front view "
          Top             =   240
          Width           =   435
       End
@@ -170,7 +170,7 @@ Begin VB.Form frm3D
          Height          =   240
          Left            =   120
          TabIndex        =   0
-         ToolTipText     =   "Vista in pianta "
+         ToolTipText     =   "Plan view "
          Top             =   240
          Width           =   435
       End
@@ -202,7 +202,7 @@ Begin VB.Form frm3D
          Picture         =   "frm3D.frx":0454
          Style           =   1  'Graphical
          TabIndex        =   8
-         ToolTipText     =   "Copia l' immagine negli Appunti "
+         ToolTipText     =   "Copy the image to the clipboard "
          Top             =   780
          UseMaskColor    =   -1  'True
          Width           =   480
@@ -373,7 +373,7 @@ Begin VB.Form frm3D
    End
    Begin VB.Label lblIstruzioni 
       BackStyle       =   0  'Transparent
-      Caption         =   "La vista puo' essere cambiata spostando (con il tasto sinistro del Mouse premuto) l' estremità dell' asse Y."
+      Caption         =   "The view can be changed by moving (with the left mouse button pressed) to the end of the Y axis."
       BeginProperty Font 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -392,7 +392,7 @@ Begin VB.Form frm3D
    Begin VB.Label zLabel01 
       Alignment       =   1  'Right Justify
       BackStyle       =   0  'Transparent
-      Caption         =   "à[Grd]:"
+      Caption         =   "[Degree]:"
       BeginProperty Font 
          Name            =   "Terminal"
          Size            =   9
@@ -479,7 +479,7 @@ Attribute VB_Exposed = False
 ' Aggiornamento...: 21/3/2002 (aggiunta la rotazione).
 ' Versione........: 1.1 a 32 bits (provvisoria, in via di sviluppo).
 ' Sistema.........: VB6 sotto Windows NT.
-' Scritto da......: F. Languasco ®
+' Scritto da......: F. Languasco 
 ' E-Mail..........: MC7061@mclink.it
 ' DownLoads a.....: http://members.xoom.virgilio.it/flanguasco/
 '                   http://www.flanguasco.org
@@ -526,9 +526,9 @@ Dim Titolo$
 Dim fPunti As Boolean   ' Se True vengono disegnati i punti;
                         ' se False viene disegnata una superficie.
 '
-Dim NV&             ' N° di valori nei vettori XV(), YV() e ZV().
+Dim NV&             ' N?di valori nei vettori XV(), YV() e ZV().
 '
-Dim NXV&, NYV&      ' N° di valori nei vettori XV(), YV() e
+Dim NXV&, NYV&      ' N?di valori nei vettori XV(), YV() e
                     ' di colonne e righe nella matrice ZV().
 '
 Dim XMin!, XMax!    ' Valori minimi
@@ -583,9 +583,9 @@ Dim PRv() As POINTAPI       ' Vettore dei punti o matrice dei vertici dei
 Const lRP& = 4              ' Raggio del disegno dei punti [Pixels].
 '
 ' Variabili per la Sub DisegnaSup_BN:
-Dim NPoli&                  ' N° di quadrilateri in una riga.
+Dim NPoli&                  ' N?di quadrilateri in una riga.
 Dim lpPoint() As POINTAPI   ' Vettore dei vertici di una riga.
-Dim lpVertici&()            ' Vettore del N° di vertici di ogni poligono.
+Dim lpVertici&()            ' Vettore del N?di vertici di ogni poligono.
 '
 ' Variabili per la Sub DisegnaSuperficie:
 Dim lpPoint_C() As POINTAPI ' Vettore dei vertici di un quadrilatero.
@@ -677,7 +677,7 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
 '     FormatVX$: Stringa di formato dei valori sull' asse X.
 '     FormatVY$: Stringa di formato dei valori sull' asse Y.
 '     FormatVZ$: Stringa di formato dei valori sull' asse Z.
-'     Npx:       N° di Pixels di cui si vuole conoscere
+'     Npx:       N?di Pixels di cui si vuole conoscere
 '                larghezza ed altezza in [vbUser].
 '     Titolo$:   Titolo del grafico.
 '     UnitaX$:   Unita' (o titolo) dell' asse X.
@@ -711,9 +711,9 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
 '
     On Error GoTo Quadro3D_ERR
     ' Verifica la correttezza delle scale:
-    If X0 >= Xn Then Err.Raise 1001, "Quadro3D", " Errore di scala X."
-    If Y0 >= Yn Then Err.Raise 1001, "Quadro3D", " Errore di scala Y."
-    If Z0 > Zn Then Err.Raise 1001, "Quadro3D", " Errore di scala Z."
+    If X0 >= Xn Then Err.Raise 1001, "Quadro3D", " Error scale X."
+    If Y0 >= Yn Then Err.Raise 1001, "Quadro3D", " Error scale Y."
+    If Z0 > Zn Then Err.Raise 1001, "Quadro3D", " Error scale Z."
 '
 '-------------------------------------------------------------------------------------
 '   Calcolo del passo di grigliatura dei tre assi.
@@ -1174,7 +1174,7 @@ Private Sub DisegnaSuperficie(ByVal bCol As Boolean)
     Quadrante = CLng(Int(THETA / PI_2))
 '
     Select Case Quadrante
-        Case 0  ' 1° quadrante.
+        Case 0  ' 1?quadrante.
         For J = NYV - 1 To 1 Step -1
             For I = 1 To NXV - 1
                 lpPoint_C(1).X = PRv(I, J).X
@@ -1196,7 +1196,7 @@ Private Sub DisegnaSuperficie(ByVal bCol As Boolean)
             Next I
         Next J
 '
-        Case 1  ' 2° quadrante.
+        Case 1  ' 2?quadrante.
         For I = NXV - 1 To 1 Step -1
             For J = NYV - 1 To 1 Step -1
                 lpPoint_C(1).X = PRv(I, J).X
@@ -1218,7 +1218,7 @@ Private Sub DisegnaSuperficie(ByVal bCol As Boolean)
             Next J
         Next I
 '
-        Case 2  ' 3° quadrante.
+        Case 2  ' 3?quadrante.
         For J = 1 To NYV - 1
             For I = NXV - 1 To 1 Step -1
                 lpPoint_C(1).X = PRv(I, J).X
@@ -1240,7 +1240,7 @@ Private Sub DisegnaSuperficie(ByVal bCol As Boolean)
             Next I
         Next J
 '
-        Case 3  ' 4° quadrante.
+        Case 3  ' 4?quadrante.
         For I = 1 To NXV - 1
             For J = 1 To NYV - 1
                 lpPoint_C(1).X = PRv(I, J).X
@@ -1356,7 +1356,7 @@ Private Sub cmdPausa_Click()
 '
     bPausa = Not bPausa
 '
-    cmdPausa.Caption = IIf(bPausa, "Co&nt.", "&Pausa")
+    cmdPausa.Caption = IIf(bPausa, "Co&nt.", "&Pause")
     cmdRuota.Enabled = Not bPausa
     updTheta.Enabled = bPausa
 '
@@ -1369,7 +1369,7 @@ Private Sub cmdRuota_Click()
 '
 '
     bRuota = Not bRuota
-    cmdRuota.Caption = IIf(bRuota, "Fe&rma", "&Ruota")
+    cmdRuota.Caption = IIf(bRuota, "&Stop", "&Ruota")
 '
     THETA = 0!
     lblTheta = Format(RadToGrd * THETA, "#0.0")
@@ -1709,7 +1709,7 @@ Private Sub QuickSort3V(ByRef ValTab#(), ByRef ValTab1#(), ByRef ValTab2#(), _
 '
 QuickSort3V_ERR:
     If (Err <> 0) Then
-        M$ = "Errore " & Str$(Err.Number) & vbNewLine
+        M$ = "Error " & Str$(Err.Number) & vbNewLine
         M$ = M$ & Err.Description
         MsgBox M$, vbCritical, " QuickSort3V"
     End If
@@ -1741,6 +1741,7 @@ Private Sub Form_Unload(Cancel As Integer)
 '
 '
 End Sub
+
 Private Sub optBN_Click()
 '
 '

@@ -16,7 +16,7 @@ Begin VB.Form frmSurFit
    StartUpPosition =   3  'Windows Default
    Begin VB.CheckBox chkValoriLivelli 
       Alignment       =   1  'Right Justify
-      Caption         =   "&Valori dei Livelli:"
+      Caption         =   "&Values of Levels:"
       Height          =   255
       Left            =   1980
       TabIndex        =   12
@@ -24,14 +24,14 @@ Begin VB.Form frmSurFit
       Width           =   1455
    End
    Begin VB.Frame zFrame2 
-      Caption         =   "Funzioni di prova:"
+      Caption         =   "Test functions:"
       Height          =   795
       Left            =   120
       TabIndex        =   22
       Top             =   120
       Width           =   4575
       Begin VB.CommandButton cmdProva 
-         Caption         =   "&Prova"
+         Caption         =   "&Test"
          Height          =   255
          Left            =   3600
          TabIndex        =   0
@@ -103,14 +103,14 @@ Begin VB.Form frmSurFit
       End
    End
    Begin VB.Frame zFrame1 
-      Caption         =   "Interpolazione"
+      Caption         =   "Interpolation"
       Height          =   795
       Left            =   4800
       TabIndex        =   21
       Top             =   120
       Width           =   4575
       Begin VB.CheckBox chkGradiente 
-         Caption         =   "&Gradiente"
+         Caption         =   "&Gradient"
          Height          =   255
          Left            =   3360
          TabIndex        =   11
@@ -144,7 +144,7 @@ Begin VB.Form frmSurFit
       End
    End
    Begin VB.CommandButton cmdGrigliaSurFit 
-      Caption         =   "Griglia"
+      Caption         =   "Grid"
       Height          =   255
       Left            =   8460
       TabIndex        =   14
@@ -153,7 +153,7 @@ Begin VB.Form frmSurFit
       Width           =   855
    End
    Begin VB.CommandButton cmdGrigliaOrg 
-      Caption         =   "Griglia"
+      Caption         =   "Grid"
       Height          =   255
       Left            =   3780
       TabIndex        =   13
@@ -170,7 +170,7 @@ Begin VB.Form frmSurFit
       ScaleWidth      =   4515
       TabIndex        =   16
       TabStop         =   0   'False
-      ToolTipText     =   "Click per vista 3D della Superficie "
+      ToolTipText     =   "Click for 3D view of the Surface "
       Top             =   1020
       Width           =   4575
    End
@@ -185,7 +185,7 @@ Begin VB.Form frmSurFit
       ScaleWidth      =   4515
       TabIndex        =   15
       TabStop         =   0   'False
-      ToolTipText     =   "Click per vista 3D dei Punti "
+      ToolTipText     =   "Click to view 3D points "
       Top             =   1020
       Width           =   4575
       Begin MSComDlg.CommonDialog CMDialog1 
@@ -301,42 +301,42 @@ Begin VB.Form frmSurFit
    Begin VB.Menu mnuFile 
       Caption         =   "&File"
       Begin VB.Menu mnuLeggiDati 
-         Caption         =   "&Leggi file dati"
+         Caption         =   "&Load data files"
       End
       Begin VB.Menu zSep02 
          Caption         =   "-"
       End
       Begin VB.Menu mnuSalvaInterpolati 
-         Caption         =   "&Salva dati interpolati"
+         Caption         =   "&Save interpolated data"
          Enabled         =   0   'False
       End
       Begin VB.Menu zSep03 
          Caption         =   "-"
       End
       Begin VB.Menu mnuEsci 
-         Caption         =   "&Esci"
+         Caption         =   "&Exit"
       End
       Begin VB.Menu zSep04 
          Caption         =   "-"
       End
       Begin VB.Menu mnuRecenti 
-         Caption         =   "Files Recenti:"
+         Caption         =   "Recent Files:"
          Index           =   0
       End
    End
    Begin VB.Menu mnuImpostazioni 
-      Caption         =   "&Impostazioni"
+      Caption         =   "&Settings"
    End
    Begin VB.Menu mnuQM 
-      Caption         =   "&?"
+      Caption         =   "&Help"
       Begin VB.Menu mnuIstruzioni 
-         Caption         =   "I&struzioni"
+         Caption         =   "I&nstructions"
       End
       Begin VB.Menu zSep01 
          Caption         =   "-"
       End
       Begin VB.Menu mnuInformazioni 
-         Caption         =   "&Informazioni su SurFit"
+         Caption         =   "&About SurFit"
       End
    End
 End
@@ -359,7 +359,7 @@ Attribute VB_Exposed = False
 ' Data............: 21/9/2001
 ' Versione........: 1.0 a 32 bits.
 ' Sistema.........: VB6 sotto Windows NT.
-' Scritto da......: F. Languasco ®
+' Scritto da......: F. Languasco 
 ' E-Mail..........: MC7061@mclink.it
 ' DownLoads a.....: http://members.xoom.virgilio.it/flanguasco/
 '                   http://www.flanguasco.org
@@ -370,14 +370,14 @@ Attribute VB_Exposed = False
 '
 Option Explicit
 '
-Dim ND&             ' N° di dati nei vettori.
+Dim ND&             ' N?di dati nei vettori.
 Dim XD#()           ' Vettori dei valori
 Dim YD#()           ' dati della superficie
 Dim ZD#()           ' da interpolare.
 '
 Dim Xs#(), Ys#()    ' Coordinate della griglia dei punti dati.
 '
-Dim NXI&, NYI&      ' N° di colonne e di righe nella
+Dim NXI&, NYI&      ' N?di colonne e di righe nella
                     ' griglia dei punti interpolati.
 Dim XI#(), YI#()    ' Coordinate della griglia dei punti interpolati.
 Dim ZI#()           ' Superficie interpolata.
@@ -427,7 +427,7 @@ Private Sub Prova_KTB2D()
     IER = 0 ' Niente file di debug.
     Call KTB2D(ND, XD(), YD(), ZD(), Par, NXI, A, HX, NYI, C, HY, ZI(), IER)
     If IER <> 0 Then
-        MsgBox "Errore " & IER & " in KTB2D", vbCritical
+        MsgBox "Error " & IER & " in KTB2D", vbCritical
         Exit Sub
     End If
 '
@@ -469,7 +469,7 @@ Private Sub Prova_QSHEP2D()
     Call QSHEP2(ND, XD(), YD(), ZD(), NQ, NW, NR, LCELL(), LNEXT(), _
                 XMin, YMin, DX, DY, RMAX, RSQ(), ASh(), IER)
     If IER <> 0 Then
-        MsgBox "Errore " & IER & " in QSHEP2D", vbCritical
+        MsgBox "Error " & IER & " in QSHEP2D", vbCritical
         Exit Sub
     End If
 '
@@ -481,7 +481,7 @@ Private Sub Prova_QSHEP2D()
                             XMin, YMin, DX, DY, RMAX, RSQ(), ASh(), _
                             ZI(I, J), Grad(I, J).DX, Grad(I, J).DY, IER)
                 If IER <> 0 Then
-                    MsgBox "Errore " & IER & " in QS2GRD", vbCritical
+                    MsgBox "Error " & IER & " in QS2GRD", vbCritical
                     Exit Sub
                 End If
             Next I
@@ -671,7 +671,7 @@ Private Sub cmdProva_Click()
 '
     ' Chiama la routine di interpolazione:
     bDisegnaZC = True
-    Titolo$ = ND & " Punti casuali"
+    Titolo$ = ND & " Random points"
     If optKTB2D Then
         Prova_KTB2D
     ElseIf optMASUB Then
@@ -726,7 +726,7 @@ Private Sub Prova_MASUB()
 '
     If Not MASUB(IC, IEX, ND, XD(), YD(), ZD(), TP _
                , NXI, NYI, XI(), YI(), ZI()) Then
-        MsgBox "Errore in MASUB", vbCritical
+        MsgBox "Error in MASUB", vbCritical
         Exit Sub
     End If
     lblNAdd = UBound(XD) - ND   ' Punti aggiunti per estrapolazione.
@@ -793,9 +793,9 @@ Private Sub DisegnaLivelli(ByVal A#, ByVal B#, ByVal C#, ByVal D#, _
     ReDim ZLin(1 To NLiv) As LineaLivello_Type
 '
     ' Imposta la grafica:
-    Quadro picOrg, A, B, C, D, , , 3, Px3, Py3, "Punti dati: " & Titolo$, _
+    Quadro picOrg, A, B, C, D, , , 3, Px3, Py3, "Data points: " & Titolo$, _
                   "x", "y", True
-    Quadro picSurFit, A, B, C, D, , , , , , "Superficie interpolata", "x", "y", True
+    Quadro picSurFit, A, B, C, D, , , , , , "Interpolated surface", "x", "y", True
 '
     ' Visualizza i punti dati:
     For N = 1 To ND
@@ -876,9 +876,9 @@ Private Sub DisegnaGradiente(ByVal Px3!, ByVal Py3!)
         Next J
     Next I
     If GMax2 = 0 Then
-        M$ = "La superficie e' piana." & vbNewLine
-        M$ = M$ & "Non e' possibile disegnare il gradiente."
-        MsgBox M$, vbInformation, " Disegno del gradiente"
+        M$ = "The surface is flat." & vbNewLine
+        M$ = M$ & "It is not possible to draw the gradient."
+        MsgBox M$, vbInformation, " Gradient design"
         Exit Sub
     End If
     
@@ -891,7 +891,7 @@ Private Sub DisegnaGradiente(ByVal Px3!, ByVal Py3!)
     GradScalaY = LnF * CDbl(Py3) / Sqr(GMax2)
 '
     ' Angolo e lunghezza delle punte delle frecce:
-    Const ApF# = PI_2 / 3#  ' 30°
+    Const ApF# = PI_2 / 3#  ' 30?
     PxF = 1.9 * Px3
     PyF = 1.9 * Py3
     PlFQ = 1# * (PxF ^ 2 + PyF ^ 2) ' Lunghezza minima rappresentabile
@@ -992,8 +992,8 @@ Private Sub mnuLeggiDati_Click()
 '
     On Error GoTo mnuLeggi_Click_ERR
 '
-    FN_Temp$ = CMDialog_Files(CMDialog1, "Open", "Files dati", "*.dat;*.txt", _
-                              FolderN$, , " Dati della superficie da interpolare")
+    FN_Temp$ = CMDialog_Files(CMDialog1, "Open", "Data files", "*.dat;*.txt", _
+                              FolderN$, , " Surface data to be interpolated")
 '
 '
     If BreakDown(FN_Temp$, FolderN$, Titolo$) Then
@@ -1003,7 +1003,7 @@ Private Sub mnuLeggiDati_Click()
 '
 mnuLeggi_Click_ERR:
     If Err <> 0 And Err <> cdlCancel Then
-        M$ = "Errore " & Str$(Err.Number) & vbNewLine
+        M$ = "Error " & Str$(Err.Number) & vbNewLine
         M$ = M$ & Err.Description
         MsgBox M$, vbCritical, " mnuLeggi/" & Err.Source
     End If
@@ -1038,8 +1038,8 @@ Private Sub mnuSalvaInterpolati_Click()
 '
     On Error GoTo mnuSalvaInterpolati_Click_ERR
 '
-    FileNome$ = CMDialog_Files(CMDialog1, "Save", "Files dati", "*.dat;*.txt", _
-                               FolderN$, , " Dati interpolati")
+    FileNome$ = CMDialog_Files(CMDialog1, "Save", "Data files", "*.dat;*.txt", _
+                               FolderN$, , " Interpolated data")
 '
     FF = FreeFile
     Open FileNome$ For Output As #FF
@@ -1055,7 +1055,7 @@ Private Sub mnuSalvaInterpolati_Click()
 '
 mnuSalvaInterpolati_Click_ERR:
     If Err <> 0 And Err <> cdlCancel Then
-        M$ = "Errore " & Str$(Err.Number) & vbNewLine
+        M$ = "Error " & Str$(Err.Number) & vbNewLine
         M$ = M$ & Err.Description
         MsgBox M$, vbCritical, " mnuSalva/" & Err.Source
     End If
