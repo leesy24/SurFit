@@ -1,0 +1,799 @@
+	SUBROUTINE KTB2D(ND,XD,YD,ZD,PAR
+	1				,nx,xmn,xsiz
+	2				,ny,ymn,ysiz,Z,IER)
+	IMPLICIT NONE
+C
+	! Specify that KTB2D is exported to a DLL
+	! and that the external name is 'KTB2D'
+	!DEC$ ATTRIBUTES DLLEXPORT :: KTB2D
+	!DEC$ ATTRIBUTES ALIAS:'KTB2D' :: KTB2D
+c
+c                       *******************
+c
+c	The following Parameters control static dimensioning within ktb2d:
+c
+c	 MAXX      maximum nodes in X
+c	 MAXY      maximum nodes in Y
+c	 MAXDAT    maximum number of data points
+c	 MAXSAM    maximum number of data points to use in one kriging system
+c	 MAXDIS    maximum number of discretization points per block
+c	 MAXNST    maximum number of nested structures
+c
+c	User Adjustable:
+c
+      integer*4 MAXDAT,MAXSAM,MAXDIS,MAXNST
+	parameter(MAXDAT =10000,
+     1          MAXSAM =  120,
+     2          MAXDIS =   64,
+     3          MAXNST =    4)
+c
+c	Fixed
+c
+      integer*4 MAXKD,MAXKRG
+      parameter(MAXKD=MAXSAM+1,MAXKRG=MAXKD*MAXKD)
+	double precision UNEST,EPSLON
+      parameter       (UNEST=-999,EPSLON=0.0000001)
+C
+      TYPE ParType
+		SEQUENCE 
+		REAL(8)::		tmin
+		REAL(8)::		tmax
+		INTEGER(4)::	nxdis
+		INTEGER(4)::	nydis
+		INTEGER(4)::	ndmin
+		INTEGER(4)::	ndmax
+		REAL(8)::		radius
+		INTEGER(4)::	ktype
+		REAL(8)::		skmean
+		INTEGER(4)::	nst
+		REAL(8)::		c0
+		INTEGER(4)::	it(1:MAXNST)
+		REAL(8)::		cc(1:MAXNST)
+		REAL(8)::		ang(1:MAXNST)
+		REAL(8)::		aa(1:MAXNST)
+		REAL(8)::		a2(1:MAXNST)
+      END TYPE ParType
+C
+	INTEGER*4 ND,nx,ny,IER
+	DOUBLE PRECISION xmn,xsiz,XD(1:ND)
+	1				,ymn,ysiz,YD(1:ND),ZD(1:ND),Z(1:nx,1:ny)
+	TYPE (ParType):: PAR
+
+
+c
+c-----------------------------------------------------------------------
+c
+c	Variable Declaration:
+c
+      integer*4 nums(MAXSAM)
+	integer*4 NDr,n1,na,ndb,neq,nn,nk,i,ia,isam,ii,id,in,ix,iy
+      integer*4 ldbg,k,jk,j,j1,jj,idbg,ising
+c
+      logical   first
+c
+      double precision x(MAXDAT),y(MAXDAT),vr(MAXDAT)
+      double precision xdb(MAXDIS),ydb(MAXDIS),xa(MAXSAM),ya(MAXSAM)
+     	double precision vra(MAXSAM),dist(MAXSAM),PMX,anis(MAXNST)
+      double precision r(MAXSAM+1),rr(MAXSAM+1),s(MAXSAM+1),a(MAXKRG)
+	double precision v,ss,xloc,yloc,xdis,ydis,cbb,cb1,rad2,cov,unbias
+	double precision ak,av,vk,dx,dy,h2,est,estv,xx,yy,cb,sumw,cova2
+	1				,vrt
+c
+      data      first/.true./,PMX/9999.0D0/
+C
+C%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+C                                                                      %
+C Copyright (C) 1996, The Board of Trustees of the Leland Stanford     %
+C Junior University.  All rights reserved.                             %
+C                                                                      %
+C The programs in GSLIB are distributed in the hope that they will be  %
+C useful, but WITHOUT ANY WARRANTY.  No author or distributor accepts  %
+C responsibility to anyone for the consequences of using them or for   %
+C whether they serve any particular purpose or work at all, unless he  %
+C says so in writing.  Everyone is granted permission to copy, modify  %
+C and redistribute the programs in GSLIB, but only under the condition %
+C that this notice and the above copyright notice remain intact.       %
+C                                                                      %
+C%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+c-----------------------------------------------------------------------
+c
+c                 Kriging of a 2-D Rectangular Grid
+c                 *********************************
+c
+c
+c	Read Input Parameters:
+c
+	idbg=IER	! Debug flag
+	if (idbg.gt.0) then
+c		Unit numbers:
+		ldbg = 3
+		open(ldbg,file='Debug.txt',status='UNKNOWN')
+	end if
+c
+      if(ND.gt.MAXDAT) then
+		if (idbg.gt.0)
+     1		write(ldbg,*) ' ERROR: Exceeded available memory for data'
+		IER=1
+          return
+      end if
+c
+	IER=0
+c
+      if(PAR%ndmin.lt.0) PAR%ndmin = 0
+      if(PAR%ndmax.gt.MAXSAM) then
+		if (idbg.gt.0)
+     1		write(ldbg,*) 'ndmax is too big - modify PARAMETERS'
+		IER=2
+          return
+	end if
+c
+      if(PAR%nst.gt.MAXNST)   then
+		if (idbg.gt.0)
+     1		write(ldbg,*) 'nst is too big - modify PARAMETERS'
+		IER=3
+          return
+	end if
+c
+      if(PAR%nst.le.0) then
+            PAR%nst     = 1
+            PAR%it(1)   = 1
+            PAR%cc(1)   = 0.0
+            PAR%ang(1)  = 0.0
+            PAR%aa(1)   = 0.0
+            anis(1) = 0.0
+      else
+            do i=1,PAR%nst
+                  anis(i) = PAR%a2(i) / PAR%aa(i)
+c
+                  if(PAR%it(i).eq.4) then
+                        if ((PAR%aa(i).lt.0.0) 
+	1				 .OR. (PAR%aa(i).gt.2.0)) then
+						if (idbg.gt.0)
+     1						write(ldbg,*) 'INVALID power variogram'
+						IER=4
+						return
+					  end if
+                  end if
+            end do
+      end if
+c
+c	Read the data:
+c
+      av = 0.0
+      ss = 0.0
+c
+	NDr=0
+	do 7 i=1, ND
+		vrt = ZD(i)
+		if(vrt.lt.PAR%tmin.or.vrt.gt.PAR%tmax) go to 7
+c
+		NDr	    = NDr + 1
+		x(NDr)  = XD(i)
+		y(NDr)  = YD(i)
+		vr(NDr) = vrt
+		av      = av + vrt
+		ss      = ss + vrt*vrt
+7	CONTINUE
+c
+c	Echo the input data if debugging flag >0:
+c
+	if (idbg.gt.0) then
+		write(ldbg,*) 'tmin,tmax',PAR%tmin,PAR%tmax
+		write(ldbg,*) 'xmn,ymn',xmn,ymn
+		write(ldbg,*) 'xsiz,ysiz',xsiz,ysiz
+		write(ldbg,*) 'nxdis,nydis',PAR%nxdis,PAR%nydis
+		write(ldbg,*) 'ndmin',PAR%ndmin
+		write(ldbg,*) 'ndmax',PAR%ndmax
+		write(ldbg,*) 'radius',PAR%radius
+		write(ldbg,*) 'ktype',PAR%ktype
+		write(ldbg,*) 'skmean',PAR%skmean
+		write(ldbg,*) 'nst',PAR%nst
+		write(ldbg,*) 'c0',PAR%c0
+		do i=1,PAR%nst
+			write(ldbg,97) 'it ',i,PAR%it(i)
+			write(ldbg,98) 'cc ',i,PAR%cc(i)
+			write(ldbg,98) 'ang',i,PAR%ang(i)
+			write(ldbg,98) 'aa ',i,PAR%aa(i)
+			write(ldbg,98) 'a2 ',i,PAR%a2(i)
+97			format(A3,'(',I1,')',I6)
+98			format(A3,'(',I1,')',F10.3)
+		end do
+		write(ldbg,*) 'NDr,nx,ny',NDr,nx,ny
+c
+		do id=1,NDr
+			write(ldbg,99) id,x(id),y(id),vr(id)
+99			format('Data: ',i5,' at ',2f12.3,' value: ',f12.5)
+		end do
+c
+c	Compute the averages and variances as an error check for the user:
+c
+		av = av / dmax1(DBLE(NDr),1.0d0)
+		ss =(ss / dmax1(DBLE(NDr),1.0d0)) - av * av
+		write(ldbg,*) 'av,ss',av,ss
+	end if
+C
+c-----------------------------------------------------------------------
+c
+c           Ordinary/Simple Kriging of a 2-D Rectangular Grid
+c           *************************************************
+c
+c This subroutine estimates point or block values of one variable by
+c ordinary kriging.  All of the samples are rescanned for each block
+c estimate; this makes the program simple but inefficient.  The data
+c should NOT contain any missing values.  Unestimated points are
+c returned as -1.0e21
+c
+c
+c
+c Original:  A.G. Journel                                           1978
+c Revisions: B.E. Buxton                                       Apr. 1983
+c-----------------------------------------------------------------------
+c
+c Set up the discretization points per block.  Figure out how many
+c are needed, the spacing, and fill the xdb and ydb arrays with the
+c offsets relative to the block center (this only gets done once):
+c
+      ndb  = PAR%nxdis * PAR%nydis
+      if(ndb.gt.MAXDIS) then
+		if (idbg.gt.0) then
+     			write(ldbg,*) 'ERROR KB2D: Too many discretization points.'
+     			write(ldbg,*) '            Increase MAXDIS'
+     			write(ldbg,*) '            or lower n[xy]dis.'
+		end if
+		IER=5
+          return
+      endif
+      xdis = xsiz  / dmax1(DBLE(PAR%nxdis),1.0d0)
+      ydis = ysiz  / dmax1(DBLE(PAR%nydis),1.0d0)
+      xloc = -0.5*(xsiz+xdis)
+      i    = 0
+      do ix =1,PAR%nxdis
+            xloc = xloc + xdis
+            yloc = -0.5*(ysiz+ydis)
+            do iy=1,PAR%nydis
+                  yloc = yloc + ydis
+                  i = i+1
+                  xdb(i) = xloc
+                  ydb(i) = yloc
+            end do
+      end do
+c
+c	Initialize accumulators:
+c
+      cbb  = 0.0
+      rad2 = PAR%radius*PAR%radius
+c
+c	Calculate Block Covariance. Check for point kriging.
+c
+      cov   = cova2(xdb(1),ydb(1),xdb(1),ydb(1),PAR%nst,PAR%c0
+     1             ,PMX,PAR%cc,PAR%aa,PAR%it,PAR%ang,anis,first)
+c
+c	Keep this value to use for the unbiasedness constraint:
+c
+      unbias = cov
+      first  = .false.
+      if (ndb.le.1) then
+            cbb = cov
+      else
+            do i=1,ndb
+                  do j=1,ndb
+                        cov = cova2(xdb(i),ydb(i),xdb(j),ydb(j)
+	1							 ,PAR%nst,PAR%c0,PMX
+     2                             ,PAR%cc,PAR%aa,PAR%it
+     3							 ,PAR%ang,anis,first)
+                        if(i.eq.j) cov = cov - PAR%c0
+                        cbb = cbb + cov
+                  end do
+            end do
+            cbb = cbb/DBLE(ndb*ndb)
+      endif
+c
+c	MAIN LOOP OVER ALL THE BLOCKS IN THE GRID:
+c
+      nk = 0
+      ak = 0.0
+      vk = 0.0
+      do 4 iy=1,ny
+		yloc = ymn + (iy-1)*ysiz
+		do 4 ix=1,nx
+            xloc = xmn + (ix-1)*xsiz
+c
+c	Find the nearest samples within each octant: First initialize
+c	the counter arrays:
+c
+            na = 0
+            do isam=1,PAR%ndmax
+                  dist(isam) = 1.0d+20
+                  nums(isam) = 0
+            end do
+c
+c	Scan all the samples (this is inefficient and the user with lots of
+c	data should move to ktb3d):
+c
+            do 6 id=1,NDr
+                  dx = x(id) - xloc
+                  dy = y(id) - yloc
+                  h2 = dx*dx + dy*dy
+                  if(h2.gt.rad2) go to 6
+c
+c	Do not consider this sample if there are enough close ones:
+c
+                  if(na.eq.PAR%ndmax.and.h2.gt.dist(na)) go to 6
+c
+c	Consider this sample (it will be added in the correct location):
+c
+                  if(na.lt.PAR%ndmax) na = na + 1
+                  nums(na)           = id
+                  dist(na)           = h2
+                  if(na.eq.1) go to 6
+c
+c	Sort samples found thus far in increasing order of distance:
+c
+                  n1 = na-1
+                  do ii=1,n1
+                        k=ii
+                        if(h2.lt.dist(ii)) then
+                              jk = 0
+                              do jj=k,n1
+                                    j  = n1-jk
+                                    jk = jk+1
+                                    j1 = j+1
+                                    dist(j1) = dist(j)
+                                    nums(j1) = nums(j)
+                              end do
+                              dist(k) = h2
+                              nums(k) = id
+                              go to 6
+                        endif
+                  end do
+6           continue
+c
+c	Is there enough samples?
+c
+            if (na.lt.PAR%ndmin) then
+				if (idbg.gt.0)
+	1				write(ldbg,*) 'Block ',ix,iy, 'not estimated'
+                  est  = UNEST
+                  estv = UNEST
+                  go to 1
+            endif
+c
+c	Put coordinates and values of neighborhood samples into xa,ya,vra:
+c
+            do ia=1,na
+                  jj      = nums(ia)
+                  xa(ia)  = x(jj)
+                  ya(ia)  = y(jj)
+                  vra(ia) = vr(jj)
+            end do
+c
+c	Handle the situation of only one sample:
+c
+            if(na.eq.1) then
+                  cb1 = cova2(xa(1),ya(1),xa(1),ya(1),PAR%nst,PAR%c0
+     1                       ,PMX,PAR%cc,PAR%aa,PAR%it,PAR%ang
+     2					   ,anis,first)
+                  xx  = xa(1) - xloc
+                  yy  = ya(1) - yloc
+c
+c	Establish Right Hand Side Covariance:
+c
+                  if(ndb.le.1) then
+                        cb = cova2(xx,yy,xdb(1),ydb(1)
+	1							,PAR%nst,PAR%c0,PMX
+     2                            ,PAR%cc,PAR%aa,PAR%it
+     2							,PAR%ang,anis,first)
+                  else
+                        cb  = 0.0
+                        do i=1,ndb
+                              cb = cb + cova2(xx,yy,xdb(i),ydb(i)
+	1									   ,PAR%nst,PAR%c0,PMX
+     2									   ,PAR%cc,PAR%aa,PAR%it
+     3									   ,PAR%ang,anis,first)
+                              dx = xx - xdb(i)
+                              dy = yy - ydb(i)
+                              if((dx*dx+dy*dy).lt.EPSLON)
+     1                        cb = cb - PAR%c0
+                        end do
+                        cb = cb / DBLE(ndb)
+                  end if
+                  if(PAR%ktype.eq.0) then
+                        s(1) = cb/cbb
+                        est  = s(1)*vra(1) + (1.0-s(1))*PAR%skmean
+                        estv = cbb - s(1) * cb
+                  else
+                        est  = vra(1)
+                        estv = cbb - 2.0*cb + cb1
+                  end if
+            else
+c
+c	Solve the Kriging System with more than one sample:
+c
+                  neq = na + PAR%ktype
+                  nn  = (neq + 1)*neq/2
+c
+c	Set up kriging matrices:
+c
+                  in=0
+                  do j=1,na
+c
+c	Establish Left Hand Side Covariance Matrix:
+c
+                        do i=1,j
+                              in = in + 1
+                              a(in) = cova2(xa(i),ya(i),xa(j),ya(j)
+     1                                     ,PAR%nst,PAR%c0,PMX
+     2									 ,PAR%cc,PAR%aa,PAR%it
+     3                                     ,PAR%ang,anis,first)
+                        end do
+                        xx = xa(j) - xloc
+                        yy = ya(j) - yloc
+c
+c	Establish Right Hand Side Covariance:
+c
+                        if(ndb.le.1) then
+                              cb = cova2(xx,yy,xdb(1),ydb(1)
+	1								  ,PAR%nst,PAR%c0,PMX
+     2                                  ,PAR%cc,PAR%aa,PAR%it
+     3								  ,PAR%ang,anis,first)
+                        else
+                              cb  = 0.0
+                              do j1=1,ndb
+                                    cb = cb + cova2(xx,yy
+     1											 ,xdb(j1),ydb(j1)
+     3											 ,PAR%nst,PAR%c0,PMX
+     4											 ,PAR%cc,PAR%aa
+     5											 ,PAR%it,PAR%ang
+     6											 ,anis,first)
+                                    dx = xx - xdb(j1)
+                                    dy = yy - ydb(j1)
+                                    if((dx*dx+dy*dy).lt.EPSLON)
+     1                                    cb = cb - PAR%c0
+                              end do
+                              cb = cb / DBLE(ndb)
+                        end if
+                        r(j)  = cb
+                        rr(j) = r(j)
+                  end do
+c
+c	Set the unbiasedness constraint:
+c
+                  if(PAR%ktype.eq.1) then
+                        do i=1,na
+                              in    = in + 1
+                              a(in) = unbias
+                        end do
+                        in      = in + 1
+                        a(in)   = 0.0
+                        r(neq)  = unbias
+                        rr(neq) = r(neq)
+                  end if
+c
+c	Solve the Kriging System:
+c
+                  call ksol(1,neq,1,a,r,s,ising)
+c
+c	Write a warning if the matrix is singular:
+c
+                  if(ising.ne.0) then
+					if (idbg.gt.0) then
+                        write(ldbg,*) 'WARNING KB2D: singular matrix'
+                        write(ldbg,*) '              for block',ix,iy
+					end if
+                      est  = UNEST
+                      estv = UNEST
+                      go to 1
+                  endif
+c
+c	Compute the estimate and the kriging variance:
+c
+                  est  = 0.0
+                  estv = cbb
+                  sumw = 0.0
+                  if(PAR%ktype.eq.1) estv = estv - (s(na+1))
+                  do i=1,na
+                        sumw = sumw + (s(i))
+                        est  = est  + (s(i))*vra(i)
+                        estv = estv - (s(i)*rr(i))
+                  end do
+                  if(PAR%ktype.eq.0) est = est + (1.0-sumw)*PAR%skmean
+            endif
+c
+c	Write the result to the output matrix:
+
+1		  Z(ix,iy)=est
+
+            if(est.gt.UNEST) then
+                  nk = nk + 1
+                  ak = ak + est
+                  vk = vk + est*est
+            end if
+c
+c	END OF MAIN LOOP OVER ALL THE BLOCKS:
+c
+4     continue
+c
+c	Finished:
+c
+100   continue
+	if (idbg.gt.0) close(ldbg)
+	return
+      end
+
+
+ 
+ 
+      DOUBLE PRECISION function cova2(x1,y1,x2,y2,nst,c0
+	1							   ,PMX,cc,aa,it,
+     2								ang,anis,first)
+	IMPLICIT NONE
+C
+      INTEGER*4   nst,it(*)
+      DOUBLE PRECISION aa(*),cc(*),ang(*),anis(*)
+      DOUBLE PRECISION x1,y1,x2,y2,c0,PMX
+      LOGICAL   first
+c
+	DOUBLE PRECISION azmuth,dx,dy,dx1,dy1,h,hh,hr,cov1
+	1				,rotmat(4,4),maxcov,DTOR,EPSLON
+	INTEGER*4 is
+	PARAMETER(DTOR=3.14159265/180.0,EPSLON=0.0000001)
+      SAVE      rotmat,maxcov
+c-----------------------------------------------------------------------
+c
+c              Covariance Between Two Points (2-D Version)
+c              *******************************************
+c
+c This function returns the covariance associated with a variogram model
+c that is specified by a nugget effect and possibly four different
+c nested varigoram structures.  The anisotropy definition can be
+c different for each of the nested structures (spherical, exponential,
+c gaussian, or power).
+c
+c
+c
+c INPUT VARIABLES:
+c
+c   x1,y1            Coordinates of first point
+c   x2,y2            Coordinates of second point
+c   nst              Number of nested structures (max. 4).
+c   c0               Nugget constant (isotropic).
+c   PMX              Maximum variogram value needed for kriging when
+c                      using power model.  A unique value of PMX is
+c                      used for all nested structures which use the
+c                      power model.  therefore, PMX should be chosen
+c                      large enough to account for the largest single
+c                      structure which uses the power model.
+c   cc(nst)          Multiplicative factor of each nested structure.
+c   aa(nst)          Parameter "a" of each nested structure.
+c   it(nst)          Type of each nested structure:
+c                      1. spherical model of range a;
+c                      2. exponential model of parameter a;
+c                           i.e. practical range is 3a
+c                      3. gaussian model of parameter a;
+c                           i.e. practical range is a*sqrt(3)
+c                      4. power model of power a (a must be gt. 0  and
+c                           lt. 2).  if linear model, a=1,c=slope.
+c   ang(nst)         Azimuth angle for the principal direction of
+c                      continuity (measured clockwise in degrees from Y)
+c   anis(nst)        Anisotropy (radius in minor direction at 90 degrees
+c                      from "ang" divided by the principal radius in 
+c                      direction "ang")
+c   first            A logical variable which is set to true if the
+c                      direction specifications have changed - causes
+c                      the rotation matrices to be recomputed.
+c
+c
+c
+c OUTPUT VARIABLES: returns "cova2" the covariance obtained from the
+c                   variogram model.
+c
+c
+c
+c-----------------------------------------------------------------------
+c
+c	The first time around, re-initialize the cosine matrix for the
+c	variogram structures:
+c
+      if(first) then
+            maxcov = c0
+            do is=1,nst
+                  azmuth       = (90.0-ang(is))*DTOR
+                  rotmat(1,is) =  dcos(azmuth)
+                  rotmat(2,is) =  dsin(azmuth)
+                  rotmat(3,is) = -dsin(azmuth)
+                  rotmat(4,is) =  dcos(azmuth)
+                  if(it(is).eq.4) then
+                        maxcov = maxcov + PMX
+                  else
+                        maxcov = maxcov + cc(is)
+                  endif
+            end do
+      endif
+c
+c	Check for very small distance:
+c
+      dx = x2-x1
+      dy = y2-y1
+      if((dx*dx+dy*dy).lt.EPSLON) then
+            cova2 = maxcov
+            return
+      endif
+c
+c	Non-zero distance, loop over all the structures:
+c
+      cova2 = 0.0
+      do is=1,nst
+c
+c	Compute the appropriate structural distance:
+c
+            dx1 = (dx*rotmat(1,is) + dy*rotmat(2,is))
+            dy1 = (dx*rotmat(3,is) + dy*rotmat(4,is))/anis(is)
+            h   = dsqrt(dmax1((dx1*dx1+dy1*dy1),0.0d0))
+            if(it(is).eq.1) then
+c
+c	Spherical model:
+c
+                  hr = h/aa(is)
+                  if(hr.lt.1.0) cova2 = cova2 
+     1                                + cc(is)*(1.-hr*(1.5-.5*hr*hr))
+            else if(it(is).eq.2) then
+c
+c	Exponential model:
+c
+                  cova2 = cova2 +cc(is)*dexp(-h/aa(is))
+            else if(it(is).eq. 3) then
+c
+c	Gaussian model:
+c
+                  hh=-(h*h)/(aa(is)*aa(is))
+                  cova2 = cova2 +cc(is)*dexp(hh)
+            else
+c
+c	Power model:
+c
+                  cov1  = PMX - cc(is)*(h**aa(is))
+                  cova2 = cova2 + cov1
+            endif
+      end do
+c
+      return
+      end
+
+
+      subroutine KSOL(nright, NEQ, nsb, A, R, S, ising)
+c-----------------------------------------------------------------------
+C
+c                Solution of a System of Linear Equations
+c                ****************************************
+C
+C
+C
+c INPUT VARIABLES:
+C
+c   nright,nsb       number of columns in right hand side matrix.
+c                      for KB2D: nright=1, nsb=1
+c   neq              number of equations
+c   a()              upper triangular left hand side matrix (stored
+c                      columnwise)
+c   r()              right hand side matrix (stored columnwise)
+c                      for kb2d, one column per variable
+C
+C
+C
+c OUTPUT VARIABLES:
+C
+c   s()              solution array, same dimension as  r  above.
+c   ising            singularity indicator
+c                      0,  no singularity problem
+c                     -1,  neq .le. 1
+c                      k,  a null pivot appeared at the kth iteration
+C
+C
+C
+c PROGRAM NOTES:
+C
+c   1. Requires the upper triangular left hand side matrix.
+c   2. Pivots are on the diagonal.
+c   3. Does not search for max. element for pivot.
+c   4. Several right hand side matrices possible.
+c   5. USE for ok and sk only, NOT for UK.
+C
+C
+c-----------------------------------------------------------------------
+      implicit real*8 (a-h,o-z)
+      real*8   a(*),r(*),s(*)
+C
+c If there is only one equation then set ising and return:
+C
+      if(neq.le.1) then
+            ising = -1
+            Return
+      End If
+C
+C Initialize:
+C
+      TOL = 0.0000001
+      ising = 0
+      NN = NEQ * (NEQ + 1) / 2
+      nm = nsb * NEQ
+      M1 = NEQ - 1
+      kk = 0
+C
+c Start triangulation:
+C
+      do k=1,m1
+            kk = kk + K
+            ak = A(kk)
+            if(abs(ak).lt.tol) then
+                  ising = K
+                  Return
+            End If
+            km1 = K - 1
+            do iv=1,nright
+                  nm1 = nm * (iv - 1)
+                  ii = kk + NN * (iv - 1)
+                  piv = 1# / A(ii)
+                  lp = 0
+                  do i=k,m1
+                        ll = ii
+                        ii = ii + I
+                        ap = A(ii) * piv
+                        lp = lp + 1
+                        ij = ii - km1
+                        do j=i,m1
+                              ij = ij + J
+                              ll = ll + J
+                              A(ij) = A(ij) - ap * A(ll)
+                        end do
+                        do llb=k,nm,neq
+                              in=llb+lp+nm1
+                              ll1 = llb + nm1
+                              r(in)=r(in)-ap*r(ll1)
+                        end do
+                  end do
+            end do
+      end do
+C
+c Error checking - singular matrix:
+C
+      ijm = ij - NN * (nright - 1)
+      if(abs(a(ijm)).lt.tol) then
+            ising = NEQ
+            Return
+      End If
+C
+c Finished triangulation, start solving back:
+C
+      do iv=1,nright
+            nm1 = nm * (iv - 1)
+            ij = ijm + NN * (iv - 1)
+            piv = 1# / A(ij)
+            do llb=neq,nm,neq
+                  ll1 = llb + nm1
+                  S(ll1) = R(ll1) * piv
+            end do
+            I = NEQ
+            kk = ij
+            do ii=1,m1
+                  kk = kk - I
+                  piv = 1# / A(kk)
+                  I = I - 1
+                  do llb=i,nm,neq
+                        ll1 = llb + nm1
+                        in=ll1
+                        ap=r(in)
+                        ij = kk
+                        do j=i,m1
+                              ij = ij + J
+                              in=in+1
+                              ap=ap-a(ij)*s(in)
+                        end do
+                        S(ll1) = ap * piv
+                  end do
+            end do
+      end do
+C
+c Finished solving back, return:
+C
+      Return
+      End

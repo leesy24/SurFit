@@ -1,0 +1,8 @@
+Routines per l' interpolazione di superfici da punti dati
+sparpagliati.  Comprende l' interpolazione con "kriging",
+con il metodo quadratico di Shepard e la routine MASUB.
+Ho anche incluso la mia ultima elaborazione di CONREC con
+la possibilita' di etichettare le linee di livello ed un
+Form, di utilità generale, per la visualizzazione in 3D
+assonometrica delle superfici.
+Ultimo aggiornamento: 21/12/2001
