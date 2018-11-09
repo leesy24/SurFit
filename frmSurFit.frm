@@ -30,7 +30,7 @@ Begin VB.Form frmSurFit
       TabIndex        =   22
       Top             =   120
       Width           =   4575
-      Begin VB.CommandButton cmdProva 
+      Begin VB.CommandButton cmdTest 
          Caption         =   "&Test"
          Height          =   255
          Left            =   3600
@@ -319,7 +319,7 @@ Begin VB.Form frmSurFit
       Begin VB.Menu zSep04 
          Caption         =   "-"
       End
-      Begin VB.Menu mnuRecenti 
+      Begin VB.Menu mnuRecent 
          Caption         =   "Recent Files:"
          Index           =   0
       End
@@ -403,13 +403,13 @@ Dim lZxy&           ' Indice della funzione di prova.
 '
 Dim bScriviVal As Boolean   ' Scrive i valori delle linee di livello.
 Dim bDisegnaGD As Boolean   ' Disegna le freccette del gradiente.
-Dim bDisegnaZC As Boolean   ' Disegna la superficie calcolata.
+Dim bDrawZC As Boolean   ' Disegna la superficie calcolata.
 Dim Titolo$                 ' Titolo del quadro picOrg.
 '
 Const Me_W& = 9600          ' Dimensioni di questo
 Const Me_H& = 7200 - 255    ' Form [Twips].
 
-Private Sub Prova_KTB2D()
+Private Sub Test_KTB2D()
 '
 '   Interpolazione, con "kriging",  di una superficie
 '   con punti dati nei vettori XD(), YD(), ZD():
@@ -443,7 +443,8 @@ Private Sub Prova_KTB2D()
 '
 '
 End Sub
-Private Sub Prova_QSHEP2D()
+
+Private Sub Test_QSHEP2D()
 '
 '   Interpolazione di una superficie con punti dati nei
 '   vettori XD(), YD(), ZD() con il metodo quadratico
@@ -574,11 +575,11 @@ Private Sub chkGradiente_Click()
 '
     ' Chiama la routine di interpolazione:
     If optKTB2D Then
-        Prova_KTB2D
+        Test_KTB2D
     ElseIf optMASUB Then
-        Prova_MASUB
+        Test_MASUB
     ElseIf optQSHEP2D Then
-        Prova_QSHEP2D
+        Test_QSHEP2D
     End If
 '
     Screen.MousePointer = vbDefault
@@ -595,11 +596,11 @@ Private Sub chkValoriLivelli_Click()
 '
     ' Chiama la routine di interpolazione:
     If optKTB2D Then
-        Prova_KTB2D
+        Test_KTB2D
     ElseIf optMASUB Then
-        Prova_MASUB
+        Test_MASUB
     ElseIf optQSHEP2D Then
-        Prova_QSHEP2D
+        Test_QSHEP2D
     End If
 '
     Screen.MousePointer = vbDefault
@@ -639,76 +640,77 @@ Private Sub cmdGrigliaSurFit_MouseUp(Button As Integer, Shift As Integer, X As S
 '
 '
 End Sub
-Private Sub cmdProva_Click()
+
+Private Sub cmdTest_Click()
 '
 '
     Dim I&, N&
 '
-    cmdProva.Enabled = False
+    cmdTest.Enabled = False
     Screen.MousePointer = vbHourglass
     DoEvents
 '
     ND = CLng(RandU(6, 200))
     ReDim XD#(1 To ND), YD#(1 To ND), ZD#(1 To ND)
     For N = 1 To ND
-        ' Ascisse dei punti dati:
+        ' Ascission of data points:
         XD(N) = RandU(-10, 10)
-        ' Ordinate dei punti dati:
+        ' Order data points:
         YD(N) = RandU(-10, 10)
     Next N
 '
-    Call ParametriDiDefault
+    Call DefaultParameters
 '
-    ' Calcola il valore della superficie
-    ' ai punti dati:
+    ' Calculate the value of the surface at the data points:
     For N = 1 To ND
         ZD(N) = Zxy(XD(N), YD(N))
     Next N
 '
-    ' Prepara una griglia
-    ' corrispondente ai punti dati:
-    GrigliaPuntiDati XD(), YD(), Xs(), Ys()
+    ' Prepare a grid corresponding to data points:
+    GridPointsData XD(), YD(), Xs(), Ys()
 '
-    ' Chiama la routine di interpolazione:
-    bDisegnaZC = True
+    ' Call the interpolation routine:
+    bDrawZC = True
     Titolo$ = ND & " Random points"
     If optKTB2D Then
-        Prova_KTB2D
+        Test_KTB2D
     ElseIf optMASUB Then
-        Prova_MASUB
+        Test_MASUB
     ElseIf optQSHEP2D Then
-        Prova_QSHEP2D
+        Test_QSHEP2D
     End If
 '
     Screen.MousePointer = vbDefault
-    cmdProva.Enabled = True
+    cmdTest.Enabled = True
 '
 '
 '
 End Sub
+
 Private Sub Form_Load()
 '
 '
     Dim Me_L&, Me_T&
 '
-    LeggiPosizioneForm Me, Me_L, Me_T
+    LoadPositionForm Me, Me_L, Me_T
     Me.Move Me_L, Me_T, Me_W, Me_H
 '
-    LeggiFilesRecenti Me.mnuRecenti, "PuntiDati"
+    LoadRecentFiles Me.mnuRecent, "PointsData"
 '
-    ZCol() = TabellaColori(NTCol)
+    ZCol() = ColorTable(NTCol)
 '
     NXI = 50
     NYI = 50
-    NLiv = 10   ' Numero di livelli da tracciare.
+    NLiv = 10   ' Number of levels to trace.
 '
     optZxy(1).Value = True
-    cmdProva_Click
+    cmdTest_Click
 '
 '
 '
 End Sub
-Private Sub Prova_MASUB()
+
+Private Sub Test_MASUB()
 '
 '   Interpolazione di una superficie con punti dati
 '   nei vettori XD(), YD(), ZD():
@@ -766,11 +768,10 @@ Private Sub DisegnaGriglia(Quadro As PictureBox, dXI#(), dYI#())
 '
 '
 End Sub
-Public Sub GrigliaPuntiDati(XD#(), YD#(), XGD#(), YGD#())
+Public Sub GridPointsData(XD#(), YD#(), XGD#(), YGD#())
 '
-'   Prepara i vettori delle coordinate dei punti dati,
-'   eliminando i valori doppi ed ordinandoli in verso
-'   crescente:
+'   Prepare the vector vectors of the data points, eliminating
+'   the double values and ordering them in increasing direction:
 '
     XGD() = XD()
     YGD() = YD()
@@ -838,7 +839,7 @@ Private Sub DisegnaLivelli(ByVal A#, ByVal B#, ByVal C#, ByVal D#, _
         MsgBox Msg$, vbCritical, " CONREC di ZI()"
     End If
 '
-    If bDisegnaZC Then
+    If bDrawZC Then
         ' Calcola il valore della superficie
         ' su tutti i punti della griglia:
         For I = 1 To NXI
@@ -930,7 +931,7 @@ Private Sub Form_Unload(Cancel As Integer)
     If IsLoaded(frmIstruzioni) Then Unload frmIstruzioni
     If IsLoaded(frm3D) Then Unload frm3D
 '
-    SalvaFilesRecenti Me.mnuRecenti, "PuntiDati"
+    SalvaFilesRecenti Me.mnuRecent, "PointsData"
 '
     SalvaPosizioneForm Me
 '
@@ -956,11 +957,11 @@ Private Sub mnuImpostazioni_Click()
         ' Chiama la routine di interpolazione
         ' con i parametri modificati:
         If optKTB2D Then
-            Prova_KTB2D
+            Test_KTB2D
         ElseIf optMASUB Then
-            Prova_MASUB
+            Test_MASUB
         ElseIf optQSHEP2D Then
-            Prova_QSHEP2D
+            Test_QSHEP2D
         End If
     '
         Screen.MousePointer = vbDefault
@@ -1012,7 +1013,7 @@ mnuLeggi_Click_ERR:
 '
 End Sub
 
-Private Sub mnuRecenti_Click(INDEX As Integer)
+Private Sub mnuRecent_Click(INDEX As Integer)
 '
 '
     Dim FN_Temp$
@@ -1020,7 +1021,7 @@ Private Sub mnuRecenti_Click(INDEX As Integer)
     If INDEX = 0 Then Exit Sub
 '
 '
-    FN_Temp$ = mnuRecenti(INDEX).Caption
+    FN_Temp$ = mnuRecent(INDEX).Caption
     FN_Temp$ = Right$(FN_Temp$, Len(FN_Temp$) - 3)
 '
     If BreakDown(FN_Temp$, FolderN$, Titolo$) Then
@@ -1067,7 +1068,7 @@ Private Sub optKTB2D_Click()
 '
 '
     Screen.MousePointer = vbHourglass
-    Prova_KTB2D
+    Test_KTB2D
     Screen.MousePointer = vbDefault
 '
 '
@@ -1077,7 +1078,7 @@ Private Sub optMASUB_Click()
 '
 '
     Screen.MousePointer = vbHourglass
-    Prova_MASUB
+    Test_MASUB
     Screen.MousePointer = vbDefault
 '
 '
@@ -1087,7 +1088,7 @@ Private Sub optQSHEP2D_Click()
 '
 '
     Screen.MousePointer = vbHourglass
-    Prova_QSHEP2D
+    Test_QSHEP2D
     Screen.MousePointer = vbDefault
 '
 '
@@ -1160,7 +1161,7 @@ Private Sub optZxy_Click(INDEX As Integer)
 End Sub
 
 
-Private Sub ParametriDiDefault()
+Private Sub DefaultParameters()
 '
 '   Attribuisce i valori di default ai parametri delle
 '   routines di interpolazione.  Questa routine viene
@@ -1226,7 +1227,7 @@ Private Sub ElaboraFileDati(ByVal FileN$)
     Screen.MousePointer = vbHourglass
     DoEvents
 '
-    AggiornaFilesRecenti Me.mnuRecenti, FileN$
+    AggiornaFilesRecenti Me.mnuRecent, FileN$
 '
     FF = FreeFile
     Open FileN$ For Input As #FF
@@ -1239,20 +1240,20 @@ Private Sub ElaboraFileDati(ByVal FileN$)
         Input #FF, XD(ND), YD(ND), ZD(ND)
     Loop
 '
-    Call ParametriDiDefault
+    Call DefaultParameters
 '
     ' Prepara una griglia
     ' corrispondente ai punti dati:
-    GrigliaPuntiDati XD(), YD(), Xs(), Ys()
+    GridPointsData XD(), YD(), Xs(), Ys()
 '
     ' Chiama la routine di interpolazione:
-    bDisegnaZC = False
+    bDrawZC = False
     If optKTB2D Then
-        Prova_KTB2D
+        Test_KTB2D
     ElseIf optMASUB Then
-        Prova_MASUB
+        Test_MASUB
     ElseIf optQSHEP2D Then
-        Prova_QSHEP2D
+        Test_QSHEP2D
     End If
     mnuSalvaInterpolati.Enabled = True
 '

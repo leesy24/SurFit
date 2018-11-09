@@ -1446,10 +1446,10 @@ Private Sub Form_Load()
 '
     Dim Me_L&, Me_T&
 '
-    LeggiPosizioneForm Me, Me_L, Me_T
+    LoadPositionForm Me, Me_L, Me_T
     Me.Move Me_L, Me_T ', Me_W, Me_H
 '
-    TCol() = TabellaColori(NTCol)
+    TCol() = ColorTable(NTCol)
 '
     ' Dimensioni del cerchio di evidenziazione:
     shpInd.Width = 2 * shpIndOffx
@@ -1588,7 +1588,7 @@ Private Sub Impostazioni(Optional ByVal bAutoScala As Boolean = True)
 '
 End Sub
 Private Sub QuickSort3V(ByRef ValTab#(), ByRef ValTab1#(), ByRef ValTab2#(), _
-    ByVal Low&, ByVal High&, Optional ByVal Verso& = -1)
+    ByVal Low&, ByVal High&, Optional ByVal OrderDir& = -1)
 '
 '   Routine QuickSort3V:
 '    ValTab():  Vettore che si vuole ordinare.
@@ -1596,7 +1596,7 @@ Private Sub QuickSort3V(ByRef ValTab#(), ByRef ValTab1#(), ByRef ValTab2#(), _
 '    ValTab2(): Secondo vettore associato.
 '    Low:       Posizione iniziale della zona da ordinare.
 '    High:      Posizione finale della zona da ordinare.
-'    Verso:     Direzione dell' ordinamento:
+'    OrderDir:     Direzione dell' ordinamento:
 '                > 0 -> dal minore al maggiore.
 '                = 0 -> nessun ordinamento.
 '                < 0 -> dal maggiore al minore.
@@ -1606,15 +1606,15 @@ Private Sub QuickSort3V(ByRef ValTab#(), ByRef ValTab1#(), ByRef ValTab2#(), _
     Dim Part As Double      ' Tipo della chiave di ordinamento.
 '
     On Error GoTo QuickSort3V_ERR
-    If Verso = 0 Then Exit Sub
+    If OrderDir = 0 Then Exit Sub
 '
     If Low < High Then
 '
         If High - Low = 1 Then
             ' Only two elements in this subdivision; swap them
             ' if they are out of order, then end recursive calls:
-            If ((Verso > 0) And (ValTab(Low) > ValTab(High))) _
-            Or ((Verso < 0) And (ValTab(Low) < ValTab(High))) Then
+            If ((OrderDir > 0) And (ValTab(Low) > ValTab(High))) _
+            Or ((OrderDir < 0) And (ValTab(Low) < ValTab(High))) Then
                 'SWAP ValTab(Low), ValTab(High)
                 ' Vettore principale:
                 ValTemp = ValTab(Low)
@@ -1651,12 +1651,12 @@ Private Sub QuickSort3V(ByRef ValTab#(), ByRef ValTab1#(), ByRef ValTab2#(), _
             ' Move in from both sides towards the pivot element:
             Do
                 I = Low: J = High
-                Do While ((Verso > 0) And (I < J) And (ValTab(I) <= Part)) _
-                Or ((Verso < 0) And (I < J) And (ValTab(I) >= Part))
+                Do While ((OrderDir > 0) And (I < J) And (ValTab(I) <= Part)) _
+                Or ((OrderDir < 0) And (I < J) And (ValTab(I) >= Part))
                     I = I + 1
                 Loop
-                Do While ((Verso > 0) And (J > I) And (ValTab(J) >= Part)) _
-                Or ((Verso < 0) And (J > I) And (ValTab(J) <= Part))
+                Do While ((OrderDir > 0) And (J > I) And (ValTab(J) >= Part)) _
+                Or ((OrderDir < 0) And (J > I) And (ValTab(J) <= Part))
                     J = J - 1
                 Loop
 '
@@ -1697,11 +1697,11 @@ Private Sub QuickSort3V(ByRef ValTab#(), ByRef ValTab1#(), ByRef ValTab2#(), _
             ' Recursively call the QuickSort3V procedure (pass the smaller
             ' subdivision first to use less stack space):
             If (I - Low) < (High - I) Then
-                QuickSort3V ValTab(), ValTab1(), ValTab2(), Low, I - 1, Verso
-                QuickSort3V ValTab(), ValTab1(), ValTab2(), I + 1, High, Verso
+                QuickSort3V ValTab(), ValTab1(), ValTab2(), Low, I - 1, OrderDir
+                QuickSort3V ValTab(), ValTab1(), ValTab2(), I + 1, High, OrderDir
             Else
-                QuickSort3V ValTab(), ValTab1(), ValTab2(), I + 1, High, Verso
-                QuickSort3V ValTab(), ValTab1(), ValTab2(), Low, I - 1, Verso
+                QuickSort3V ValTab(), ValTab1(), ValTab2(), I + 1, High, OrderDir
+                QuickSort3V ValTab(), ValTab1(), ValTab2(), Low, I - 1, OrderDir
             End If
         End If
     End If

@@ -28,75 +28,75 @@ Private Const LOCALE_SDECIMAL& = &HE
 Private Const LOCALE_STHOUSAND& = &HF
 Private Const LOCALE_SDATE& = &H1D
 Private Const LOCALE_STIME& = &H1E
-Public Sub AggiornaFilesRecenti(ByVal mnuRecenti As Object, ByVal FileRec$ _
+
+Public Sub UpdateRecentFiles(ByVal mnuRecent As Object, ByVal FileRec$ _
     , Optional ByVal MAXFIL& = 5)
 '
-'   Aggiunge al menu mnuRecenti() il file FileRec$.
-'   mnuRecenti e' una voce di menu, con indice:
-'   mnuRecenti(0) e' il titolo, i files da memorizzare
-'   iniziano dalla posizione mnuRecenti(1).
-'   Se FileRec$ e' gia' presente lo sposta al primo posto.
-'   MAXFIL e' il numero massimo di files recenti da ricordare:
-'   puo' essere diverso a seconda dell' applicazione che usa
-'   questa routine (0 < MAXFIL < 10).
+'   Add the FileRec $ file to the mnuRecent () menu.
+'   mnuRecent is a menu item, with an index:
+'   mnuRecent (0) is the title, the files to be memorized start from
+'   the mnuRecent position (1).
+'   If FileRec $ is already present it moves it to the first place.
+'   MAXFIL is the maximum number of recent files to remember:
+'   it can be different depending on the application using this routine (0 <MAXFIL <10).
 '
     Dim I&, F&, FILN&
-    Dim A$, NuovoFile As Boolean
+    Dim A$, NewFile As Boolean
 '
     If FileRec$ = "" Then Exit Sub
 '
-    FILN = mnuRecenti.UBound
+    FILN = mnuRecent.UBound
 '
-    NuovoFile = True
+    NewFile = True
     For F = 1 To FILN
-        A$ = mnuRecenti(F).Caption
+        A$ = mnuRecent(F).Caption
         If UCase$(Right$(A$, Len(A$) - 3)) = UCase$(FileRec$) Then
-            NuovoFile = False
+            NewFile = False
             Exit For
         End If
     Next F
     If F > FILN Then F = FILN
 '
-    If (FILN < MAXFIL) And NuovoFile Then
+    If (FILN < MAXFIL) And NewFile Then
         FILN = FILN + 1
         F = FILN
-        Load mnuRecenti(FILN)
-        mnuRecenti(FILN).Visible = True
+        Load mnuRecent(FILN)
+        mnuRecent(FILN).Visible = True
     End If
 '
-    mnuRecenti(0).Visible = (FILN > 0)
+    mnuRecent(0).Visible = (FILN > 0)
 '
     For I = F To 2 Step -1
-        A$ = mnuRecenti(I - 1).Caption
+        A$ = mnuRecent(I - 1).Caption
         A$ = "&" & Trim$(Str$(I)) & " " & Right$(A$, Len(A$) - 3)
-        mnuRecenti(I).Caption = A$
+        mnuRecent(I).Caption = A$
     Next I
 '
-    mnuRecenti(1).Caption = "&1 " & FileRec$
+    mnuRecent(1).Caption = "&1 " & FileRec$
 '
 '
 '
 End Sub
-Public Sub LeggiFilesRecenti(ByVal mnuRecenti As Object, ByVal Sezione$ _
-    , Optional ByVal MAXFIL& = 5, Optional ByVal VerificaFE As Boolean = True)
+
+Public Sub LoadRecentFiles(ByVal mnuRecent As Object, ByVal Section$ _
+    , Optional ByVal MAXFIL& = 5, Optional ByVal VerificationFE As Boolean = True)
 '
-'   Legge dal Registry di Windows e se e' definito il "Product Name"
-'   del progetto, i files recenti e li aggiunge al menu mnuRecenti().
-'   Se VerificaFE = True verifica anche l' esistenza dei files da
-'   aggiungere:
+'   It reads from the Windows Registry and if the "Product Name" of the project
+'   is defined, the recent files are added to the menu mnuRecent ().
+'   If VerificationFE = True also verifies the existence of the files to be added:
 '
     Dim I&, FileRec$
 '
     If App.ProductName = "" Then Exit Sub
 '
     For I = MAXFIL To 1 Step -1
-        FileRec$ = GetSetting(App.ProductName, Sezione$, Str$(I), "")
+        FileRec$ = GetSetting(App.ProductName, Section$, Str$(I), "")
         If FileRec$ <> "" Then
-            If VerificaFE Then
+            If VerificationFE Then
                 If FileExists(FileRec$) Then _
-                    AggiornaFilesRecenti mnuRecenti, FileRec$, MAXFIL
+                    UpdateRecentFiles mnuRecent, FileRec$, MAXFIL
             Else
-                AggiornaFilesRecenti mnuRecenti, FileRec$, MAXFIL
+                UpdateRecentFiles mnuRecent, FileRec$, MAXFIL
             End If
         End If
     Next I
@@ -104,19 +104,20 @@ Public Sub LeggiFilesRecenti(ByVal mnuRecenti As Object, ByVal Sezione$ _
 '
 '
 End Sub
-Public Sub SalvaFilesRecenti(ByVal mnuRecenti As Object, ByVal Sezione$)
+
+Public Sub SalvaFilesRecenti(ByVal mnuRecent As Object, ByVal Section$)
 '
 '   Salva nel Registry di Windows e se e' definito il "Product Name"
-'   del progetto, i files recenti contenuti nel menu mnuRecenti():
+'   del progetto, i files recenti contenuti nel menu mnuRecent():
 '
     Dim I&, FileRec$
 '
     If App.ProductName = "" Then Exit Sub
 '
-    For I = 1 To mnuRecenti.UBound
-        FileRec$ = mnuRecenti(I).Caption
+    For I = 1 To mnuRecent.UBound
+        FileRec$ = mnuRecent(I).Caption
         FileRec$ = Right$(FileRec$, Len(FileRec$) - 3)
-        SaveSetting App.ProductName, Sezione$, Str$(I), FileRec$
+        SaveSetting App.ProductName, Section$, Str$(I), FileRec$
     Next I
 '
 '
@@ -131,31 +132,32 @@ Public Sub SalvaPosizioneForm(ByVal frmF As Form _
 '   Se Dimensioni = True salva anche le dimensioni:
 '
     If (frmF.WindowState <> vbMinimized) And (App.ProductName <> "") Then
-        SaveSetting App.ProductName, "PosizioniForms", frmF.Name & "_Left", frmF.Left
-        SaveSetting App.ProductName, "PosizioniForms", frmF.Name & "_Top", frmF.Top
+        SaveSetting App.ProductName, "FormsPositions", frmF.Name & "_Left", frmF.Left
+        SaveSetting App.ProductName, "FormsPositions", frmF.Name & "_Top", frmF.Top
 '
         If Dimensioni Then
-            SaveSetting App.ProductName, "PosizioniForms", frmF.Name & "_Width", frmF.Width
-            SaveSetting App.ProductName, "PosizioniForms", frmF.Name & "_Height", frmF.Height
+            SaveSetting App.ProductName, "FormsPositions", frmF.Name & "_Width", frmF.Width
+            SaveSetting App.ProductName, "FormsPositions", frmF.Name & "_Height", frmF.Height
         End If
     End If
 '
 '
 '
 End Sub
-Public Sub LeggiPosizioneForm(ByVal frmF As Form, ByRef frmF_Left&, ByRef frmF_Top& _
+
+Public Sub LoadPositionForm(ByVal frmF As Form, ByRef frmF_Left&, ByRef frmF_Top& _
     , Optional ByRef frmF_Width&, Optional ByRef frmF_Height&)
 '
-'   Legge, se e' definito il "Product Name" del progetto, la posizione
-'   iniziale e le dimensioni  del Form frmF memorizzate sul Registry di Window.
-'   Da usare nell' evento frmF_Load e con frmF.StartUpPosition = vbStartUpManual:
+'   It reads, if the "Product Name" of the project is defined, the initial
+'   position and the dimensions of the Form frmF stored on the Window Registry.
+'   To be used in the frmF_Load event and with frmF.StartUpPosition = vbStartUpManual:
 '
     If App.ProductName <> "" Then
-        frmF_Left = Val(GetSetting(App.ProductName, "PosizioniForms", frmF.Name & "_Left", 0))
-        frmF_Top = Val(GetSetting(App.ProductName, "PosizioniForms", frmF.Name & "_Top", 0))
+        frmF_Left = Val(GetSetting(App.ProductName, "FormsPositions", frmF.Name & "_Left", 0))
+        frmF_Top = Val(GetSetting(App.ProductName, "FormsPositions", frmF.Name & "_Top", 0))
 '
-        frmF_Width = Val(GetSetting(App.ProductName, "PosizioniForms", frmF.Name & "_Width", Screen.Width))
-        frmF_Height = Val(GetSetting(App.ProductName, "PosizioniForms", frmF.Name & "_Height", Screen.Height))
+        frmF_Width = Val(GetSetting(App.ProductName, "FormsPositions", frmF.Name & "_Width", Screen.Width))
+        frmF_Height = Val(GetSetting(App.ProductName, "FormsPositions", frmF.Name & "_Height", Screen.Height))
     Else
         frmF_Left = 0
         frmF_Top = 0
@@ -331,24 +333,25 @@ Public Function IsLoaded(ByVal frmF As Form) As Boolean
 '
 '
 End Function
-Public Function TabellaColori(ByVal NCol&) As Long()
+
+Public Function ColorTable(ByVal NCol&) As Long()
 '
-'   Ritorna un vettore contenente NCol (2, 16, 256, 1280 o 1792) colori
-'   in formato RGB.  La scala di colore, per NCOL = 1280, va' dal Viola
-'   al Rosso; per NCOL = 1792, va' dal Bianco al Nero:
+'   Returns a vector containing NCol (2, 16, 256, 1280 or 1792) colors in RGB
+'   format. The color scale, for NCOL = 1280, goes from Purple to Red; for
+'   NCOL = 1792, go from White to Black:
 '
     Dim C&, C1&, C2&
     Dim R&, G&, B&
-    ReDim TCol(0 To NCol - 1) As Long ' Tabella dei colori.
+    ReDim TCol(0 To NCol - 1) As Long ' Table of color.
 '
     Select Case NCol
         Case 2
-        ' Prepara la tabella a 2 colori:
+        ' Prepare the 2-color table:
         TCol(0) = vbWhite
-        TCol(1) = &H808080 ' Grigio.
+        TCol(1) = &H808080 ' Grey.
 '
         Case 16
-        ' Prepara la tabella a 16 colori:
+        ' Prepare the table in 16 colors:
         For C = 0 To 15
             R = 255 * (Sqr(C) / Sqr(15))
             If C < 8 Then
@@ -362,7 +365,7 @@ Public Function TabellaColori(ByVal NCol&) As Long()
         Next C
 '
         Case 256
-        ' Prepara la tabella a 256 colori:
+        ' Prepare the 256 color table:
         For C = 0 To 255
             R = 255 * (Sqr(C) / Sqr(255))
             If C < 128 Then
@@ -376,7 +379,7 @@ Public Function TabellaColori(ByVal NCol&) As Long()
         Next C
 '
         Case 1280
-        ' Prepara la tabella a 1280 colori:
+        ' Prepare the table in 1280 colors:
         C = 0
         For C1 = 0 To 4
             For C2 = 0 To 255
@@ -402,7 +405,7 @@ Public Function TabellaColori(ByVal NCol&) As Long()
         Next C1
 '
         Case 1792
-        ' Prepara la tabella a 1792 colori:
+        ' Prepare the table at 1792 colors:
         For C1 = 0 To 6
             For C2 = 0 To 255
                 R = Switch(C1 = 0, 255 _
@@ -433,25 +436,26 @@ Public Function TabellaColori(ByVal NCol&) As Long()
         Next C1
     End Select
 '
-    TabellaColori = TCol()
+    ColorTable = TCol()
 '
 '
 '
 End Function
+
 Public Function RandU(ByVal V_Min!, ByVal V_Max!) As Single
 '
-'   Ritorna una variabile casuale reale a distribuzione uniforme:
+'   Returns a real random variable with uniform distribution:
 '
     RandU = V_Min + (V_Max - V_Min) * Rnd
 '
 '
 '
 End Function
+
 Public Function Decima(dV#(), Optional ByRef lNV&) As Double()
 '
-'   Ritorna un vettore con gli elementi di dV()
-'   ma senza i doppioni.
-'   lNV e' il numero degli elementi rimasti:
+'   Return a vector with the elements of dV () but without duplicates.
+'   lNV is the number of elements left:
 '
     Dim I&, J&, Il&, Iu&, K&, dVT#()
 '
@@ -483,32 +487,33 @@ Public Function Decima(dV#(), Optional ByRef lNV&) As Double()
 '
 '
 End Function
+
 Public Sub QuickSort(ByRef ValTab() As Double, ByVal Low&, ByVal High&, _
-    Optional ByVal Verso& = -1)
+    Optional ByVal OrderDir& = -1)
 '
 '   Routine QuickSort:
-'    ValTab():  Vettore che si vuole ordinare.
-'    Low:       Posizione iniziale della zona da ordinare.
-'    High:      Posizione finale della zona da ordinare.
-'    Verso:     Direzione dell' ordinamento:
-'                > 0 -> dal minore al maggiore.
-'                = 0 -> nessun ordinamento.
-'                < 0 -> dal maggiore al minore.
+'    ValTab():  Vector that you want to order.
+'    Low:       Initial position of the area to be ordered.
+'    High:      Final position of the area to be ordered.
+'    OrderDir:  Direction of the order:
+'                > 0 -> from the minor to the major.
+'                = 0 -> no sorting.
+'                < 0 -> from major to minor.
 '
     Dim RandIndex&, I&, J&, M$
-    Dim ValTemp As Double   ' Tipo del vettore che si vuole ordinare.
-    Dim Part As Double      ' Tipo della chiave di ordinamento.
+    Dim ValTemp As Double   ' Type of the carrier that you want to order.
+    Dim Part As Double      ' Type of sorting key.
 '
     On Error GoTo QuickSort_ERR
-    If Verso = 0 Then Exit Sub
+    If OrderDir = 0 Then Exit Sub
 '
     If Low < High Then
 '
         If High - Low = 1 Then
             ' Only two elements in this subdivision; swap them
             ' if they are out of order, then end recursive calls:
-            If ((Verso > 0) And (ValTab(Low) > ValTab(High))) _
-            Or ((Verso < 0) And (ValTab(Low) < ValTab(High))) Then
+            If ((OrderDir > 0) And (ValTab(Low) > ValTab(High))) _
+            Or ((OrderDir < 0) And (ValTab(Low) < ValTab(High))) Then
                 'SWAP ValTab(Low), ValTab(High)
                 ValTemp = ValTab(Low)
                 ValTab(Low) = ValTab(High)
@@ -527,12 +532,12 @@ Public Sub QuickSort(ByRef ValTab() As Double, ByVal Low&, ByVal High&, _
             ' Move in from both sides towards the pivot element:
             Do
                 I = Low: J = High
-                Do While ((Verso > 0) And (I < J) And (ValTab(I) <= Part)) _
-                Or ((Verso < 0) And (I < J) And (ValTab(I) >= Part))
+                Do While ((OrderDir > 0) And (I < J) And (ValTab(I) <= Part)) _
+                Or ((OrderDir < 0) And (I < J) And (ValTab(I) >= Part))
                     I = I + 1
                 Loop
-                Do While ((Verso > 0) And (J > I) And (ValTab(J) >= Part)) _
-                Or ((Verso < 0) And (J > I) And (ValTab(J) <= Part))
+                Do While ((OrderDir > 0) And (J > I) And (ValTab(J) >= Part)) _
+                Or ((OrderDir < 0) And (J > I) And (ValTab(J) <= Part))
                     J = J - 1
                 Loop
 '
@@ -555,11 +560,11 @@ Public Sub QuickSort(ByRef ValTab() As Double, ByVal Low&, ByVal High&, _
             ' Recursively call the QuickSort procedure (pass the smaller
             ' subdivision first to use less stack space):
             If (I - Low) < (High - I) Then
-                QuickSort ValTab(), Low, I - 1, Verso
-                QuickSort ValTab(), I + 1, High, Verso
+                QuickSort ValTab(), Low, I - 1, OrderDir
+                QuickSort ValTab(), I + 1, High, OrderDir
             Else
-                QuickSort ValTab(), I + 1, High, Verso
-                QuickSort ValTab(), Low, I - 1, Verso
+                QuickSort ValTab(), I + 1, High, OrderDir
+                QuickSort ValTab(), Low, I - 1, OrderDir
             End If
         End If
     End If
@@ -575,6 +580,7 @@ QuickSort_ERR:
 '
 '
 End Sub
+
 Public Function CMDialog_Files(ByVal CMDialog As CommonDialog, ByVal Oper$, _
     ByVal Tipo$, ByVal Ext$, Optional ByVal DirNome$ = "", _
     Optional ByVal FileNome$ = "", Optional ByVal Titolo$ = "") As String
