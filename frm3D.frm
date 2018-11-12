@@ -541,8 +541,12 @@ Dim ZRMin!, ZRMax!  ' chiamate successive a Picture3D cambino le scale degli ass
                     ' Inoltre il cambio vista pilotato dal Mouse, richiede i veri
                     ' valori di XRMin, XRMax e ZRMin.
 Dim AsseX!          ' XRMax - XRMin.
-Dim sUZ$            ' Etichetta delle unita' dell' asse Z.
-Dim ZEsp&           ' Fattore di riduzione della scala Z.
+Dim sUX$            ' Label of the units of the X axis.
+Dim XEsp&           ' X scale reduction factor
+Dim sUY$            ' Label of the units of the Y axis.
+Dim YEsp&           ' Y scale reduction factor
+Dim sUZ$            ' Label of the units of the Z axis.
+Dim ZEsp&           ' Z scale reduction factor
 '
 Dim Ax!, Bx!        ' Coefficienti di
 Dim Ay!, By!        ' conversione scale
@@ -625,16 +629,17 @@ Private Declare Function ScreenToClient Lib "user32" (ByVal hWnd As Long, _
 Private Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
 Private Declare Function WindowFromPoint Lib "user32" _
     (ByVal X As Long, ByVal Y As Long) As Long
-Private Sub Ruota(ByVal X0#, ByVal Y0#, ByVal Rot#, ByVal CRx#, ByVal CRy#, Xr#, Yr#)
+
+Private Sub Rotate(ByVal X0#, ByVal Y0#, ByVal Rot#, ByVal CRx#, ByVal CRy#, Xr#, Yr#)
 '
-'   Routine per la rotazione di un punto:
+'   Routines for rotating a point:
 '
-'   X0, Y0:     coordinate del punto da ruotare.
-'   Rot:        rotazione del punto in [radianti].
-'   CRx, CRy:   coordinate del centro di rotazione.
-'   Xr, Yr:     coordinate finali del punto ruotato.
+'   X0, Y0:     coordinates of the point to rotate.
+'   Rot:        rotation of the point in [radians].
+'   CRx, CRy:   coordinates of the rotation center.
+'   Xr, Yr:     final coordinates of the rotated point.
 '
-    ' Rotazione:
+    ' Rotation:
     Xr = (X0 - CRx) * Cos(Rot) - (Y0 - CRy) * Sin(Rot) + CRx
     Yr = (X0 - CRx) * Sin(Rot) + (Y0 - CRy) * Cos(Rot) + CRy
 '
@@ -1165,7 +1170,7 @@ Private Sub DrawSurface(ByVal bCol As Boolean)
     For J = 1 To NYV
         For I = 1 To NXV
             If bRotate Then
-                Ruota XV(I), YV(J), CDbl(THETA), X0r, Y0r, Xr, Yr
+                Rotate XV(I), YV(J), CDbl(THETA), X0r, Y0r, Xr, Yr
                 PRv(I, J).X = CLng((Ax * Xr + Bx) + (Ay * Yr + By) * CosA)
                 PRv(I, J).Y = CLng((Az * ZV(I, J) + Bz) - (Ay * Yr + By) * SinA)
             Else
@@ -1314,7 +1319,7 @@ Private Sub DisegnaSup_BN()
     For J = 1 To NYV
         For I = 1 To NXV
             If bRotate Then
-                Ruota XV(I), YV(J), THETA, X0r, Y0r, Xr, Yr
+                Rotate XV(I), YV(J), THETA, X0r, Y0r, Xr, Yr
                 PRv(I, J).X = CLng((Ax * X0r + Bx) + (Ay * Y0r + By) * CosA)
                 PRv(I, J).Y = CLng((Az * ZV(I, J) + Bz) - (Ay * Y0r + By) * SinA)
             Else
@@ -1487,7 +1492,7 @@ Private Sub Settings(Optional ByVal bAutoScale As Boolean = True)
 '   Find and calculate commonly used settings and variables:
 '
     Dim I&, J&, N&, ZnCol!, ZMed!
-    Dim AZMax#, ZRid#
+    Dim AMax#, Rid#
 '
     If bAutoScale Then
         ' Find the minimum and maximum values of the abscissas:
@@ -1545,17 +1550,49 @@ Private Sub Settings(Optional ByVal bAutoScale As Boolean = True)
             Next J
         End If
         
-        AZMax = DMAX1(Abs(ZMin), Abs(ZMax))
-        If AZMax > 1000# Then
+        AMax = DMAX1(Abs(XMin), Abs(XMax))
+        If AMax > 1000# Then
+            ' Reduces the scale of X values:
+            XEsp = 3 * Int((Log(AMax) / Log10) / 3#)
+            sUX$ = "x[10^" & XEsp & "]"
+            Rid = 10# ^ XEsp
+            XMin = XMin / Rid
+            XMax = XMax / Rid
+            For I = 1 To NXV
+                XV(I) = XV(I) / Rid
+            Next I
+        Else
+            XEsp = 0
+            sUX$ = "x"
+        End If
+    
+        AMax = DMAX1(Abs(YMin), Abs(YMax))
+        If AMax > 1000# Then
+            ' Reduces the scale of Y values:
+            YEsp = 3 * Int((Log(AMax) / Log10) / 3#)
+            sUY$ = "y[10^" & YEsp & "]"
+            Rid = 10# ^ YEsp
+            YMin = YMin / Rid
+            YMax = YMax / Rid
+            For I = 1 To NYV
+                YV(I) = YV(I) / Rid
+            Next I
+        Else
+            YEsp = 0
+            sUY$ = "y"
+        End If
+
+        AMax = DMAX1(Abs(ZMin), Abs(ZMax))
+        If AMax > 1000# Then
             ' Reduces the scale of Z values:
-            ZEsp = 3 * Int((Log(AZMax) / Log10) / 3#)
-            sUZ$ = "z [10^" & ZEsp & "]"
-            ZRid = 10# ^ ZEsp
-            ZMin = ZMin / ZRid
-            ZMax = ZMax / ZRid
+            ZEsp = 3 * Int((Log(AMax) / Log10) / 3#)
+            sUZ$ = "z[10^" & ZEsp & "]"
+            Rid = 10# ^ ZEsp
+            ZMin = ZMin / Rid
+            ZMax = ZMax / Rid
             For J = 1 To NYV
                 For I = 1 To NXV
-                    ZV(I, J) = ZV(I, J) / ZRid
+                    ZV(I, J) = ZV(I, J) / Rid
                 Next I
             Next J
         Else
@@ -1839,7 +1876,7 @@ Private Sub DrawPoints(ByVal bCol As Boolean)
     ' Disegno i punti proiettati sul piano di rappresentazione:
     For N = 1 To NV
         If bRotate Then
-            Ruota XV(N), YV(N), CDbl(THETA), X0r, Y0r, Xr, Yr
+            Rotate XV(N), YV(N), CDbl(THETA), X0r, Y0r, Xr, Yr
             PRv(N).X = CLng((Ax * Xr + Bx) + (Ay * Yr + By) * CosA)
             PRv(N).Y = CLng((Az * ZV(N) + Bz) - (Ay * Yr + By) * SinA)
         Else
@@ -1882,8 +1919,8 @@ Private Sub Draw(Optional ByVal bChangeView As Boolean = False)
     ' Set the graphic:
     lGridCol = IIf(bRotate, RFCL, vbGreen)
     Picture3D pic3D, XRMin, XRMax, YRMin, YRMax, ZRMin, ZRMax, _
-             ALFA, RAyx, Ax, Bx, Ay, By, Az, Bz, , , "#0.000", , , , _
-             Title$, "x", "y", sUZ$, lGridCol, True
+             ALFA, RAyx, Ax, Bx, Ay, By, Az, Bz, , , , , , , _
+             Title$, sUX$, sUY$, sUZ$, lGridCol, True
 '
     If bChangeView Then
         ' Precalculation of translations for the Subs DisegnaXXX:
@@ -2025,8 +2062,8 @@ Private Sub MeasureSpace3D()
 '            pic3D.ToolTipText = " X = " & Format$(XV(I), "#0.000 ") & _
 '                                " Y = " & Format$(YV(J), "#0.000 ") & _
 '                                " Z = " & Format$(ZV(I, J), "#0.000 ")
-            UpdateCursorPositions lblX, Format$(XV(I), "#0.000 "), _
-                                     lblY, Format$(YV(J), "#0.000 "), _
+            UpdateCursorPositions lblX, Format$(XV(I) * 10 ^ XEsp, "#0.000 "), _
+                                     lblY, Format$(YV(J) * 10 ^ YEsp, "#0.000 "), _
                                      lblZ, Format$(ZV(I, J) * 10 ^ ZEsp, "#0.000 ")
             shpInd.Left = pic3D.ScaleX(PRv(I, J).X - shpIndOffx, vbPixels, vbUser) _
                           + pic3D.ScaleLeft
