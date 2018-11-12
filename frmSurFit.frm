@@ -375,19 +375,20 @@ Dim XD#()           ' Vector data values
 Dim YD#()           ' of the surface
 Dim ZD#()           ' to be interpolated.
 '
-Dim Xs#(), Ys#()    ' Coordinate della griglia dei punti dati.
+Dim Xs#(), Ys#()    ' Coordinates of the data point grid.
 '
-Dim NXI&, NYI&      ' N?di colonne e di righe nella
-                    ' griglia dei punti interpolati.
-Dim XI#(), YI#()    ' Coordinate della griglia dei punti interpolati.
-Dim ZI#()           ' Superficie interpolata.
-Dim ZC#()           ' Superficie calcolata.
-Dim Grad() As Grad_Type   ' Matrice del gradiente.
+Dim NXI&, NYI&      ' Number of columns and rows in
+                    ' the interpolated points grid.
+Dim XI#(), YI#()    ' Coordinates of the interpolated points grid.
+Dim ZI#()           ' Interpolated surface.
+Dim ZI_default#     ' Default value of Interpolated surface.
+Dim ZC#()           ' Calculated surface.
+Dim Grad() As Grad_Type   ' Gradient matrix.
 '
 ' Impostazioni per KTB2D:
 Dim Par As ParType, IER&
 '
-' Impostazioni per MASUB:
+' Settings for MASUB:
 Dim TP#
 '
 ' Impostazioni per QSHEP2D:
@@ -731,10 +732,11 @@ Private Sub Test_MASUB()
 '
     ' Parameter setting for MASUB:
     IC = 1      ' First and only call.
-    IEX = 1     ' Extrapolation is required.
+    'IEX = 1     ' Extrapolation is required.
+    ZI_default = -50000
 '
     If Not MASUB(IC, IEX, ND, XD(), YD(), ZD(), TP _
-               , NXI, NYI, XI(), YI(), ZI()) Then
+               , NXI, NYI, XI(), YI(), ZI(), ZI_default) Then
         MsgBox "Error in MASUB", vbCritical
         Exit Sub
     End If

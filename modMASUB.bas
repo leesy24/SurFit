@@ -26,7 +26,7 @@ Attribute VB_Name = "modMASUB"
 Option Explicit
 
 Public Function MASUB(ByVal IC&, ByVal IEX&, ByVal ND&, XD#(), YD#(), ZD#(), _
-     ByVal TP#, ByVal NXI&, ByVal NYI&, XI#(), YI#(), ByRef ZI#()) As Boolean
+     ByVal TP#, ByVal NXI&, ByVal NYI&, XI#(), YI#(), ByRef ZI#(), Optional ByVal ZI_default = 1000000#) As Boolean
 '
 '   IT CARRIES OUT A SMOOTH BIVARIATE INTERPOLATION WHEN THE DATA
 '   POINTS PROJECTION IN THE  X-Y  PLANE IS IRREGULARLY DISTRIBUTED
@@ -88,7 +88,7 @@ Public Function MASUB(ByVal IC&, ByVal IEX&, ByVal ND&, XD#(), YD#(), ZD#(), _
 '               TO BE STORED.
 '               IF EXTRAPOLATION IS NOT REQUESTED (IEX=0), THE Z VALUES AT
 '               THE RECTANGULAR GRID POINTS OUTSIDE THE CONVEX HULL OF THE
-'               DATA POINTS, ARE SET TO 1.0E6.
+'               DATA POINTS, ARE SET TO 1.0E6 OR ZI_default.
 '
 '   THE OTHER PARAMETERS ARE
 '    IWK =      INTEGER ARRAY OF DIMENSION  23*N-31+MAX0(8*N+25,NXI*NYI)
@@ -224,7 +224,7 @@ Public Function MASUB(ByVal IC&, ByVal IEX&, ByVal ND&, XD#(), YD#(), ZD#(), _
 70  Call ORDGR(XD(), YD(), NT, IPT(), NXI, NYI, XI(), YI(), NGP(), IGP())
 80  For I = 1 To NXI
         For J = 1 To NYI
-            ZI(I, J) = 1000000#
+            ZI(I, J) = ZI_default
         Next J
     Next I
     ITPV = 0
@@ -316,6 +316,7 @@ Private Function IF_ARI(ByVal vX As Variant) As Long
 '
 '
 End Function
+
 Private Sub EXTRP(ByVal ND&, X#(), Y#(), Z#(), ByVal KC&, _
     ByRef IWK&(), ByRef A#, ByRef B#, ByRef C#, ByRef D#)
 '
@@ -505,6 +506,7 @@ Private Sub EXTRP(ByVal ND&, X#(), Y#(), Z#(), ByVal KC&, _
 '
 '
 End Sub
+
 Private Function DINF(ByVal U1#, ByVal V1#, ByVal U2#, ByVal V2#) As Double
 '
 '   STATEMENT FUNCTIONS.
