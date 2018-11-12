@@ -2,7 +2,7 @@ Attribute VB_Name = "modLivelli"
 '==============================================================
 ' Descrizione.....: Subroutine CONREC
 ' Nome dei Files..: Livelli.bas
-' Data............: Nov. 1990 - 1° Versione in QuickBasic,
+' Data............: Nov. 1990 - 1?Versione in QuickBasic,
 '                   F. Languasco - URL Colworth
 ' Aggiornamento...: 26/7/1999
 ' Aggiornamento...: 24/7/2001 (aggiunta etichettatura delle
@@ -11,7 +11,7 @@ Attribute VB_Name = "modLivelli"
 '                   punti delle linee di livello: CONREC_pK).
 ' Versione........: 2.0 a 32 bits.
 ' Sistema.........: Visual Basic 6.0 sotto Windows NT.
-' Scritto da......: F. Languasco ®
+' Scritto da......: F. Languasco 
 ' E-Mail..........: MC7061@mclink.it
 ' DownLoads a.....: http://members.xoom.virgilio.it/flanguasco/
 '                   http://www.flanguasco.org
@@ -106,7 +106,7 @@ Dim PO() As SegOrg_Type ' Vettore dei segmenti disordinati
                         ' livello, da CONREC_pK.
 '
 Private Type SegOrd_Type
-    NC As Long      ' N° della curva di appartenenza.
+    NC As Long      ' N?della curva di appartenenza.
     x1 As Long
     y1 As Long
     x2 As Long
@@ -131,7 +131,7 @@ Private Sub Ordina()
         ' Cerca il primo segmento ancora disponibile in PO():
         I1 = PrimoDisponibile(PO(), I1 + 1, NPO)
 '
-        NCu = NCu + 1   ' N° della curva corrente.
+        NCu = NCu + 1   ' N?della curva corrente.
         NPu = NPu + 1   ' Puntatore in PT() all' ultimo segmento nella curva corrente.
         NPi = NPu       ' Puntatore in PT() al primo segmento nella curva corrente.
         ReDim Preserve PT(1 To NPu)
@@ -243,6 +243,7 @@ Private Function PrimoDisponibile(Seg() As SegOrg_Type _
 '
 '
 End Function
+
 Public Sub CONREC_pK(ByVal Page As PictureBox, D#(), X#(), Y#(), _
     ZLTipo() As LineaLivello_Type, _
     Optional ByRef Msg$, _
@@ -267,7 +268,7 @@ Public Sub CONREC_pK(ByVal Page As PictureBox, D#(), X#(), Y#(), _
     Dim K&, K1&, J&, I&, M&, M1&, M2&, M3&, CAS&
     Dim x1#, y1#, x2#, y2#, DMin#, DMax#
 '
-    ' Definizioni per le etichette dei livelli:
+    ' Definitions for layer labels:
     Dim PageFN$, PageFS&, PageDW&, PageFC&
     Dim fzLbl As Boolean, PageFB As Boolean, PageFT As Boolean
 '
@@ -306,8 +307,8 @@ Public Sub CONREC_pK(ByVal Page As PictureBox, D#(), X#(), Y#(), _
         End If
     Next K
 '
-    ' Calcola la lunghezza in [Caratteri] delle etichette
-    ' e ne richiede, eventualmente, la visualizzazione:
+    ' Calculate the length in [Characters] of the labels and,
+    ' if necessary, display them:
     ReDim zLbl(1 To NL) As zLbl_Type
     For K = 1 To NL
         zLbl(K).LblW = Len(Trim(ZLTipo(K).sLblTes))
@@ -318,10 +319,9 @@ Public Sub CONREC_pK(ByVal Page As PictureBox, D#(), X#(), Y#(), _
     Next K
 '
     PageDW = Page.DrawWidth
-    If fzLbl Then   ' Si vogliono scrivere i valori dei livelli.
-        ' Salva le impostazioni correnti,
-        ' assegna quelle nuove e calcola
-        ' i parametri di posizione:
+    If fzLbl Then   ' We want to write the values of the levels.
+        ' Save the current settings, assign the new ones and calculate
+        ' the position parameters:
         PageFN$ = Page.FontName
         PageFS = Page.FontSize
         PageFC = Page.ForeColor
@@ -333,8 +333,8 @@ Public Sub CONREC_pK(ByVal Page As PictureBox, D#(), X#(), Y#(), _
         For K = 1 To NL
             If ZLTipo(K).lLblFSz < 8 Then ZLTipo(K).lLblFSz = 8
             Page.FontSize = ZLTipo(K).lLblFSz
-            ' Calcola larghezza ed altezza dell' etichetta
-            ' in [ScaleUnits] ed usando il suo FontSize:
+            ' Calculate the width and height of the label in [ScaleUnits] and
+            ' use it's FontSize:
             zLbl(K).LblW = Page.TextWidth("O") * zLbl(K).LblW
             zLbl(K).LblH = Abs(Page.TextHeight("O"))
         Next K
@@ -445,7 +445,7 @@ Public Sub CONREC_pK(ByVal Page As PictureBox, D#(), X#(), Y#(), _
                         y2 = (H(M2) * YH(M1) - H(M1) * YH(M2)) / (H(M2) - H(M1))
                     End Select
 '
-                    ' Gestione di un eventuale Flag di fine ciclo:
+                    ' Management of a possible end-of-cycle flag:
                     DoEvents
                     If fStop Then GoTo CONREC_END
 '
@@ -453,15 +453,14 @@ DRAWIT:
                     Page.Line (x1, y1)-(x2, y2), ZLTipo(K).lLinCol
                     If ZLTipo(K).lLinSps = 1 Then Page.PSet (x2, y2), ZLTipo(K).lLinCol
 '
-                    ' Etichette delle linee di livello:
-                    If zLbl(K).LblW > 0 Then    ' Prova a scrivere il
-                                                ' valore della linea
-                                                ' di livello K alla
-                                                ' posizione x2, y2.
-                        ' Scarta le posizioni fuori quadro:
+                    ' Level line labels:
+                    If zLbl(K).LblW > 0 Then    ' Try writing the value of the
+                                                ' level line K to position
+                                                ' x2, y2.
+                        ' Discard the out-of-square positions:
                         If (X(IUB) < x2 + zLbl(K).LblW) _
                         Or (y2 - zLbl(K).LblH < Y(1)) Then GoTo CASE0
-                        ' e quelle gia' impegnate:
+                        ' and those already engaged:
                         For K1 = 1 To NL
                             If (K1 <> K) _
                             And (zLbl(K1).x1 < x2 + zLbl(K).LblW) _
@@ -470,12 +469,12 @@ DRAWIT:
                             And (y2 - zLbl(K).LblH < zLbl(K1).y2) Then GoTo CASE0
                         Next K1
 '
-                        ' La posizione x2, y2 e' OK:
+                        ' The position x2, y2 is OK:
                         zLbl(K).x1 = x2                 ' Area
-                        zLbl(K).x2 = x2 + zLbl(K).LblW  ' impegnata
-                        zLbl(K).y1 = y2 - zLbl(K).LblH  ' dalla
-                        zLbl(K).y2 = y2                 ' etichetta K.
-                        zLbl(K).LblW = 0                ' Livello K etichettato.
+                        zLbl(K).x2 = x2 + zLbl(K).LblW  ' occupied
+                        zLbl(K).y1 = y2 - zLbl(K).LblH  ' by the
+                        zLbl(K).y2 = y2                 ' K label.
+                        zLbl(K).LblW = 0                ' K-level labeled.
 '
                         Page.ForeColor = ZLTipo(K).lLblCol
                         Page.FontSize = ZLTipo(K).lLblFSz
@@ -494,7 +493,7 @@ NOIBOX: Next J
 CONREC_END:
     Page.DrawWidth = PageDW
     If fzLbl Then
-        ' Ripristina le impostazioni:
+        ' Reset settings:
         Page.FontName = PageFN$
         Page.FontSize = PageFS
         Page.ForeColor = PageFC

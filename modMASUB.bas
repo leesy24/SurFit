@@ -1031,8 +1031,8 @@ Private Sub ADJAC(ByVal NT&, IPT&(), ByVal N&, _
 '             TRIANGULATION.
 '
     Dim I&, I1&, I2&, J&, J1&, J2&, JIN&, JFIN&, L&, KIN&, NT3&
-    Dim ITEM&(1 To 30)
-    'ReDim ITEM&(1 To MAX0(30, NT)) ' Per trattare numeri grandi di triangolazioni.
+    'Dim ITEM&(1 To 30)
+    ReDim ITEM&(1 To MAX0(30, NT)) ' To treat large numbers of triangulations.
 '
     NADVE(1) = 0
     KIN = 0

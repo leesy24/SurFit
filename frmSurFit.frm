@@ -109,7 +109,7 @@ Begin VB.Form frmSurFit
       TabIndex        =   21
       Top             =   120
       Width           =   4575
-      Begin VB.CheckBox chkGradiente 
+      Begin VB.CheckBox chkGradient 
          Caption         =   "&Gradient"
          Height          =   255
          Left            =   3360
@@ -306,7 +306,7 @@ Begin VB.Form frmSurFit
       Begin VB.Menu zSep02 
          Caption         =   "-"
       End
-      Begin VB.Menu mnuSalvaInterpolati 
+      Begin VB.Menu mnuSaveInterpolated 
          Caption         =   "&Save interpolated data"
          Enabled         =   0   'False
       End
@@ -402,9 +402,9 @@ Dim FolderN$        ' Folder dei files dati.
 Dim lZxy&           ' Indice della funzione di prova.
 '
 Dim bScriviVal As Boolean   ' Scrive i valori delle linee di livello.
-Dim bDisegnaGD As Boolean   ' Disegna le freccette del gradiente.
-Dim bDrawZC As Boolean   ' Disegna la superficie calcolata.
-Dim Title$                 ' Titolo del quadro picOrg.
+Dim bDrawGD As Boolean   ' Draw the darts of the gradient.
+Dim bDrawZC As Boolean   ' Draw the calculated area.
+Dim Title$                 ' Title of the picOrg picture.
 '
 Const Me_W& = 9600          ' Dimensioni di questo
 Const Me_H& = 7200 - 255    ' Form [Twips].
@@ -419,7 +419,7 @@ Private Sub Test_KTB2D()
 '
     ' Prepara i vettori XI() ed YI() con le
     ' coordinate della griglia di interpolazione:
-    GrigliaDiInterpolazione A, B, C, D
+    GridForInterpolation A, B, C, D
 '
     HX = (B - A) / CDbl(NXI - 1)
     HY = (D - C) / CDbl(NYI - 1)
@@ -431,10 +431,10 @@ Private Sub Test_KTB2D()
         Exit Sub
     End If
 '
-    DisegnaLivelli A, B, C, D, Px3, Py3
-    If bDisegnaGD Then
-        Call Gradiente_2D(XI(), YI(), ZI(), NXI, NYI, Grad())
-        DisegnaGradiente Px3, Py3
+    DrawLevels A, B, C, D, Px3, Py3
+    If bDrawGD Then
+        Call Gradient_2D(XI(), YI(), ZI(), NXI, NYI, Grad())
+        DrawGradient Px3, Py3
     End If
 '
     picOrg.AutoRedraw = False
@@ -456,7 +456,7 @@ Private Sub Test_QSHEP2D()
 '
     ' Prepara i vettori XI() ed YI() con le
     ' coordinate della griglia di interpolazione:
-    GrigliaDiInterpolazione A, B, C, D
+    GridForInterpolation A, B, C, D
 '
     ' Impostazione dei parametri per QSHEP2:
     NQ = MIN0(MAX0(5, NQ), MIN0(40, ND - 1))    ' 5 <= NQ <= MIN(40,ND-1)
@@ -474,7 +474,7 @@ Private Sub Test_QSHEP2D()
         Exit Sub
     End If
 '
-    If bDisegnaGD Then
+    If bDrawGD Then
         ' Calcola la superficie interpolata ed il gradiente:
         For J = 1 To NYI
             For I = 1 To NXI
@@ -498,8 +498,8 @@ Private Sub Test_QSHEP2D()
         Next J
     End If
 '
-    DisegnaLivelli A, B, C, D, Px3, Py3
-    If bDisegnaGD Then DisegnaGradiente Px3, Py3
+    DrawLevels A, B, C, D, Px3, Py3
+    If bDrawGD Then DrawGradient Px3, Py3
 '
     picOrg.AutoRedraw = False
     picSurFit.AutoRedraw = False
@@ -568,14 +568,14 @@ Private Function Zxy(ByVal x1#, ByVal x2#) As Double
 '
 End Function
 
-Private Sub chkGradiente_Click()
+Private Sub chkGradient_Click()
 '
 '
-    bDisegnaGD = (chkGradiente.Value = vbChecked)
+    bDrawGD = (chkGradient.Value = vbChecked)
 '
     Screen.MousePointer = vbHourglass
 '
-    ' Chiama la routine di interpolazione:
+    ' Call the interpolation routine:
     If optKTB2D Then
         Test_KTB2D
     ElseIf optMASUB Then
@@ -589,6 +589,7 @@ Private Sub chkGradiente_Click()
 '
 '
 End Sub
+
 Private Sub chkValoriLivelli_Click()
 '
 '
@@ -596,7 +597,7 @@ Private Sub chkValoriLivelli_Click()
 '
     Screen.MousePointer = vbHourglass
 '
-    ' Chiama la routine di interpolazione:
+    ' Call the interpolation routine:
     If optKTB2D Then
         Test_KTB2D
     ElseIf optMASUB Then
@@ -653,12 +654,16 @@ Private Sub cmdTest_Click()
     DoEvents
 '
     ND = CLng(RandU(6, 200))
+    'D = CLng(89 * 89)
+    'ND = CLng(46 * 46)
     ReDim XD#(1 To ND), YD#(1 To ND), ZD#(1 To ND)
     For N = 1 To ND
         ' Abscissas of data points:
         XD(N) = RandU(-10, 10)
-        ' ordinates of data points:
+        'XD(N) = RandU(-25, 25)
+        ' Ordinates of data points:
         YD(N) = RandU(-10, 10)
+        'YD(N) = RandU(-25, 25)
     Next N
 '
     Call DefaultParameters
@@ -722,7 +727,7 @@ Private Sub Test_MASUB()
 '
     ' Prepare the XI () and YI () vectors with the coordinates of
     ' the interpolation grid:
-    GrigliaDiInterpolazione A, B, C, D, 0.1
+    GridForInterpolation A, B, C, D, 0.1
 '
     ' Parameter setting for MASUB:
     IC = 1      ' First and only call.
@@ -735,10 +740,10 @@ Private Sub Test_MASUB()
     End If
     lblNAdd = UBound(XD) - ND   ' Points added for extrapolation.
 '
-    DisegnaLivelli A, B, C, D, Px3, Py3
-    If bDisegnaGD Then
-        Call Gradiente_2D(XI(), YI(), ZI(), NXI, NYI, Grad())
-        DisegnaGradiente Px3, Py3
+    DrawLevels A, B, C, D, Px3, Py3
+    If bDrawGD Then
+        Call Gradient_2D(XI(), YI(), ZI(), NXI, NYI, Grad())
+        DrawGradient Px3, Py3
     End If
 '
     picOrg.AutoRedraw = False
@@ -790,30 +795,30 @@ Public Sub GridPointsData(XD#(), YD#(), XGD#(), YGD#())
 '
 End Sub
 
-Private Sub DisegnaLivelli(ByVal A#, ByVal B#, ByVal C#, ByVal D#, _
+Private Sub DrawLevels(ByVal A#, ByVal B#, ByVal C#, ByVal D#, _
     ByRef Px3!, ByRef Py3!)
 '
-'   Visualizzazione delle curve di livello:
+'   Displaying level curves:
 '
     Dim I&, J&, K&, N&, ZMin#, ZMax#, ZDif#, GMax2#, Msg$
     ReDim ZLin(1 To NLiv) As LineaLivello_Type
 '
-    ' Imposta la grafica:
+    ' Set the graphic:
     Quadro picOrg, A, B, C, D, , , 3, Px3, Py3, "Data points: " & Title$, _
                   "x", "y", True
     Quadro picSurFit, A, B, C, D, , , , , , "Interpolated surface", "x", "y", True
 '
-    ' Visualizza i punti dati:
+    ' Displaying data points:
     For N = 1 To ND
         picOrg.Circle (XD(N), YD(N)), Px3, vbRed
     Next N
 '
-    ' Visualizza i punti aggiunti (solo per MASUB):
+    ' Displaying added points (MASUB only):
     For N = ND + 1 To UBound(XD)
         picOrg.Circle (XD(N), YD(N)), Px3, vbYellow
     Next N
 '
-    ' Trova i Max. e Min. della superficie:
+    ' Find the Max. and Min. of the surface:
     ZMin = ZI(1, 1)
     ZMax = ZI(1, 1)
     For I = 1 To NXI
@@ -823,7 +828,7 @@ Private Sub DisegnaLivelli(ByVal A#, ByVal B#, ByVal C#, ByVal D#, _
         Next J
     Next I
 '
-    ' Prepara il vettore dei livelli:
+    ' Prepare the layer vector:
     For K = 1 To NLiv
         ZLin(K).dLinVal = ZMin + (K - 1) * (ZMax - ZMin) / (NLiv - 1)
         ZLin(K).lLinCol = ZCol((K - 1) * (NTCol - 1) / (NLiv - 1))
@@ -838,35 +843,35 @@ Private Sub DisegnaLivelli(ByVal A#, ByVal B#, ByVal C#, ByVal D#, _
         ZLin(K).lLblFSz = 10
     Next K
 '
-    ' Visualizza la superficie interpolata:
+    ' Displaying the interpolated surface:
     CONREC_pK picSurFit, ZI(), XI(), YI(), ZLin(), Msg$
     If Msg$ <> "" Then
-        MsgBox Msg$, vbCritical, " CONREC di ZI()"
+        MsgBox Msg$, vbCritical, " CONREC of ZI()"
     End If
 '
     If bDrawZC Then
-        ' Calcola il valore della superficie
-        ' su tutti i punti della griglia:
+        ' Calculate the value of the surface on all points of the grid:
         For I = 1 To NXI
             For J = 1 To NYI
                 ZC(I, J) = Zxy(XI(I), YI(J))
             Next J
         Next I
 '
-        ' Visualizza la superficie calcolata:
+        ' Displaying the calculated area:
         CONREC_pK picOrg, ZC(), XI(), YI(), ZLin(), Msg$
         If Msg$ <> "" Then
-            MsgBox Msg$, vbCritical, " CONREC di ZC()"
+            MsgBox Msg$, vbCritical, " CONREC of ZC()"
         End If
     End If
 '
-    ' Disegna la superficie in 3D:
+    ' Draw the surface in 3D:
     frm3D.Surface XI#(), YI#(), ZI#(), Title$
 '
 '
 '
 End Sub
-Private Sub DisegnaGradiente(ByVal Px3!, ByVal Py3!)
+
+Private Sub DrawGradient(ByVal Px3!, ByVal Py3!)
 '
 '   Disegna le freccette del gradiente:
 '
@@ -1037,12 +1042,12 @@ Private Sub mnuRecent_Click(INDEX As Integer)
 '
 End Sub
 
-Private Sub mnuSalvaInterpolati_Click()
+Private Sub mnuSaveInterpolated_Click()
 '
 '
     Dim FF%, I&, J&, FileNome$, M$
 '
-    On Error GoTo mnuSalvaInterpolati_Click_ERR
+    On Error GoTo mnuSaveInterpolated_Click_ERR
 '
     FileNome$ = CMDialog_Files(CMDialog1, "Save", "Data files", "*.dat;*.txt", _
                                FolderN$, , " Interpolated data")
@@ -1059,7 +1064,7 @@ Private Sub mnuSalvaInterpolati_Click()
     Close FF
 '
 '
-mnuSalvaInterpolati_Click_ERR:
+mnuSaveInterpolated_Click_ERR:
     If Err <> 0 And Err <> cdlCancel Then
         M$ = "Error " & Str$(Err.Number) & vbNewLine
         M$ = M$ & Err.Description
@@ -1099,32 +1104,30 @@ Private Sub optQSHEP2D_Click()
 '
 '
 End Sub
-Private Sub GrigliaDiInterpolazione(ByRef A#, ByRef B#, ByRef C#, ByRef D#, _
+
+Private Sub GridForInterpolation(ByRef A#, ByRef B#, ByRef C#, ByRef D#, _
     Optional ByVal est# = 0)
 '
-'   Prepara i vettori contenenti ascisse ed ordinate della griglia
-'   di interpolazione.  Calcola anche gli estremi delle coordinate
-'   di interpolazione, eventualmente allargandole del fattore Est:
-'   da usare, principalmente, per MASUB che va' facilmente in errore
-'   quando gli estremi di interpolazione coincidono con gli estremi
-'   dei punti dati.
+'   Prepare the vectors containing abscissa and order the interpolation grid.
+'   It also calculates the extremes of the interpolation coordinates,
+'   possibly extending them to the East factor:
+'   to be used, mainly, for MASUB which is easily mistaken when the
+'   interpolation extremes coincide with the ends of the data points.
 '
     Dim I&, J&, HX#, HY#
 '
-    ' Per eliminare i punti aggiunti da
-    ' un' eventuale chiamata precedente a MASUB:
+    ' To delete points added by a previous call to MASUB:
     ReDim Preserve XD(1 To ND)
     ReDim Preserve YD(1 To ND)
     lblND = ND
     lblNAdd = "--"
 '
-    ' Trova le coordinate Max. e Min.
-    ' dei punti dati:
+    ' Find the Max. and Min. coordinates of the data points:
     A = DMINVAL(XD())   ' Minimo X.
     B = DMAXVAL(XD())   ' Massimo X.
     C = DMINVAL(YD())   ' Minimo Y.
     D = DMAXVAL(YD())   ' Massimo Y.
-    ' e le allarga del fattore Est:
+    ' And widens the East factor:
     HX = (B - A)
     A = A - est * HX
     B = B + est * HX
@@ -1136,18 +1139,18 @@ Private Sub GrigliaDiInterpolazione(ByRef A#, ByRef B#, ByRef C#, ByRef D#, _
     lblYMin = Format$(C, "#0.000")
     lblYMax = Format$(D, "#0.000")
 '
-    ReDim XI(1 To NXI), YI#(1 To NYI)   ' Coordinate della griglia dei punti interpolati.
-    ReDim ZI(1 To NXI, 1 To NYI)        ' Superficie interpolata.
-    ReDim ZC(1 To NXI, 1 To NYI)        ' Superficie calcolata.
-    ReDim Grad(1 To NXI, 1 To NYI)      ' Matrice del gradiente.
+    ReDim XI(1 To NXI), YI#(1 To NYI)   ' Coordinates of the interpolated points grid.
+    ReDim ZI(1 To NXI, 1 To NYI)        ' Interpolated surface.
+    ReDim ZC(1 To NXI, 1 To NYI)        ' Calculated surface.
+    ReDim Grad(1 To NXI, 1 To NYI)      ' Gradient matrix.
 '
-    ' Ascisse della griglia dei punti interpolati:
+    ' Abscissas of the grid of the interpolated points:
     HX = (B - A) / CDbl(NXI - 1)
     For I = 1 To NXI
         XI(I) = A + (I - 1) * HX
     Next I
 '
-    ' Ordinate della griglia dei punti interpolati:
+    ' Ordinates of the grid of the interpolated points:
     HY = (D - C) / CDbl(NYI - 1)
     For J = 1 To NYI
         YI(J) = C + (J - 1) * HY
@@ -1156,6 +1159,7 @@ Private Sub GrigliaDiInterpolazione(ByRef A#, ByRef B#, ByRef C#, ByRef D#, _
 '
 '
 End Sub
+
 Private Sub optZxy_Click(INDEX As Integer)
 '
 '
@@ -1260,7 +1264,7 @@ Private Sub ProcessDataFile(ByVal FileN$)
     ElseIf optQSHEP2D Then
         Test_QSHEP2D
     End If
-    mnuSalvaInterpolati.Enabled = True
+    mnuSaveInterpolated.Enabled = True
 '
 '
 ProcessDataFile_ERR:

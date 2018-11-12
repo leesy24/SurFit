@@ -7,7 +7,7 @@ Attribute VB_Name = "modGradiente"
 ' Data............: 21/9/2001
 ' Versione........: 1.0 a 32 bits.
 ' Sistema.........: VB6 sotto Windows NT.
-' Scritto da......: F. Languasco ®
+' Scritto da......: F. Languasco 
 ' E-Mail..........: MC7061@mclink.it
 ' DownLoads a.....: http://members.xoom.it/flanguasco/
 '                   http://www.flanguasco.org
@@ -22,15 +22,16 @@ Public Type Grad_Type   ' Componenti
     DX As Double        ' orizzontali
     DY As Double        ' e verticali
 End Type                ' del gradiente.
-Public Sub Gradiente_2D(XI#(), YI#(), ZI#(), ByVal NXI&, ByVal NYI&, Grad() As Grad_Type)
+
+Public Sub Gradient_2D(XI#(), YI#(), ZI#(), ByVal NXI&, ByVal NYI&, Grad() As Grad_Type)
 '
 '   Calcola il gradiente di una superficie.
 '   Parametri in ingresso:
 '    XI(1 To NXI):              vettore delle ascisse della superficie.
 '    YI(1 To NYI):              vettore delle ordinate della superficie.
 '    ZI(1 To NXI, 1 To NYI):    matrice dei valori della superficie.
-'    NXI:                       N° di colonne nella griglia di ZI() (NXI >= 3).
-'    NYI:                       N° di righe nella griglia di ZI() (NYI >= 3).
+'    NXI:                       N?di colonne nella griglia di ZI() (NXI >= 3).
+'    NYI:                       N?di righe nella griglia di ZI() (NYI >= 3).
 '   Parametri in uscita:
 '    Grad(1 To NXI, 1 To NYI):  matrice delle componenti orizzontali
 '                               e verticali del gradiente.
