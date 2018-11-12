@@ -404,7 +404,7 @@ Dim lZxy&           ' Indice della funzione di prova.
 '
 Dim bScriviVal As Boolean   ' Scrive i valori delle linee di livello.
 Dim bDrawGD As Boolean   ' Draw the darts of the gradient.
-Dim bDrawZC As Boolean   ' Draw the calculated area.
+Dim bDrawZC As Boolean   ' Draw the calculated surface.
 Dim Title$                 ' Title of the picOrg picture.
 '
 Const Me_W& = 9600          ' Dimensioni di questo
@@ -867,7 +867,8 @@ Private Sub DrawLevels(ByVal A#, ByVal B#, ByVal C#, ByVal D#, _
     End If
 '
     ' Draw the surface in 3D:
-    frm3D.Surface XI#(), YI#(), ZI#(), Title$
+    'frm3D.Surface XI#(), YI#(), ZI#(), Title$
+    frm3D.Surface XI#(), YI#(), ZI#(), Title$, False, -25000, 25000, -25000, 25000, -50000, 0
 '
 '
 '
@@ -1214,15 +1215,18 @@ End Sub
 Private Sub picOrg_Click()
 '
 '
-    frm3D.Points XD#(), YD#(), ZD#(), Title$
+    'frm3D.Points XD#(), YD#(), ZD#(), Title$
+    frm3D.Points XD#(), YD#(), ZD#(), Title$, False, -25000, 25000, -25000, 25000, -50000, 0
 '
 '
 '
 End Sub
+
 Private Sub picSurFit_Click()
 '
 '
-    frm3D.Surface XI#(), YI#(), ZI#(), Title$
+    'frm3D.Surface XI#(), YI#(), ZI#(), Title$
+    frm3D.Surface XI#(), YI#(), ZI#(), Title$, False, -25000, 25000, -25000, 25000, -50000, 0
 '
 '
 '

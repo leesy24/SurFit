@@ -20,7 +20,7 @@ Begin VB.Form frm3D
       TabIndex        =   23
       Top             =   0
       Width           =   3435
-      Begin VB.CommandButton cmdPausa 
+      Begin VB.CommandButton cmdPause 
          Caption         =   "&Pause"
          Enabled         =   0   'False
          BeginProperty Font 
@@ -38,7 +38,7 @@ Begin VB.Form frm3D
          Top             =   240
          Width           =   555
       End
-      Begin VB.CommandButton cmdRuota 
+      Begin VB.CommandButton cmdRotate 
          Caption         =   "&Rotate"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -488,15 +488,15 @@ Attribute VB_Exposed = False
 '   Routines di ingresso:
 '
 '    frm3D.Points XD#(), YD#(), ZD#() [, Title$ = ""] [, IC& = 1] _
-'                [, bAutoScala as Boolean = True] _
+'                [, bAutoScale as Boolean = True] _
 '                [, XMin#, XMax#, YMin#, YMax#, ZMin#, ZMax#]
 '     XD():       vettore contenente le ascisse  dei punti da rappresentare.
 '     YD():          "        "       " ordinate  "    "    "      ".
 '     ZD():          "        "       " altezze   "    "    "      ".
 '     Title$:    titolo del quadro (opzionale).
 '     IC:         se IC <= 1 il Form viene messo in primo piano (opzionale).
-'     bAutoScala: se False devono essere passati anche i valori Min e Max
-'                 da usare come estremi dei tre assi.
+'     bAutoScale: if False must also pass the values Min and Max to be used
+'                  as extremes of the three axes.
 '
 '    frm3D.Surface XI#(), YI#(), ZI#() [, Title$ = ""] [, IC& = 1]
 '     XI():     vettore contenente le ascisse  della superficie da rappresentare.
@@ -523,8 +523,8 @@ Dim ZV#()           ' Vettore delle altezze dei punti o
                     ' matrice dei livelli della superficie.
 Dim Title$
 '
-Dim fPunti As Boolean   ' Se True vengono disegnati i punti;
-                        ' se False viene disegnata una superficie.
+Dim fPoints As Boolean  ' If True, draw points;
+                        ' if False, draw a surface.
 '
 Dim NV&             ' N?di valori nei vettori XV(), YV() e ZV().
 '
@@ -537,7 +537,7 @@ Dim ZMin!, ZMax!    ' dei dati in ingresso.
 '
 Dim XRMin!, XRMax!  ' Valori minimi e massimi su gli assi del quadro:
 Dim YRMin!, YRMax!  ' servono ad evitare, in questa particolare applicazione, che
-Dim ZRMin!, ZRMax!  ' chiamate successive a Quadro3D cambino le scale degli assi.
+Dim ZRMin!, ZRMax!  ' chiamate successive a Picture3D cambino le scale degli assi.
                     ' Inoltre il cambio vista pilotato dal Mouse, richiede i veri
                     ' valori di XRMin, XRMax e ZRMin.
 Dim AsseX!          ' XRMax - XRMin.
@@ -560,7 +560,7 @@ Dim SemiAsseX!          ' Misure degli assi del disegno.
 Dim SemiAsseY!          '   "      "     "   "     "
 Dim AsseZ!              '   "      "     "   "     "
 Dim TrRotX!, TrRotY!    ' Coeff. di trasformazione delle coordinate durante la rotazione.
-Dim bPausa As Boolean   ' Flag di rotazione in pausa.
+Dim bPause As Boolean   ' Flag for rotation paused.
 'Const RFCL& = &H8000&   ' Colore di assi e griglie di riferimento durante la rotazione.
 Const RFCL& = &H404080  ' Colore di assi e griglie di riferimento durante la rotazione.
 '
@@ -576,10 +576,10 @@ Private Type POINTAPI
      Y As Long          '     "
 End Type
 '
-' Variabili per la Sub DisegnaPunti:
+' Variabili per la Sub DrawPoints:
 Dim PRv() As POINTAPI       ' Vettore dei punti o matrice dei vertici dei
                             ' quadrilateri proiettati sul piano di rappresentazione
-                            ' (e' usata anche dalle Subs DisegnaSup_BN e DisegnaSuperficie).
+                            ' (e' usata anche dalle Subs DisegnaSup_BN e DrawSurface).
 Const lRP& = 4              ' Raggio del disegno dei punti [Pixels].
 '
 ' Variabili per la Sub DisegnaSup_BN:
@@ -587,7 +587,7 @@ Dim NPoli&                  ' N?di quadrilateri in una riga.
 Dim lpPoint() As POINTAPI   ' Vettore dei vertici di una riga.
 Dim lpVertici&()            ' Vettore del N?di vertici di ogni poligono.
 '
-' Variabili per la Sub DisegnaSuperficie:
+' Variabili per la Sub DrawSurface:
 Dim lpPoint_C() As POINTAPI ' Vettore dei vertici di un quadrilatero.
 '
 ' Costanti per la ricerca della posizione 3D:
@@ -595,7 +595,7 @@ Const shpIndOffx& = lRP + 2 ' Offset orizzontale e verticale del cerchio
 Const shpIndOffy& = lRP + 2 ' di evidenziazione.
 Const PCHL& = &HC0FFFF      ' Colore di evidenza per le etichette di posizione cursore.
 '
-Dim bRuota As Boolean       ' Flag di rotazione in corso.
+Dim bRotate As Boolean      ' Flag for Rotation in progress.
 Dim bLoaded As Boolean      ' Flag di Form inizializzato.
 '
 '-------------------------------------------------------------------------------------
@@ -641,7 +641,8 @@ Private Sub Ruota(ByVal X0#, ByVal Y0#, ByVal Rot#, ByVal CRx#, ByVal CRy#, Xr#,
 '
 '
 End Sub
-Private Function Quadro3D(ByVal Foglio As PictureBox, _
+
+Private Function Picture3D(ByVal Foglio As PictureBox, _
     ByRef X0!, ByRef Xn!, ByRef Y0!, ByRef Yn!, ByRef Z0!, ByRef Zn!, _
     Optional ByVal ALFA! = PI / 6!, Optional ByRef RAyx! = 1!, _
     Optional ByRef Ax!, Optional ByRef Bx!, _
@@ -658,46 +659,46 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
     Optional ByVal RifCol& = vbGreen, _
     Optional ByVal AutoRed As Boolean = False) As Boolean
 '
-'   Routine, di uso generale, per la preparazione di un foglio
-'   adatto a rappresentare, in assonometria, un grafico z = f(x, y).
-'    Parametri in ingresso:
-'     Foglio:    PictureBox da scalare.
-'     X0:        Valore minimo di ascissa da rappresentare.
-'     Xn:        Valore massimo di ascissa da rappresentare.
-'                Deve essere X0 < Xn.
-'     Y0:        Valore minimo di ordinata da rappresentare.
-'     Yn:        Valore massimo di ordinata da rappresentare.
-'                Deve essere Y0 < Yn.
-'     Z0:        Valore minimo di elevazione da rappresentare.
-'     Zn:        Valore massimo di elevazione da rappresentare.
-'                Deve essere Z0 <= Zn.
-'     Alfa:      Angolo formato dall' asse Y con l' asse X [Rad].
-'     RAyx:      Rapporto fra la lunghezza dell' asse Y e quella dell' asse X.
-'                Deve essere RAyx <= 1000.
-'     FormatVX$: Stringa di formato dei valori sull' asse X.
-'     FormatVY$: Stringa di formato dei valori sull' asse Y.
-'     FormatVZ$: Stringa di formato dei valori sull' asse Z.
-'     Npx:       N?di Pixels di cui si vuole conoscere
-'                larghezza ed altezza in [vbUser].
-'     Title$:   Titolo del grafico.
-'     UnitaX$:   Unita' (o titolo) dell' asse X.
-'     UnitaY$:   Unita' (o titolo) dell' asse Y.
-'     UnitaZ$:   Unita' (o titolo) dell' asse Z.
-'     RifCol:    Colore degli assi e delle griglie di riferimento.
-'     AutoRed:   Stato di Foglio.AutoRedraw dopo il disegno del quadro.
-'    Parametri in uscita:
-'     X0:        Valore minimo di ascissa rappresentata.
-'     Xn:        Valore massimo di ascissa rappresentata.
-'     Y0:        Valore minimo di ordinata rappresentata.
-'     Yn:        Valore massimo di ordinata rappresentata.
-'     Z0:        Valore minimo di elevazione rappresentata.
-'     Zn:        Valore massimo di elevazione rappresentata.
-'     RAyx:      Rapporto usato fra la lunghezza dell' asse Y e quella dell' asse X.
-'     Ax, Bx:    Coefficienti di trasformazione dalla scala
-'     Ay, By:    vbUser, impostata da questa routine, alle "Logical
-'     Az, Bz:    Coordinates" richieste dalle API grafiche.
-'     PxN_X:     Larghezza in [vbUser] ed
-'     PxN_Z:     altezza in [vbUser] di Npx [Pixels].
+'   Routine, of general use, for the preparation of a sheet suitable
+'   to represent, in axonometry, a graph z = f (x, y).
+'    Input parameters:
+'     Foglio:    PictureBox to climb.
+'     X0:        Minimum value of the abscissa to be represented.
+'     Xn:        Maximum abscissa value to be represented.
+'                It must be X0 < Xn.
+'     Y0:        Minimum value of the ordinate to be represented.
+'     Yn:        Maximum value of the ordinate to be represented.
+'                It must be Y0 < Yn.
+'     Z0:        Minimum value of elevation to be represented.
+'     Zn:        Maximum value of elevation to be represented.
+'                It must be Z0 <= Zn.
+'     Alfa:      Angle formed by the Y axis with the X axis [Rad].
+'     RAyx:      Ratio between the length of the Y axis and that of the X axis.
+'                It must be RAyx <= 1000.
+'     FormatVX$: Value format string on the X axis.
+'     FormatVY$: Value format string on the Y axis.
+'     FormatVZ$: Value format string on the Z axis.
+'     Npx:       Number of Pixels whose width and height
+'                you want to know in [vbUser].
+'     Title$:    Title of the graph.
+'     UnitaX$:   Unit (or title) of the X axis.
+'     UnitaY$:   Unit (or title) of the Y axis.
+'     UnitaZ$:   Unit (or title) of the Z axis.
+'     RifCol:    Color of the reference axes and grids.
+'     AutoRed:   State of Foglio.AutoRedraw after drawing the painting.
+'    Output parameters:
+'     X0:        Minimum abscissa value represented.
+'     Xn:        Maximum abscissa value represented.
+'     Y0:        Minimum ordinate value shown.
+'     Yn:        Maximum value of the ordinate shown.
+'     Z0:        Minimum value of elevation represented.
+'     Zn:        Maximum value of elevation shown.
+'     RAyx:      Ratio used between the length of the Y axis and that of the X axis.
+'     Ax, Bx:    Transformation coefficients from the vbUser scale,
+'     Ay, By:     set by this routine, to the "Logical Coordinates"
+'     Az, Bz:     required by the graphic APIs.
+'     PxN_X:     Width in [vbUser] and height
+'     PxN_Z:      in [vbUser] of Npx [Pixels].
 '
     Dim I&, XI!, rrx!, YI!, D_Y!, rry!, ZI!, rrz!
     Dim CosA!, SinA!, Ryx!, LAx!, LAy!, LAz$
@@ -709,20 +710,20 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
     t0 = Timer
     
 '
-    On Error GoTo Quadro3D_ERR
-    ' Verifica la correttezza delle scale:
-    If X0 >= Xn Then Err.Raise 1001, "Quadro3D", " Error scale X."
-    If Y0 >= Yn Then Err.Raise 1001, "Quadro3D", " Error scale Y."
-    If Z0 > Zn Then Err.Raise 1001, "Quadro3D", " Error scale Z."
+    On Error GoTo Picture3D_ERR
+    ' Check the correctness of the stairs:
+    If X0 >= Xn Then Err.Raise 1001, "Picture3D", " Error scale X."
+    If Y0 >= Yn Then Err.Raise 1001, "Picture3D", " Error scale Y."
+    If Z0 > Zn Then Err.Raise 1001, "Picture3D", " Error scale Z."
 '
 '-------------------------------------------------------------------------------------
-'   Calcolo del passo di grigliatura dei tre assi.
+'   Calculation of the grating step of the three axes.
 '
     Dim DZMin!                      ' Ampiezza min. della scala Z.
     Const Log10! = 2.30258509299405 ' Log(10#)
 '
-    ' Calcola la spaziatura dei valori scritti
-    ' sull' asse X: la sequenza e' 1, 2, 2.5 e 5:
+    ' Calculates the spacing of the values written on the X axis:
+    '  the sequence is 1, 2, 2.5 and 5:
     LAx = Xn - X0
     rrx = 10! ^ Ceil(Log(LAx / 20!) / Log10)
     Do While LAx / rrx < 5!
@@ -733,8 +734,8 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
     Xn = rrx * Ceil(Round(Xn / rrx, 3))
     LAx = Xn - X0
 '
-    ' Calcola la spaziatura dei valori scritti
-    ' sull' asse Y: la sequenza e' 1, 2, 2.5 e 5:
+    ' Calculates the spacing of the values written on the Y axis:
+    '  the sequence is 1, 2, 2.5 and 5:
     D_Y = Yn - Y0
     rry = 10! ^ Ceil(Log(D_Y / 20!) / Log10)
     Do While D_Y / rry < 5!
@@ -747,8 +748,7 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
     If RAyx > 1000! Then RAyx = 1000!
     LAy = RAyx * LAx
 '
-    ' Imposta una scala minima
-    ' per l' asse Z:
+    ' Set a minimum scale for the Z axis:
     DZMin! = 0.0001
     If (Zn - Z0) < DZMin Then
         Do While (Z0 - DZMin / 20!) = Z0
@@ -759,8 +759,8 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
         Zn = Zn + DZMin
     End If
 '
-    ' Calcola la spaziatura dei valori scritti
-    ' sull' asse Z: la sequenza e' 1, 2, 2.5 e 5:
+    ' Calculates the spacing of the values written on the Y axis:
+    '  the sequence is 1, 2, 2.5 and 5:
     LAz = Zn - Z0
     rrz = 10! ^ Ceil(Log(LAz / 20!) / Log10)
     Do While LAz / rrz < 5!
@@ -772,49 +772,46 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
     LAz = Zn - Z0
 '
 '-------------------------------------------------------------------------------------
-'   Calcola larghezza ed altezza dei bordi.
+'   Calculate the width and height of the edges.
 '
     Dim Bl!, Br!, BB!, Bt!, BDen!
     Dim DT_X!, DT_Z!, DPz!, DDz!, TxHt!, TxHb!
 '
-    ' Imposta i dati di Font dei valori
-    ' degli assi e dei titoli:
+    ' Set Font data of axis and title values:
     Foglio.FontName = "MS Sans Serif"
     Foglio.FontBold = False
 '
     CosA = Cos(ALFA)
     SinA = Sin(ALFA)
 '
-    ' Annulla le scale precedenti:
+    'Cancel the previous stairs:
     Foglio.ScaleMode = vbPixels
 '
-    ' Il bordo a sinistra deve essere sufficiente
-    ' a contenere il valore Z piu' largo:
+    ' The left edge must be sufficient to contain the largest Z value:
     Foglio.FontSize = 8
     TxWs = MAX0(Foglio.TextWidth(Format$(-Abs(Z0), FormatVZ$) & "W"), _
                Foglio.TextWidth(Format$(-Abs(Zn), FormatVZ$) & "W"), _
                Foglio.TextWidth(UnitaZ$ & "W"))
 '
-    ' Il bordo a destra deve essere sufficiente
-    ' a contenere il valore Xn e l' etichetta UnitaX$:
+    ' The border on the right must be sufficient to contain
+    '  the Xn value and the UnitaX $ label:
     TxWd = Foglio.TextWidth(Format$(-Abs(Xn), FormatVZ$) & "W") _
          + Foglio.TextWidth(UnitaX$ & "W")
 '
-    ' I bordi a sinistra ed a destra sono:
+    ' The borders on the left and on the right are:
     DT_X = LAx * (1! + RAyx * CosA)
     BDen = DT_X / (Foglio.ScaleWidth - TxWs - TxWd)
     Bl = TxWs * BDen
     Br = TxWd * BDen
 '
-    ' Il bordo sotto e' 2 volte l' altezza dei valori:
+    ' The border below is 2 times the height of the values:
     TxHb = 2! * Abs(Foglio.TextHeight("W"))
 '
-    ' Il bordo sopra e' 2 volte l' altezza dei valori
-    ' piu' 2 volte l' altezza del titolo:
+    ' The edge above is 2 times the height of the values plus 2 times the height of the title:
     Foglio.FontSize = 12
     TxHt = TxHb + 2! * Abs(Foglio.TextHeight(Title$))
 '
-    ' I bordi sopra e sotto sono:
+    ' The edges above and below are:
     DDz = Foglio.ScaleWidth * LAx * RAyx * SinA / (Bl + DT_X + Br)
     DPz = Abs(Foglio.ScaleHeight) - DDz - TxHt - TxHb
     If DPz <= 0 Then DPz = 0.001
@@ -824,37 +821,36 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
     Bt = TxHt * BDen
 '
 '-------------------------------------------------------------------------------------
-'   Imposta la scala e calcola i valori comuni.
+'   Set the scale and calculate the common values.
 '
-    Dim TaccheX!, TaccheZ!  ' Lunghezza delle tacche sugli assi.
-    Dim EstAx!, EstAz!      ' Prolungamento degli assi X e Z.
-    Dim LyCosA!, LySinA!    ' Proiezioni dell' asse Y.
+    Dim TaccheX!, TaccheZ!  ' Length of the notches on the axes.
+    Dim EstAx!, EstAz!      ' Extension of the X and Z axes.
+    Dim LyCosA!, LySinA!    ' Projections of the Y axis.
 '
-    ' Imposta i bordi orizzontali
-    ' e verticali:
+    ' Set horizontal and vertical borders:
     QxMin = X0 - Bl
     QxMax = X0 + DT_X + Br
     QzMin = Z0 - BB
     QzMax = Z0 + DT_Z + Bt
 '
-    ' Imposta la scala e cancella il Foglio:
+    ' Set the scale and delete the Sheet:
     'Foglio.Picture = LoadPicture("")
     Foglio.Scale (QxMin, QzMax)-(QxMax, QzMin)
-    Foglio.Line (QxMin, QzMin)-(QxMax, QzMax), Foglio.BackColor, BF ' Questo e' piu' veloce
-                                                                    ' di Foglio.Cls.
-    ' Il disegno del quadro deve essere permanente:
+    Foglio.Line (QxMin, QzMin)-(QxMax, QzMax), Foglio.BackColor, BF ' This is faster than
+                                                                    '  Foglio.Cls.
+    ' The drawing of the painting must be permanent:
     Foglio.AutoRedraw = True
 '
-    ' Larghezza ed altezza di 1 pixel in [vbUser]:
+    ' Width and height of 1 pixel in [vbUser]:
     Px1_X = Abs(Foglio.ScaleX(1, vbPixels, vbUser))
     Px1_Z = Abs(Foglio.ScaleY(1, vbPixels, vbUser))
-    Ryx = Px1_Z / Px1_X ' Rapporto di scala Y/X.
+    Ryx = Px1_Z / Px1_X ' Y/X scale ratio.
 '
-    ' Calcola larghezza ed altezza di Npx pixels in [vbUser]:
+    ' Calculate width and height of Npx pixels in [vbUser]:
     PxN_X = Npx * Px1_X
     PxN_Z = Npx * Px1_Z
 '
-    ' Precalcolo di alcuni valori di uso frequente:
+    ' Precalculation of some frequently used values:
     TaccheX = 4! * Px1_X
     TaccheZ = 4! * Px1_Z
     EstAx = 15! * Px1_X
@@ -866,14 +862,14 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
     End If
 '
 '-------------------------------------------------------------------------------------
-'   Disegna assi, griglie e scrive i valori di scala.
+'   Draw axes, grids and write scale values.
 '
     Foglio.FontSize = 8
     Foglio.DrawWidth = 1
     Foglio.ForeColor = RifCol
     Foglio.DrawMode = vbCopyPen
 '
-    ' Controlla la separazione delle etichette:
+    ' Check the separation of the labels:
     Dim TxW!
     TxW = DMAX1(Foglio.TextWidth(Format$(X0, FormatVX$)), _
                Foglio.TextWidth(Format$(Xn, FormatVX$)))
@@ -887,7 +883,7 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
 '
     bVlZ = (LAz / rrz) * TxH < LAz
 '
-    ' Traccia l' asse X:
+    ' Draw the X axis:
     Foglio.DrawStyle = vbSolid
     Foglio.Line (X0, Z0)-(Xn + EstAx, Z0)
     If bVlX Then
@@ -895,32 +891,32 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
                    -(Xn + EstAx - TaccheX, Z0 + TaccheZ / 2!)
         Foglio.Line (Xn + EstAx, Z0) _
                    -(Xn + EstAx - TaccheX, Z0 - TaccheZ / 2!)
-        ' e scrive l' etichetta dell' asse X:
+        ' and write the label of the X axis:
         If Len(UnitaX$) > 0 Then
             Foglio.CurrentX = Xn + Foglio.TextWidth(Xn & "W")
             Foglio.Print UnitaX$;
         End If
     End If
 '
-    ' Traccia l' asse Y:
+    ' Draw the Y axis:
     Foglio.Line (X0, Z0)-(X0 + (LAy + EstAx) * CosA, _
                           Z0 + (LAy + EstAx) * SinA * Ryx)
     If bVlY Then
-        ' e scrive l' etichetta dell' asse Y:
+        ' and write the Y axis label:
         If Len(UnitaY$) > 0 Then
             Foglio.CurrentY = Foglio.CurrentY - Foglio.TextHeight("W")
             Foglio.Print UnitaY$;
         End If
     End If
 '
-    ' Traccia l' asse Z:
+    ' Draw the Z axis:
     Foglio.Line (X0, Z0)-(X0, Zn + EstAz)
     If bVlZ Then
         Foglio.Line (X0, Zn + EstAz) _
                    -(X0 - TaccheX / 2!, Zn + EstAz - TaccheZ)
         Foglio.Line (X0, Zn + EstAz) _
                    -(X0 + TaccheX / 2!, Zn + EstAz - TaccheZ)
-        ' e scrive l' etichetta dell' asse Z:
+        ' and write the Z axis label:
         If Len(UnitaZ$) > 0 Then
             Foglio.CurrentX = QxMin
             Foglio.CurrentY = Zn + EstAz - Foglio.TextHeight("W") / 2!
@@ -928,8 +924,8 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
         End If
     End If
 '
-    ' Traccia la griglia verticale sul piano Z-X,
-    ' quella sul piano X-Y e scrive i valori dell' asse X:
+    ' Draw the vertical grid on the Z-X plane,
+    '  the plane on the X-Y plane and write the values of the X axis:
     Dim rrx_10!
 '
     rrx_10 = rrx / 10!
@@ -940,8 +936,8 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
         Foglio.Line -(XI, Z0 - TaccheZ)
         If bVlX Then
             Tx$ = Format$(XI, FormatVX$)
-            ' Verifica che il formato scelto non
-            ' induca ad errori di rappresentazione:
+            ' Verify that the chosen format does not lead
+            '  to representation errors:
             If (Abs(XI - Val(Tx$)) < rrx_10) Then
                 Foglio.CurrentX = XI - Foglio.TextWidth(Tx$) / 2!
                 Foglio.Print Tx$;
@@ -949,9 +945,9 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
         End If
     Next XI
 '
-    ' Traccia la griglia orizzontale sul piano X-Y,
-    ' quella verticale sul piano Z-Y e scrive i
-    ' valori dell' asse Y:
+    ' Draw the horizontal grid on the X-Y plane,
+    '  the vertical grid on the Z-Y plane and
+    '  write the values of the Y axis:
     Dim LyCosA_Y!, LySinA_Y!, Yx!, Yz!, rry_10!
 '
     LyCosA_Y = LyCosA / D_Y
@@ -964,11 +960,11 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
         Foglio.Line -(Foglio.CurrentX, Yz + LAz)
         If bVlY Then
             Tx$ = Format$(YI, FormatVY$)
-            ' Verifica che il formato scelto non
-            ' induca ad errori di rappresentazione:
+            ' Verify that the chosen format does not lead
+            '  to representation errors:
             If (Abs(YI - Val(Tx$)) < rry_10) Then
-                ' Le posizioni delle etichette Y dipendono
-                ' dalla presenza di quelle Z:
+                ' The positions of the Y labels depend on
+                '  the presence of those Z:
                 If bVlZ Then
                     Foglio.Line -(Foglio.CurrentX, Foglio.CurrentY + EstAz)
                     Foglio.CurrentX = Foglio.CurrentX - Foglio.TextWidth(Tx$) / 2!
@@ -983,9 +979,9 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
         End If
     Next YI
 '
-    ' Traccia la griglia orizzontale sul piano Z-Y,
-    ' quella orizzontale sul piano Z-X e scrive i
-    ' valori dell' asse Z:
+    ' Draw the horizontal grid on the Z-Y plane,
+    '  the horizontal grid on the Z-X plane and
+    '  write the values of the Z axis:
     Dim rrz_10!
 '
     rrz_10 = rrz / 10!
@@ -995,8 +991,8 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
         Foglio.Line -(Foglio.CurrentX + LAx, Foglio.CurrentY)
         If bVlZ Then
             Tx$ = Format$(ZI, FormatVZ$)
-            ' Verifica che il formato scelto non
-            ' induca ad errori di rappresentazione:
+            ' Verify that the chosen format does not lead
+            '  to representation errors:
             If (Abs(ZI - Val(Tx$)) < rrz_10) Then
                 Foglio.CurrentX = QxMin
                 Foglio.CurrentY = ZI - Foglio.TextHeight(Tx$) / 2!
@@ -1006,7 +1002,7 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
     Next ZI
 '
 '-------------------------------------------------------------------------------------
-'   Scrive il titolo del grafico:
+'   Write the chart title:
 '
     Dim TitL!, TitT!, TitW!, TitH!
 '
@@ -1017,18 +1013,18 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
 '
         TitW = Foglio.TextWidth(Title$)
         TitH = Foglio.TextHeight(Title$)
-        ' Verifica che il titolo stia tutto nel Foglio:
+        ' Verify that the title is all in the Sheet:
         If TitW <= Foglio.ScaleWidth Then
             TitL = (QxMin + QxMax - TitW) / 2!
         Else
-            ' e se no' lo taglia:
+            ' and if not, cut it:
             TitL = Foglio.ScaleLeft
             Tx$ = " . . . ."
             Title$ = Left$(Title$, Int(Len(Title$) * _
             (Foglio.ScaleWidth - Foglio.TextWidth(Tx$)) / TitW)) & Tx$
         End If
         TitT = QzMax
-        ' Cancella l' area su cui andra' scritto il titolo:
+        ' Delete the area on which the title will be written:
         'Foglio.Line (TitL, TitT)-(TitL + TitW, TitT + TitH), Foglio.BackColor, BF
         Foglio.CurrentX = TitL
         Foglio.CurrentY = TitT
@@ -1036,8 +1032,7 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
     End If
 '
 '-------------------------------------------------------------------------------------
-'   Calcola i coefficienti di trasformazione
-'   da vbUser a Pixels:
+'   Calculates the transformation coefficients from vbUser to Pixels:
 '
     Dim C0_Px!, Cn_Px!
 '
@@ -1054,15 +1049,15 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
     Az = (Cn_Px - C0_Px) / LAz
     Bz = (C0_Px * Zn - Cn_Px * Z0) / LAz
 '
-    ' E lascia il Foglio impostato:
+    ' And leave the Sheet set:
     Foglio.DrawStyle = vbSolid
     Foglio.AutoRedraw = AutoRed
 '
 '
-Quadro3D_ERR:
-    Quadro3D = (Err = 0)
+Picture3D_ERR:
+    Picture3D = (Err = 0)
     If Err <> 0 Then
-        MsgBox Err.Description, vbCritical, " Quadro3D/" & Err.Source
+        MsgBox Err.Description, vbCritical, " Picture3D/" & Err.Source
     End If
 '
 '
@@ -1070,13 +1065,12 @@ Quadro3D_ERR:
 End Function
 
 Public Sub Points(XD_I#(), YD_I#(), ZD_I#(), Optional ByVal Title_I$ = "", _
-    Optional ByVal bAutoScala As Boolean = True, _
+    Optional ByVal bAutoScale As Boolean = True, _
     Optional ByVal XMin_I#, Optional ByVal XMAx_I#, _
     Optional ByVal YMin_I#, Optional ByVal YMAx_I#, _
     Optional ByVal ZMin_I#, Optional ByVal ZMax_I#)
 '
-'   Routine di ingresso per la rappresentazione
-'   di punti nello spazio 3D:
+'   Input routines for representing points in 3D space:
 '
     If (Not bLoaded) Then
         Me.Show
@@ -1087,7 +1081,7 @@ Public Sub Points(XD_I#(), YD_I#(), ZD_I#(), Optional ByVal Title_I$ = "", _
     YV() = YD_I()
     ZV() = ZD_I()
     Title$ = Title_I$
-    If (Not bAutoScala) Then
+    If (Not bAutoScale) Then
         XMin = XMin_I
         XMax = XMAx_I
         YMin = YMin_I
@@ -1096,19 +1090,23 @@ Public Sub Points(XD_I#(), YD_I#(), ZD_I#(), Optional ByVal Title_I$ = "", _
         ZMax = ZMax_I
     End If
 '
-    fPunti = True
-    Impostazioni bAutoScala
+    fPoints = True
+    Settings bAutoScale
 '
-    Disegna True
-    MisuraSpazio3D
+    Draw True
+    MeasureSpace3D
 '
 '
 '
 End Sub
-Public Sub Surface(XI_I#(), YI_I#(), ZI_I#(), Optional ByVal Title_I$ = "")
+
+Public Sub Surface(XI_I#(), YI_I#(), ZI_I#(), Optional ByVal Title_I$ = "", _
+    Optional ByVal bAutoScale As Boolean = True, _
+    Optional ByVal XMin_I#, Optional ByVal XMAx_I#, _
+    Optional ByVal YMin_I#, Optional ByVal YMAx_I#, _
+    Optional ByVal ZMin_I#, Optional ByVal ZMax_I#)
 '
-'   Routine di ingresso per la rappresentazione
-'   in 3D di una superficie:
+'   Input routines for the 3D representation of a surface:
 '
     On Error GoTo 0
     If (Not bLoaded) Then
@@ -1120,17 +1118,26 @@ Public Sub Surface(XI_I#(), YI_I#(), ZI_I#(), Optional ByVal Title_I$ = "")
     YV() = YI_I()
     ZV() = ZI_I()
     Title$ = Title_I$
+    If (Not bAutoScale) Then
+        XMin = XMin_I
+        XMax = XMAx_I
+        YMin = YMin_I
+        YMax = YMAx_I
+        ZMin = ZMin_I
+        ZMax = ZMax_I
+    End If
 '
-    fPunti = False
-    Impostazioni
+    fPoints = False
+    Settings bAutoScale
 '
-    Disegna True
-    MisuraSpazio3D
+    Draw True
+    MeasureSpace3D
 '
 '
 '
 End Sub
-Private Sub DisegnaSuperficie(ByVal bCol As Boolean)
+
+Private Sub DrawSurface(ByVal bCol As Boolean)
 '
 '   Disegna, con API, i quadrilateri a colori o in B/N.  Disegnando le righe
 '   dall' ultima indietro fino alla prima (i.e. muovendosi verso l' osservatore),
@@ -1157,7 +1164,7 @@ Private Sub DisegnaSuperficie(ByVal bCol As Boolean)
     ' proiettati sul piano di rappresentazione:
     For J = 1 To NYV
         For I = 1 To NXV
-            If bRuota Then
+            If bRotate Then
                 Ruota XV(I), YV(J), CDbl(THETA), X0r, Y0r, Xr, Yr
                 PRv(I, J).X = CLng((Ax * Xr + Bx) + (Ay * Yr + By) * CosA)
                 PRv(I, J).Y = CLng((Az * ZV(I, J) + Bz) - (Ay * Yr + By) * SinA)
@@ -1286,7 +1293,7 @@ Private Sub DisegnaSup_BN()
 '   |_____|    |_____| .... Nelle righe J < NYV coincidono i vertici
 '  1       4  5       8     2 con 1 della riga J + 1, 4 con 3 della riga J + 1 , etc...
 '
-'   Questa routine e' riportata solo per curiosita': La Sub DisegnaSuperficie,
+'   Questa routine e' riportata solo per curiosita': La Sub DrawSurface,
 '   infatti, offre la stessa funzionalita'.  La curiosita' sta' nel fatto che,
 '   usando l' API PolyPolygon, i poligoni successivi, definiti in lpPoint(),
 '   NON nascondono quelli precedentemente definiti nello stesso vettore.
@@ -1306,7 +1313,7 @@ Private Sub DisegnaSup_BN()
     ' proiettati sul piano di rappresentazione:
     For J = 1 To NYV
         For I = 1 To NXV
-            If bRuota Then
+            If bRotate Then
                 Ruota XV(I), YV(J), THETA, X0r, Y0r, Xr, Yr
                 PRv(I, J).X = CLng((Ax * X0r + Bx) + (Ay * Y0r + By) * CosA)
                 PRv(I, J).Y = CLng((Az * ZV(I, J) + Bz) - (Ay * Y0r + By) * SinA)
@@ -1351,43 +1358,45 @@ Private Sub cmdCopiaGrafico_Click()
 '
 End Sub
 
-Private Sub cmdPausa_Click()
+Private Sub cmdPause_Click()
 '
 '
-    bPausa = Not bPausa
+    bPause = Not bPause
 '
-    cmdPausa.Caption = IIf(bPausa, "Co&nt.", "&Pause")
-    cmdRuota.Enabled = Not bPausa
-    updTheta.Enabled = bPausa
+    cmdPause.Caption = IIf(bPause, "Co&nt.", "&Pause")
+    cmdRotate.Enabled = Not bPause
+    updTheta.Enabled = bPause
 '
-    Timer1.Enabled = Not bPausa
+    Timer1.Enabled = Not bPause
 '
 '
 '
 End Sub
-Private Sub cmdRuota_Click()
+
+Private Sub cmdRotate_Click()
 '
 '
-    bRuota = Not bRuota
-    cmdRuota.Caption = IIf(bRuota, "&Stop", "&Ruota")
+    bRotate = Not bRotate
+    cmdRotate.Caption = IIf(bRotate, "&Stop", "&Rotate")
 '
     THETA = 0!
     lblTheta = Format(RadToGrd * THETA, "#0.0")
 '
-    cmdPausa.Enabled = bRuota
+    cmdPause.Enabled = bRotate
     shpInd.Visible = False
-    AggiornaPosizioniCursore lblX, "", lblY, "", lblZ, ""
+    UpdateCursorPositions lblX, "", lblY, "", lblZ, ""
 '
-    If bRuota Then
+    If bRotate Then
         Timer1.Enabled = True
     Else
         Timer1.Enabled = False
-        Disegna
+        Draw
     End If
 '
 '
 '
 End Sub
+
 Private Sub cmdXY_Click()
 '
 '   Imposta la vista in pianta:
@@ -1408,7 +1417,7 @@ Private Sub cmdXY_Click()
     lblRAyx = Format$(RAyx, "#0.000")
     lblAlfa = Format$(RadToGrd * ALFA, "#0.000")
 '
-    Disegna True
+    Draw True
 '
 '
 '
@@ -1422,7 +1431,7 @@ Private Sub cmdZX_Click()
     lblRAyx = Format$(RAyx, "#0.000")
     lblAlfa = Format$(RadToGrd * ALFA, "#0.000")
 '
-    Disegna True
+    Draw True
 '
 '
 '
@@ -1436,11 +1445,12 @@ Private Sub cmdZY_Click()
     lblRAyx = Format$(RAyx, "#0.000")
     lblAlfa = Format$(RadToGrd * ALFA, "#0.000")
 '
-    Disegna True
+    Draw True
 '
 '
 '
 End Sub
+
 Private Sub Form_Load()
 '
 '
@@ -1451,19 +1461,19 @@ Private Sub Form_Load()
 '
     TCol() = ColorTable(NTCol)
 '
-    ' Dimensioni del cerchio di evidenziazione:
+    ' Highlight circle size:
     shpInd.Width = 2 * shpIndOffx
     shpInd.Height = 2 * shpIndOffy
 '
-    ' Valori iniziali:
-    RAyx = 1!       ' Rapporto lunghezza asse Y su lunghezza asse X.
-    ALFA = PI / 6!  ' Angolo dell' asse Y rispetto all' asse X: 30 [Grd].
+    ' Initial values:
+    RAyx = 1!       ' Y axis length ratio to X axis length.
+    ALFA = PI / 6!  ' Angle of the Y axis with respect to the X axis: 30 [Grd].
 '
     lblRAyx = Format$(RAyx, "#0.000")
     lblAlfa = Format$(RadToGrd * ALFA, "#0.000")
 '
-    bRuota = False
-    bPausa = False
+    bRotate = False
+    bPause = False
     lblTheta = "0.0"
 '
     bLoaded = True
@@ -1471,74 +1481,73 @@ Private Sub Form_Load()
 '
 '
 End Sub
-Private Sub Impostazioni(Optional ByVal bAutoScala As Boolean = True)
+
+Private Sub Settings(Optional ByVal bAutoScale As Boolean = True)
 '
-'   Trova e calcola le impostazioni e
-'   le variabili di uso comune:
+'   Find and calculate commonly used settings and variables:
 '
     Dim I&, J&, N&, ZnCol!, ZMed!
     Dim AZMax#, ZRid#
 '
-    If bAutoScala Then
-        ' Trova i valori minimi e massimi delle ascisse:
+    If bAutoScale Then
+        ' Find the minimum and maximum values of the abscissas:
         XMin = DMINVAL(XV())
         XMax = DMAXVAL(XV())
 '
-        ' e delle ordinate:
+        ' and of the ordinates:
         YMin = DMINVAL(YV())
         YMax = DMAXVAL(YV())
     End If
 '
-    If fPunti Then
-        ' Impostazioni per il disegno
-        ' dei punti:
+    If fPoints Then
+        ' Point design settings:
         NV = MIN0(UBound(XV), UBound(YV), UBound(ZV))
-        ReDim Preserve XV(1 To NV)  ' Ridimensiona i vettori
-        ReDim Preserve YV(1 To NV)  ' tutti alla stessa
-        ReDim Preserve ZV(1 To NV)  ' lunghezza.
+        ReDim Preserve XV(1 To NV)  ' Resize vectors
+        ReDim Preserve YV(1 To NV)  '  all to the
+        ReDim Preserve ZV(1 To NV)  '  same length.
         ReDim PRv(1 To NV)
 '
-        ' Ordina i vettori in modo che i punti
-        ' con Y maggiore rimangano dietro:
+        ' Sorts the vectors so that the points with major Y remain behind:
         QuickSort3V YV(), XV(), ZV(), 1, NV
 '
-        If bAutoScala Then
-            ' Trova i valori minimi e massimi delle altezze:
+        If bAutoScale Then
+            ' Find the minimum and maximum values of heights:
             ZMin = DMINVAL(ZV())
             ZMax = DMAXVAL(ZV())
         End If
 '
-        ' Passo fra i colori:
+        ' Step between colors:
         If (ZMax > ZMin) Then
             ZnCol = CSng(NTCol - 1) / (ZMax - ZMin)
         End If
 '
-        ' Prepara il vettore dei colori
-        ' da assegnare ai punti:
+        ' Prepare the color vector to be assigned to the points:
         ReDim ZCol(1 To NV)
         For N = 1 To NV
-            ' Calcolo del colore corrispondente:
+            ' Calculation of the corresponding color:
             ZCol(N) = TCol(CLng((ZV(N) - ZMin) * ZnCol))
         Next N
 '
     Else
-        ' Impostazioni per il disegno
-        ' di una superficie:
+        ' Settings for drawing a surface:
         NXV = UBound(XV)
         NYV = UBound(YV)
 '
-        ' Trova i valori minimi e massimi dei livelli:
-        ZMin = ZV(1, 1)
-        ZMax = ZV(1, 1)
-        For J = 1 To NYV
-            For I = 1 To NXV
-                If ZMin > ZV(I, J) Then ZMin = ZV(I, J)
-                If ZMax < ZV(I, J) Then ZMax = ZV(I, J)
-            Next I
-        Next J
+        If bAutoScale Then
+            ' Find the minimum and maximum levels values:
+            ZMin = ZV(1, 1)
+            ZMax = ZV(1, 1)
+            For J = 1 To NYV
+                For I = 1 To NXV
+                    If ZMin > ZV(I, J) Then ZMin = ZV(I, J)
+                    If ZMax < ZV(I, J) Then ZMax = ZV(I, J)
+                Next I
+            Next J
+        End If
+        
         AZMax = DMAX1(Abs(ZMin), Abs(ZMax))
         If AZMax > 1000# Then
-            ' Riduce la scala dei valori Z:
+            ' Reduces the scale of Z values:
             ZEsp = 3 * Int((Log(AZMax) / Log10) / 3#)
             sUZ$ = "z [10^" & ZEsp & "]"
             ZRid = 10# ^ ZEsp
@@ -1554,31 +1563,30 @@ Private Sub Impostazioni(Optional ByVal bAutoScala As Boolean = True)
             sUZ$ = "z"
         End If
 '
-        ' Impostazioni per la Sub DisegnaSup_BN:
+        ' Settings for the Sub DrawSup_BN:
         NPoli = NXV - 1
-        ReDim PRv(1 To NXV, 1 To NYV)   ' Anche per Sub DisegnaSuperficie.
+        ReDim PRv(1 To NXV, 1 To NYV)   ' Also for Sub DrawSurface.
         ReDim lpPoint(1 To 4 * NPoli)
         ReDim lpVertici(1 To NPoli)
         For I = 1 To NPoli
             lpVertici(I) = 4
         Next I
     '
-        ' Impostazioni per la Sub DisegnaSuperficie:
+        ' Settings for the Sub DrawSurface:
         ReDim lpPoint_C(1 To 4)
 '
-        ' Passo fra i colori:
+        ' Step between colors:
         If (ZMax > ZMin) Then
             ZnCol = CSng(NTCol - 1) / (ZMax - ZMin)
         End If
 '
-        ' Prepara la matrice dei colori
-        ' da assegnare ai quadrilateri:
+        ' Prepare the array of colors to assign to quadrilaterals:
         ReDim ZCol(1 To NXV - 1, 1 To NYV - 1)
         For J = 1 To NYV - 1
             For I = 1 To NXV - 1
-                ' Calcolo del valor medio delle coordinate Z dei quattro vertici:
+                ' Calculation of the mean value of the Z coordinates of the four vertices:
                 ZMed = CSng(ZV(I, J) + ZV(I, J + 1) + ZV(I + 1, J + 1) + ZV(I + 1, J)) / 4!
-                ' e del colore corrispondente:
+                ' and of the corresponding color:
                 ZCol(I, J) = TCol(CLng((ZMed - ZMin) * ZnCol))
             Next I
         Next J
@@ -1587,6 +1595,7 @@ Private Sub Impostazioni(Optional ByVal bAutoScala As Boolean = True)
 '
 '
 End Sub
+
 Private Sub QuickSort3V(ByRef ValTab#(), ByRef ValTab1#(), ByRef ValTab2#(), _
     ByVal Low&, ByVal High&, Optional ByVal OrderDir& = -1)
 '
@@ -1722,17 +1731,18 @@ Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y A
 '
 '
     shpInd.Visible = False
-    AggiornaPosizioniCursore lblX, "", lblY, "", lblZ, ""
+    UpdateCursorPositions lblX, "", lblY, "", lblZ, ""
 '
 '
 '
 End Sub
+
 Private Sub Form_Unload(Cancel As Integer)
 '
 '
     Timer1.Enabled = False
-    bRuota = False
-    bPausa = False
+    bRotate = False
+    bPause = False
     bLoaded = False
     DoEvents
 '
@@ -1745,7 +1755,7 @@ End Sub
 Private Sub optBN_Click()
 '
 '
-    Disegna
+    Draw
 '
 '
 '
@@ -1753,7 +1763,7 @@ End Sub
 Private Sub optCol_Click()
 '
 '
-    Disegna
+    Draw
 '
 '
 '
@@ -1765,7 +1775,7 @@ Private Sub pic3D_MouseDown(Button As Integer, Shift As Integer, X As Single, Y 
         pic3D.MousePointer = vbCustom
 '
         shpInd.Visible = False
-        AggiornaPosizioniCursore lblX, "", lblY, "", lblZ, ""
+        UpdateCursorPositions lblX, "", lblY, "", lblZ, ""
 '
         lblRAyx.BackColor = PCHL
         lblAlfa.BackColor = PCHL
@@ -1789,13 +1799,13 @@ Private Sub pic3D_MouseMove(Button As Integer, Shift As Integer, X As Single, Y 
         RAyx = Sqr(LxPx * LxPx + LyPx * LyPx) / LAxPx
 '
         shpInd.Visible = False
-        Disegna True
+        Draw True
 '
         lblRAyx = Format$(RAyx, "#0.000")
         lblAlfa = Format$(RadToGrd * ALFA, "#0.000")
 '
     Else
-        MisuraSpazio3D
+        MeasureSpace3D
     End If
 '
 '
@@ -1812,7 +1822,7 @@ Private Sub pic3D_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As
 '
 '
 End Sub
-Private Sub DisegnaPunti(ByVal bCol As Boolean)
+Private Sub DrawPoints(ByVal bCol As Boolean)
 '
 '   Disegna, con API, i punti specificati nei vettori XV(), YV() e ZV().
 '   Se bCol = True ai punti viene assegnato un colore proporzionale alla
@@ -1828,7 +1838,7 @@ Private Sub DisegnaPunti(ByVal bCol As Boolean)
 '
     ' Disegno i punti proiettati sul piano di rappresentazione:
     For N = 1 To NV
-        If bRuota Then
+        If bRotate Then
             Ruota XV(N), YV(N), CDbl(THETA), X0r, Y0r, Xr, Yr
             PRv(N).X = CLng((Ax * Xr + Bx) + (Ay * Yr + By) * CosA)
             PRv(N).Y = CLng((Az * ZV(N) + Bz) - (Ay * Yr + By) * SinA)
@@ -1855,65 +1865,63 @@ Private Sub DisegnaPunti(ByVal bCol As Boolean)
 '
 '
 End Sub
-Private Sub Disegna(Optional ByVal bCambioVista As Boolean = False)
-'
-'   Disegna, con i parametri richiesti, i punti dati
-'   o la superficie:
 
-    Dim lGrigliaCol&, RLyx!, Rzx!
+Private Sub Draw(Optional ByVal bChangeView As Boolean = False)
+'
+'   Draw, with the required parameters, the data points or the surface:
+'
+    Dim lGridCol&, RLyx!, Rzx!
     
     Dim t0!
     t0 = Timer
 '
-    XRMin = XMin: XRMax = XMax ' Valori minimi e massimi
-    YRMin = YMin: YRMax = YMax ' su gli assi del quadro.
+    XRMin = XMin: XRMax = XMax ' Minimum and maximum values
+    YRMin = YMin: YRMax = YMax ' on the axes of the switchboard.
     ZRMin = ZMin: ZRMax = ZMax '
 '
-    ' Imposta la grafica:
-    lGrigliaCol = IIf(bRuota, RFCL, vbGreen)
-    Quadro3D pic3D, XRMin, XRMax, YRMin, YRMax, ZRMin, ZRMax, _
+    ' Set the graphic:
+    lGridCol = IIf(bRotate, RFCL, vbGreen)
+    Picture3D pic3D, XRMin, XRMax, YRMin, YRMax, ZRMin, ZRMax, _
              ALFA, RAyx, Ax, Bx, Ay, By, Az, Bz, , , "#0.000", , , , _
-             Title$, "x", "y", sUZ$, lGrigliaCol, True
+             Title$, "x", "y", sUZ$, lGridCol, True
 '
-    If bCambioVista Then
-        ' Precalcolo delle traslazioni
-        ' per le Subs DisegnaXXX:
+    If bChangeView Then
+        ' Precalculation of translations for the Subs DisegnaXXX:
         SinA = Sin(ALFA)
         CosA = Cos(ALFA)
 '
-        ' Posizione sul piano X-Y
-        ' del centro di rotazione:
+        ' Position on the X-Y plane of the rotation center:
         X0r = CDbl(XRMin + XRMax) / 2#
         Y0r = CDbl(YRMin + YRMax) / 2#
 '
-        ' Parametri per il disegno dei
-        ' riferimenti della rotazione:
+        ' Parameters for drawing rotation references:
         AsseX = XRMax - XRMin
         SemiAsseX = AsseX / 2!
         SemiAsseY = (YRMax - YRMin) / 2!
         AsseZ = ZRMax - ZRMin
 '
-        ' Rapporto di scala Z/X:
+        ' Z/X scale ratio:
         Rzx = -Ax / Az
-        ' Rotazioni delle coordinate:
+        ' Coordinate rotations:
         RLyx = AsseX / (YRMax - YRMin)
         TrRotX = RAyx * RLyx * CosA
         TrRotY = RAyx * RLyx * SinA * Rzx
     End If
 '
-    If fPunti Then
-        DisegnaPunti optCol
+    If fPoints Then
+        DrawPoints optCol
     Else
-        DisegnaSuperficie optCol
+        DrawSurface optCol
     End If
 '
-    If bRuota Then DisegnaAsseRot
+    If bRotate Then DrawAxisRot
 '
     pic3D.Refresh
 '
 '
 '
 End Sub
+
 Private Sub CercaVertice(ByVal LPx&, ByVal lPy&, ByRef Iu&, ByRef Ju&)
 '
 '   Cerca, nella matrice PRv(), il vertice piu' vicino alle
@@ -1941,12 +1949,13 @@ Private Sub CercaVertice(ByVal LPx&, ByVal lPy&, ByRef Iu&, ByRef Ju&)
 '
 '
 End Sub
-Private Sub AggiornaPosizioniCursore(ByVal lblVal1 As Label, ByVal Val1$ _
+
+Private Sub UpdateCursorPositions(ByVal lblVal1 As Label, ByVal Val1$ _
                                    , ByVal lblVal2 As Label, ByVal Val2$ _
                                    , ByVal lblVal3 As Label, ByVal Val3$)
 '
-'   Aggiorna i valori delle finestrelle di posizione
-'   del cursore ed imposta il colore di evidenziazione:
+'   Update the values of the cursor position windows
+'    and set the highlight color:
 '
     lblVal1 = Val1$
     lblVal2 = Val2$
@@ -1959,6 +1968,7 @@ Private Sub AggiornaPosizioniCursore(ByVal lblVal1 As Label, ByVal Val1$ _
 '
 '
 End Sub
+
 Private Function CercaPunto(ByVal LPx&, ByVal lPy&) As Long
 '
 '   Cerca, nel vettore PRv(), il punto piu' vicino alle
@@ -1983,25 +1993,26 @@ Private Function CercaPunto(ByVal LPx&, ByVal lPy&) As Long
 '
 '
 End Function
-Private Sub MisuraSpazio3D()
+
+Private Sub MeasureSpace3D()
 '
-'   Misura lo spazio 3D:
+'   Measure 3D space:
 '
     Dim I&, J&, N&, LPx As POINTAPI
 '
-    If bRuota Then Exit Sub
+    If bRotate Then Exit Sub
 '
     GetCursorPos LPx
     If WindowFromPoint(LPx.X, LPx.Y) = pic3D.hWnd Then
         ScreenToClient pic3D.hWnd, LPx
 '
-        If fPunti Then
+        If fPoints Then
             N = CercaPunto(CLng(LPx.X), CLng(LPx.Y))
 '            pic3D.ToolTipText = ""
 '            pic3D.ToolTipText = " X = " & Format$(XV(N), "#0.000 ") & _
 '                                " Y = " & Format$(YV(N), "#0.000 ") & _
 '                                " Z = " & Format$(ZV(N), "#0.000 ")
-            AggiornaPosizioniCursore lblX, Format$(XV(N), "#0.000 "), _
+            UpdateCursorPositions lblX, Format$(XV(N), "#0.000 "), _
                                      lblY, Format$(YV(N), "#0.000 "), _
                                      lblZ, Format$(ZV(N), "#0.000 ")
             shpInd.Left = pic3D.ScaleX(PRv(N).X - shpIndOffx, vbPixels, vbUser) _
@@ -2014,7 +2025,7 @@ Private Sub MisuraSpazio3D()
 '            pic3D.ToolTipText = " X = " & Format$(XV(I), "#0.000 ") & _
 '                                " Y = " & Format$(YV(J), "#0.000 ") & _
 '                                " Z = " & Format$(ZV(I, J), "#0.000 ")
-            AggiornaPosizioniCursore lblX, Format$(XV(I), "#0.000 "), _
+            UpdateCursorPositions lblX, Format$(XV(I), "#0.000 "), _
                                      lblY, Format$(YV(J), "#0.000 "), _
                                      lblZ, Format$(ZV(I, J) * 10 ^ ZEsp, "#0.000 ")
             shpInd.Left = pic3D.ScaleX(PRv(I, J).X - shpIndOffx, vbPixels, vbUser) _
@@ -2040,7 +2051,7 @@ Private Sub Timer1_Timer()
     If THETA >= PI2 Then THETA = 0
     lblTheta = Format(RadToGrd * THETA, "#0.0")
 '
-    Disegna
+    Draw
 '
 '
 '
@@ -2054,12 +2065,12 @@ Private Sub updTheta_Change()
     THETA = CDbl(lblTheta) / RadToGrd
     lblTheta = Format(RadToGrd * THETA, "#0.0")
 '
-    Disegna
+    Draw
 '
 '
 '
 End Sub
-Private Sub DisegnaAsseRot()
+Private Sub DrawAxisRot()
 '
 '
     Dim X0!, x1!, x2!, Y0!, y1!, y2!
