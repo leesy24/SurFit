@@ -537,16 +537,16 @@ Attribute VB_Exposed = False
 '
 Option Explicit
 '
-Dim ND&             ' N?di dati da interpolare.
-Dim NXI&, NYI&      ' N?di colonne e di righe nella
-                    ' griglia dei punti interpolati.
-Dim NLiv&           ' N?di livelli per CONREC.
+Dim ND&             ' Number of data to be interpolated.
+Dim NXI&, NYI&      ' Number of columns and rows in the
+                    ' interpolated points grid.
+Dim NLiv&           ' Number of levels for CONREC.
 '
 Dim Par As ParType  ' Parametri di KTB2D.
 '
 Dim NQ&, NW&, NR&   ' Parametri di QSHEP2D.
 '
-Dim TP#             ' Parametri di MASUB.
+Dim TP#             ' Parameters of MASUB.
 '
 Dim RS1&            ' Posizionamenti
 Dim CS1&            ' per l' "editing"

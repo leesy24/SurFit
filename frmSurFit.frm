@@ -370,10 +370,10 @@ Attribute VB_Exposed = False
 '
 Option Explicit
 '
-Dim ND&             ' N?di dati nei vettori.
-Dim XD#()           ' Vettori dei valori
-Dim YD#()           ' dati della superficie
-Dim ZD#()           ' da interpolare.
+Dim ND&             ' Number of data in the vectors.
+Dim XD#()           ' Vector data values
+Dim YD#()           ' of the surface
+Dim ZD#()           ' to be interpolated.
 '
 Dim Xs#(), Ys#()    ' Coordinate della griglia dei punti dati.
 '
