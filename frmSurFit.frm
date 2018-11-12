@@ -404,7 +404,7 @@ Dim lZxy&           ' Indice della funzione di prova.
 Dim bScriviVal As Boolean   ' Scrive i valori delle linee di livello.
 Dim bDisegnaGD As Boolean   ' Disegna le freccette del gradiente.
 Dim bDrawZC As Boolean   ' Disegna la superficie calcolata.
-Dim Titolo$                 ' Titolo del quadro picOrg.
+Dim Title$                 ' Titolo del quadro picOrg.
 '
 Const Me_W& = 9600          ' Dimensioni di questo
 Const Me_H& = 7200 - 255    ' Form [Twips].
@@ -507,15 +507,16 @@ Private Sub Test_QSHEP2D()
 '
 '
 End Sub
+
 Private Function Zxy(ByVal x1#, ByVal x2#) As Double
 '
-'   Funzioni di prova a due parametri:
+'   Two parameter test functions:
 '
     Dim A#, B#
 '
     Select Case lZxy
         Case 1
-        ' Cerchi concentrici:
+        ' Concentric circles:
         A = Sqr(x1 ^ 2 + x2 ^ 2) - 6#
         B = 1#
 '
@@ -527,18 +528,18 @@ Private Function Zxy(ByVal x1#, ByVal x2#) As Double
         'B = Abs(x2) + 3#
 '
         Case 3
-        ' Funzione di prova #1 per "Genetic Algorithms":
+        ' Test function #1 for "Genetic Algorithms":
         A = Cos(Sqr((x1 + 1#) ^ 2 + (x2 - 1#) ^ 2))
         B = Sqr((x1 - 1#) ^ 2 + (x2 + 1#) ^ 2) + 2#
 '
         Case 4
-        ' Funzione di prova #2 per "Genetic Algorithms":
+        ' Test function #2 for "Genetic Algorithms":
         A = Cos(Sqr((x1) ^ 2 + x2 * x2))
         B = Sqr(0.005 * x1 ^ 2 + x2 * x2) + 2
         B = Sqr(x2 * x2) + 2#
 '
         Case 5
-        ' Funzione di prova #3 per "Genetic Algorithms":
+        ' Test function #3 for "Genetic Algorithms":
         A = Cos(Sqr((x1 + 1) ^ 2 + (x2 - 1) ^ 2))
         B = Sqr((x1 + 1) ^ 2 + x2 * x2) + 2#
 '
@@ -548,7 +549,7 @@ Private Function Zxy(ByVal x1#, ByVal x2#) As Double
         B = 1#
 '
         Case 7
-        ' CONREC Esempio 1:
+        ' CONREC Example 1:
         x1 = x1 / 20#
         x2 = x2 / 20#
         A = 1#
@@ -566,6 +567,7 @@ Private Function Zxy(ByVal x1#, ByVal x2#) As Double
 '
 '
 End Function
+
 Private Sub chkGradiente_Click()
 '
 '
@@ -653,9 +655,9 @@ Private Sub cmdTest_Click()
     ND = CLng(RandU(6, 200))
     ReDim XD#(1 To ND), YD#(1 To ND), ZD#(1 To ND)
     For N = 1 To ND
-        ' Ascission of data points:
+        ' Abscissas of data points:
         XD(N) = RandU(-10, 10)
-        ' Order data points:
+        ' ordinates of data points:
         YD(N) = RandU(-10, 10)
     Next N
 '
@@ -671,7 +673,7 @@ Private Sub cmdTest_Click()
 '
     ' Call the interpolation routine:
     bDrawZC = True
-    Titolo$ = ND & " Random points"
+    Title$ = ND & " Random points"
     If optKTB2D Then
         Test_KTB2D
     ElseIf optMASUB Then
@@ -712,26 +714,26 @@ End Sub
 
 Private Sub Test_MASUB()
 '
-'   Interpolazione di una superficie con punti dati
-'   nei vettori XD(), YD(), ZD():
+'   Interpolation of a surface with data points in
+'   the XD (), YD (), ZD () vectors:
 '
     Dim A#, B#, C#, D#, Px3!, Py3!
     Dim IC&, IEX&
 '
-    ' Prepara i vettori XI() ed YI() con le
-    ' coordinate della griglia di interpolazione:
+    ' Prepare the XI () and YI () vectors with the coordinates of
+    ' the interpolation grid:
     GrigliaDiInterpolazione A, B, C, D, 0.1
 '
-    ' Impostazione parametri per MASUB:
-    IC = 1      ' Prima ed unica chiamata.
-    IEX = 1     ' E' richiesta l' estrapolazione.
+    ' Parameter setting for MASUB:
+    IC = 1      ' First and only call.
+    IEX = 1     ' Extrapolation is required.
 '
     If Not MASUB(IC, IEX, ND, XD(), YD(), ZD(), TP _
                , NXI, NYI, XI(), YI(), ZI()) Then
         MsgBox "Error in MASUB", vbCritical
         Exit Sub
     End If
-    lblNAdd = UBound(XD) - ND   ' Punti aggiunti per estrapolazione.
+    lblNAdd = UBound(XD) - ND   ' Points added for extrapolation.
 '
     DisegnaLivelli A, B, C, D, Px3, Py3
     If bDisegnaGD Then
@@ -745,6 +747,7 @@ Private Sub Test_MASUB()
 '
 '
 End Sub
+
 Private Sub DisegnaGriglia(Quadro As PictureBox, dXI#(), dYI#())
 '
 '   Disegna una griglia alle coordinate definite
@@ -768,6 +771,7 @@ Private Sub DisegnaGriglia(Quadro As PictureBox, dXI#(), dYI#())
 '
 '
 End Sub
+
 Public Sub GridPointsData(XD#(), YD#(), XGD#(), YGD#())
 '
 '   Prepare the vector vectors of the data points, eliminating
@@ -785,6 +789,7 @@ Public Sub GridPointsData(XD#(), YD#(), XGD#(), YGD#())
 '
 '
 End Sub
+
 Private Sub DisegnaLivelli(ByVal A#, ByVal B#, ByVal C#, ByVal D#, _
     ByRef Px3!, ByRef Py3!)
 '
@@ -794,7 +799,7 @@ Private Sub DisegnaLivelli(ByVal A#, ByVal B#, ByVal C#, ByVal D#, _
     ReDim ZLin(1 To NLiv) As LineaLivello_Type
 '
     ' Imposta la grafica:
-    Quadro picOrg, A, B, C, D, , , 3, Px3, Py3, "Data points: " & Titolo$, _
+    Quadro picOrg, A, B, C, D, , , 3, Px3, Py3, "Data points: " & Title$, _
                   "x", "y", True
     Quadro picSurFit, A, B, C, D, , , , , , "Interpolated surface", "x", "y", True
 '
@@ -856,7 +861,7 @@ Private Sub DisegnaLivelli(ByVal A#, ByVal B#, ByVal C#, ByVal D#, _
     End If
 '
     ' Disegna la superficie in 3D:
-    frm3D.Superficie XI#(), YI#(), ZI#(), Titolo$
+    frm3D.Surface XI#(), YI#(), ZI#(), Title$
 '
 '
 '
@@ -997,8 +1002,8 @@ Private Sub mnuLeggiDati_Click()
                               FolderN$, , " Surface data to be interpolated")
 '
 '
-    If BreakDown(FN_Temp$, FolderN$, Titolo$) Then
-        ElaboraFileDati FN_Temp$
+    If BreakDown(FN_Temp$, FolderN$, Title$) Then
+        ProcessDataFile FN_Temp$
     End If
 '
 '
@@ -1024,8 +1029,8 @@ Private Sub mnuRecent_Click(INDEX As Integer)
     FN_Temp$ = mnuRecent(INDEX).Caption
     FN_Temp$ = Right$(FN_Temp$, Len(FN_Temp$) - 3)
 '
-    If BreakDown(FN_Temp$, FolderN$, Titolo$) Then
-        ElaboraFileDati FN_Temp$
+    If BreakDown(FN_Temp$, FolderN$, Title$) Then
+        ProcessDataFile FN_Temp$
     End If
 '
 '
@@ -1203,7 +1208,7 @@ End Sub
 Private Sub picOrg_Click()
 '
 '
-    frm3D.Punti XD#(), YD#(), ZD#(), Titolo$
+    frm3D.Points XD#(), YD#(), ZD#(), Title$
 '
 '
 '
@@ -1211,28 +1216,29 @@ End Sub
 Private Sub picSurFit_Click()
 '
 '
-    frm3D.Superficie XI#(), YI#(), ZI#(), Titolo$
+    frm3D.Surface XI#(), YI#(), ZI#(), Title$
 '
 '
 '
 End Sub
-Private Sub ElaboraFileDati(ByVal FileN$)
+
+Private Sub ProcessDataFile(ByVal FileN$)
 '
 '
     Dim FF%
 '
-    On Error GoTo ElaboraFileDati_ERR
+    On Error GoTo ProcessDataFile_ERR
 '
     mnuFile.Enabled = False
     Screen.MousePointer = vbHourglass
     DoEvents
 '
-    AggiornaFilesRecenti Me.mnuRecent, FileN$
+    UpdateRecentFiles Me.mnuRecent, FileN$
 '
     FF = FreeFile
     Open FileN$ For Input As #FF
 '
-    ' Legge i punti dati dal file:
+    ' Read the data points from the file:
     ND = 0
     Do While Not EOF(FF)
         ND = ND + 1
@@ -1242,11 +1248,10 @@ Private Sub ElaboraFileDati(ByVal FileN$)
 '
     Call DefaultParameters
 '
-    ' Prepara una griglia
-    ' corrispondente ai punti dati:
+    ' Prepare a grid corresponding to data points:
     GridPointsData XD(), YD(), Xs(), Ys()
 '
-    ' Chiama la routine di interpolazione:
+    ' Call the interpolation routine:
     bDrawZC = False
     If optKTB2D Then
         Test_KTB2D
@@ -1258,7 +1263,7 @@ Private Sub ElaboraFileDati(ByVal FileN$)
     mnuSalvaInterpolati.Enabled = True
 '
 '
-ElaboraFileDati_ERR:
+ProcessDataFile_ERR:
     Close FF
     Screen.MousePointer = vbDefault
     mnuFile.Enabled = True

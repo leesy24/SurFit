@@ -6,7 +6,7 @@ Attribute VB_Name = "modMASUB"
 ' Data............: 21/9/2001
 ' Versione........: 1.0 a 32 bits.
 ' Sistema.........: VB6 sotto Windows NT.
-' Scritto da......: F. Languasco ®
+' Scritto da......: F. Languasco 
 ' E-Mail..........: MC7061@mclink.it
 ' DownLoads a.....: http://members.xoom.it/flanguasco/
 '                   http://www.flanguasco.org
@@ -24,6 +24,7 @@ Attribute VB_Name = "modMASUB"
 '      VOL. 15, NO. 4, PP. 365-374.
 '
 Option Explicit
+
 Public Function MASUB(ByVal IC&, ByVal IEX&, ByVal ND&, XD#(), YD#(), ZD#(), _
      ByVal TP#, ByVal NXI&, ByVal NYI&, XI#(), YI#(), ByRef ZI#()) As Boolean
 '
@@ -272,6 +273,7 @@ Public Function MASUB(ByVal IC&, ByVal IEX&, ByVal ND&, XD#(), YD#(), ZD#(), _
 '
 '
 End Function
+
 Private Sub MACEPS(ByRef SRELPR#)
 '
 '   IT CARRIES OUT AN APPROXIMATION OF MACHINE PRECISION

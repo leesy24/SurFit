@@ -47,11 +47,11 @@ Attribute VB_Exposed = False
 '================================================================
 '
 '   Nel Form di origine usare il codice:
-'    frmIstruzioni.Apri FileIstruzioni$ [, Titolo$] [, Posizione&] [, SForm as Form]
+'    frmIstruzioni.Apri FileIstruzioni$ [, Title$] [, Posizione&] [, SForm as Form]
 '
 '     FileIstruzioni$:    Nome, completo di path e di tipo .txt o .rtf,
 '                         con le istruzioni da visualizzare.
-'     Titolo$:            Caption di questo Form [opzionale].
+'     Title$:            Caption di questo Form [opzionale].
 '     Posizione:          Posizione iniziale di questo Form [opzionale]
 '                         e puo' essere solo:
 '                          0 = in alto, a destra, del Form di origine.
@@ -177,14 +177,14 @@ End Sub
 
 
 
-Public Sub Apri(ByVal NFileIstruzioni$, Optional ByVal Titolo$ = "Instructions", _
+Public Sub Apri(ByVal NFileIstruzioni$, Optional ByVal Title$ = "Instructions", _
     Optional ByVal NPosizione& = 2, Optional ByVal NSform As Form)
 '
 '
     FileIstruzioni$ = NFileIstruzioni$
     Posizione = NPosizione
     Set SForm = NSform
-    Me.Caption = " " & Titolo$
+    Me.Caption = " " & Title$
 '
     Me.Show
 '

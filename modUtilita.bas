@@ -583,7 +583,7 @@ End Sub
 
 Public Function CMDialog_Files(ByVal CMDialog As CommonDialog, ByVal Oper$, _
     ByVal Tipo$, ByVal Ext$, Optional ByVal DirNome$ = "", _
-    Optional ByVal FileNome$ = "", Optional ByVal Titolo$ = "") As String
+    Optional ByVal FileNome$ = "", Optional ByVal Title$ = "") As String
 '
 '   Imposta i valori di una finestra per la gestione dei Files
 '   e ritorna il nome completo del File scelto.
@@ -597,7 +597,7 @@ Public Function CMDialog_Files(ByVal CMDialog As CommonDialog, ByVal Oper$, _
 '    Ext$:      estensioni dei files da proporre (e.g. "*.dat[;*.txt]").
 '    DirNome$:  Folder di default.
 '    FileNome$: nome del File di default.
-'    Titolo$:   titolo della finestra.
+'    Title$:   titolo della finestra.
 '
     Dim Filter$
 '
@@ -629,7 +629,7 @@ Public Function CMDialog_Files(ByVal CMDialog As CommonDialog, ByVal Oper$, _
     End If
 '
     ' Scrive il titolo della finestra:
-    CMDialog.DialogTitle = " " & Titolo$
+    CMDialog.DialogTitle = " " & Title$
 '
     ' Controlla l' esistenza del File, chiede conferma
     ' se File Already Exists, nasconde la casella Read Only:
@@ -692,7 +692,7 @@ Public Function Quadro(ByVal Foglio As PictureBox, _
     Optional ByVal FormatVX$ = "#0.0##", _
     Optional ByVal FormatVY$ = "#0.0##", _
     Optional ByVal Npx& = 1, Optional PxN_X!, Optional PxN_Y!, _
-    Optional ByVal Titolo$ = "", _
+    Optional ByVal Title$ = "", _
     Optional ByVal UnitaX$ = "", _
     Optional ByVal UnitaY$ = "", _
     Optional ByVal AutoRed As Boolean = False) As Boolean
@@ -711,7 +711,7 @@ Public Function Quadro(ByVal Foglio As PictureBox, _
 '    Npx:       N° di Pixels di cui si vuole conoscere
 '    PxN_X:      larghezza in [vbUser] e
 '    PxN_Y:      altezza in [vbUser].
-'    Titolo$:   Titolo del grafico.
+'    Title$:   Titolo del grafico.
 '    UnitaX$:   Unita' (o titolo) dell' asse X.
 '    UnitaY$:   Unita' (o titolo) dell' asse Y.
 '    AutoRed:   Stato di Foglio.AutoRedraw dopo il disegno del quadro.
@@ -862,13 +862,13 @@ Public Function Quadro(ByVal Foglio As PictureBox, _
     End If
 '
     ' Scrive il titolo del grafico:
-    If Titolo$ <> "" Then
+    If Title$ <> "" Then
         Foglio.FontSize = 12
         Foglio.FontBold = True
         Foglio.ForeColor = vbRed
 '
-        TitW = Foglio.TextWidth(Titolo$)
-        TitH = Foglio.TextHeight(Titolo$)
+        TitW = Foglio.TextWidth(Title$)
+        TitH = Foglio.TextHeight(Title$)
         ' Verifica che il titolo stia tutto nel Foglio:
         If TitW <= Foglio.ScaleWidth Then
             TitL = (QxMin + QxMax - TitW) / 2!
@@ -876,7 +876,7 @@ Public Function Quadro(ByVal Foglio As PictureBox, _
         Else
             TitL = Foglio.ScaleLeft
             Tx$ = " . . . ."
-            Titolo$ = Left$(Titolo$, Int(Len(Titolo$) * _
+            Title$ = Left$(Title$, Int(Len(Title$) * _
             (Foglio.ScaleWidth - Foglio.TextWidth(Tx$)) / TitW)) & Tx$
         End If
         TitT = QyMax
@@ -884,7 +884,7 @@ Public Function Quadro(ByVal Foglio As PictureBox, _
         'Foglio.Line (TitL, TitT)-(TitL + TitW, TitT + TitH), Foglio.BackColor, BF
         Foglio.CurrentX = TitL
         Foglio.CurrentY = TitT
-        Foglio.Print Titolo$
+        Foglio.Print Title$
     End If
 '
     Foglio.DrawStyle = vbSolid

@@ -487,29 +487,29 @@ Attribute VB_Exposed = False
 '
 '   Routines di ingresso:
 '
-'    frm3D.Punti XD#(), YD#(), ZD#() [, Titolo$ = ""] [, IC& = 1] _
+'    frm3D.Points XD#(), YD#(), ZD#() [, Title$ = ""] [, IC& = 1] _
 '                [, bAutoScala as Boolean = True] _
 '                [, XMin#, XMax#, YMin#, YMax#, ZMin#, ZMax#]
 '     XD():       vettore contenente le ascisse  dei punti da rappresentare.
 '     YD():          "        "       " ordinate  "    "    "      ".
 '     ZD():          "        "       " altezze   "    "    "      ".
-'     Titolo$:    titolo del quadro (opzionale).
+'     Title$:    titolo del quadro (opzionale).
 '     IC:         se IC <= 1 il Form viene messo in primo piano (opzionale).
 '     bAutoScala: se False devono essere passati anche i valori Min e Max
 '                 da usare come estremi dei tre assi.
 '
-'    frm3D.Superficie XI#(), YI#(), ZI#() [, Titolo$ = ""] [, IC& = 1]
+'    frm3D.Surface XI#(), YI#(), ZI#() [, Title$ = ""] [, IC& = 1]
 '     XI():     vettore contenente le ascisse  della superficie da rappresentare.
 '     YI():        "        "       " ordinate   "       "       "      ".
 '     ZI():     matrice     "       i livelli    "       "       "      ".
-'     Titolo$:  titolo del quadro (opzionale).
+'     Title$:  titolo del quadro (opzionale).
 '     IC:       se IC <= 1 il Form viene messo in primo piano (opzionale).
 '
-'   Nota:   Per Sub Punti:
+'   Nota:   Per Sub Points:
 '            i vettori XD(1 to ND), YD(1 to ND) e ZD(1 To ND) devono avere
 '            le stesse dimensioni; in caso contrario viene usata la dimensione
 '            piu' piccola.
-'           Per Sub Superficie:
+'           Per Sub Surface:
 '            se le dimensioni dei vettori sono XI(1 to NXI) e YI(1 to NYI),
 '            la matrice deve essere dimensionata come ZI(1 to NXI, 1 to NYI).
 '
@@ -521,7 +521,7 @@ Option Explicit
 Dim XV#(), YV#()    ' Vettori delle ascisse e delle ordinate.
 Dim ZV#()           ' Vettore delle altezze dei punti o
                     ' matrice dei livelli della superficie.
-Dim Titolo$
+Dim Title$
 '
 Dim fPunti As Boolean   ' Se True vengono disegnati i punti;
                         ' se False viene disegnata una superficie.
@@ -651,7 +651,7 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
     Optional ByVal FormatVY$ = "#0.0##", _
     Optional ByVal FormatVZ$ = "#0.0##", _
     Optional ByVal Npx& = 1, Optional ByRef PxN_X!, Optional ByRef PxN_Z!, _
-    Optional ByVal Titolo$ = "", _
+    Optional ByVal Title$ = "", _
     Optional ByVal UnitaX$ = "", _
     Optional ByVal UnitaY$ = "", _
     Optional ByVal UnitaZ$ = "", _
@@ -679,7 +679,7 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
 '     FormatVZ$: Stringa di formato dei valori sull' asse Z.
 '     Npx:       N?di Pixels di cui si vuole conoscere
 '                larghezza ed altezza in [vbUser].
-'     Titolo$:   Titolo del grafico.
+'     Title$:   Titolo del grafico.
 '     UnitaX$:   Unita' (o titolo) dell' asse X.
 '     UnitaY$:   Unita' (o titolo) dell' asse Y.
 '     UnitaZ$:   Unita' (o titolo) dell' asse Z.
@@ -812,7 +812,7 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
     ' Il bordo sopra e' 2 volte l' altezza dei valori
     ' piu' 2 volte l' altezza del titolo:
     Foglio.FontSize = 12
-    TxHt = TxHb + 2! * Abs(Foglio.TextHeight(Titolo$))
+    TxHt = TxHb + 2! * Abs(Foglio.TextHeight(Title$))
 '
     ' I bordi sopra e sotto sono:
     DDz = Foglio.ScaleWidth * LAx * RAyx * SinA / (Bl + DT_X + Br)
@@ -1010,13 +1010,13 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
 '
     Dim TitL!, TitT!, TitW!, TitH!
 '
-    If Len(Titolo$) > 0 Then
+    If Len(Title$) > 0 Then
         Foglio.FontSize = 12
         Foglio.FontBold = True
         Foglio.ForeColor = vbRed
 '
-        TitW = Foglio.TextWidth(Titolo$)
-        TitH = Foglio.TextHeight(Titolo$)
+        TitW = Foglio.TextWidth(Title$)
+        TitH = Foglio.TextHeight(Title$)
         ' Verifica che il titolo stia tutto nel Foglio:
         If TitW <= Foglio.ScaleWidth Then
             TitL = (QxMin + QxMax - TitW) / 2!
@@ -1024,7 +1024,7 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
             ' e se no' lo taglia:
             TitL = Foglio.ScaleLeft
             Tx$ = " . . . ."
-            Titolo$ = Left$(Titolo$, Int(Len(Titolo$) * _
+            Title$ = Left$(Title$, Int(Len(Title$) * _
             (Foglio.ScaleWidth - Foglio.TextWidth(Tx$)) / TitW)) & Tx$
         End If
         TitT = QzMax
@@ -1032,7 +1032,7 @@ Private Function Quadro3D(ByVal Foglio As PictureBox, _
         'Foglio.Line (TitL, TitT)-(TitL + TitW, TitT + TitH), Foglio.BackColor, BF
         Foglio.CurrentX = TitL
         Foglio.CurrentY = TitT
-        Foglio.Print Titolo$
+        Foglio.Print Title$
     End If
 '
 '-------------------------------------------------------------------------------------
@@ -1069,7 +1069,7 @@ Quadro3D_ERR:
 '
 End Function
 
-Public Sub Punti(XD_I#(), YD_I#(), ZD_I#(), Optional ByVal Titolo_I$ = "", _
+Public Sub Points(XD_I#(), YD_I#(), ZD_I#(), Optional ByVal Title_I$ = "", _
     Optional ByVal bAutoScala As Boolean = True, _
     Optional ByVal XMin_I#, Optional ByVal XMAx_I#, _
     Optional ByVal YMin_I#, Optional ByVal YMAx_I#, _
@@ -1086,7 +1086,7 @@ Public Sub Punti(XD_I#(), YD_I#(), ZD_I#(), Optional ByVal Titolo_I$ = "", _
     XV() = XD_I()
     YV() = YD_I()
     ZV() = ZD_I()
-    Titolo$ = Titolo_I$
+    Title$ = Title_I$
     If (Not bAutoScala) Then
         XMin = XMin_I
         XMax = XMAx_I
@@ -1105,7 +1105,7 @@ Public Sub Punti(XD_I#(), YD_I#(), ZD_I#(), Optional ByVal Titolo_I$ = "", _
 '
 '
 End Sub
-Public Sub Superficie(XI_I#(), YI_I#(), ZI_I#(), Optional ByVal Titolo_I$ = "")
+Public Sub Surface(XI_I#(), YI_I#(), ZI_I#(), Optional ByVal Title_I$ = "")
 '
 '   Routine di ingresso per la rappresentazione
 '   in 3D di una superficie:
@@ -1119,7 +1119,7 @@ Public Sub Superficie(XI_I#(), YI_I#(), ZI_I#(), Optional ByVal Titolo_I$ = "")
     XV() = XI_I()
     YV() = YI_I()
     ZV() = ZI_I()
-    Titolo$ = Titolo_I$
+    Title$ = Title_I$
 '
     fPunti = False
     Impostazioni
@@ -1873,7 +1873,7 @@ Private Sub Disegna(Optional ByVal bCambioVista As Boolean = False)
     lGrigliaCol = IIf(bRuota, RFCL, vbGreen)
     Quadro3D pic3D, XRMin, XRMax, YRMin, YRMax, ZRMin, ZRMax, _
              ALFA, RAyx, Ax, Bx, Ay, By, Az, Bz, , , "#0.000", , , , _
-             Titolo$, "x", "y", sUZ$, lGrigliaCol, True
+             Title$, "x", "y", sUZ$, lGrigliaCol, True
 '
     If bCambioVista Then
         ' Precalcolo delle traslazioni
