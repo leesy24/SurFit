@@ -21,7 +21,7 @@ Begin VB.Form frmSurFit
       Left            =   1980
       TabIndex        =   12
       Top             =   5880
-      Width           =   1455
+      Width           =   1550
    End
    Begin VB.Frame zFrame2 
       Caption         =   "Test functions:"
@@ -734,7 +734,6 @@ Private Sub Test_MASUB()
     IC = 1      ' First and only call.
     'IEX = 1     ' Extrapolation is required.
     ZI_default = 0
-    'ZI_default = 32000
 '
     If Not MASUB(IC, IEX, ND, XD(), YD(), ZD(), TP _
                , NXI, NYI, XI(), YI(), ZI(), ZI_default) Then
@@ -869,8 +868,7 @@ Private Sub DrawLevels(ByVal A#, ByVal B#, ByVal C#, ByVal D#, _
 '
     ' Draw the surface in 3D:
     'frm3D.Surface XI#(), YI#(), ZI#(), Title$
-    'frm3D.Surface XI#(), YI#(), ZI#(), Title$, False, -25000, 25000, -25000, 25000, 28000, 50000
-    frm3D.Surface XI#(), YI#(), ZI#(), Title$, False, -25000, 25000, -25000, 25000, 0, 50000
+    frm3D.Surface XI#(), YI#(), ZI#(), Title$, False, -25#, 25#, -25#, 25#, 0#, 50#
 '
 '
 '
@@ -1218,8 +1216,7 @@ Private Sub picOrg_Click()
 '
 '
     'frm3D.Points XD#(), YD#(), ZD#(), Title$
-    'frm3D.Points XD#(), YD#(), ZD#(), Title$, False, -25000, 25000, -25000, 25000, 28000, 50000
-    frm3D.Points XD#(), YD#(), ZD#(), Title$, False, -25000, 25000, -25000, 25000, 0, 50000
+    frm3D.Points XD#(), YD#(), ZD#(), Title$, False, -25#, 25#, -25#, 25#, 0#, 50#
 '
 '
 '
@@ -1229,8 +1226,7 @@ Private Sub picSurFit_Click()
 '
 '
     'frm3D.Surface XI#(), YI#(), ZI#(), Title$
-    'frm3D.Surface XI#(), YI#(), ZI#(), Title$, False, -25000, 25000, -25000, 25000, 28000, 50000
-    frm3D.Surface XI#(), YI#(), ZI#(), Title$, False, -25000, 25000, -25000, 25000, 0, 50000
+    frm3D.Surface XI#(), YI#(), ZI#(), Title$, False, -25#, 25#, -25#, 25#, 0#, 50#
 '
 '
 '
