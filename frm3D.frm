@@ -207,28 +207,28 @@ Begin VB.Form frm3D
          UseMaskColor    =   -1  'True
          Width           =   480
       End
-      Begin VB.OptionButton optBN 
+      Begin VB.OptionButton optBW 
          BackColor       =   &H00000000&
-         Caption         =   "&B/N"
+         Caption         =   "&B/W"
          ForeColor       =   &H8000000E&
          Height          =   255
-         Left            =   8280
+         Left            =   8160
          MousePointer    =   1  'Arrow
          TabIndex        =   6
          Top             =   60
-         Width           =   615
+         Width           =   735
       End
       Begin VB.OptionButton optCol 
          BackColor       =   &H00000000&
          Caption         =   "&Col."
          ForeColor       =   &H8000000E&
          Height          =   255
-         Left            =   8280
+         Left            =   8160
          MousePointer    =   1  'Arrow
          TabIndex        =   7
          Top             =   360
          Value           =   -1  'True
-         Width           =   615
+         Width           =   735
       End
       Begin VB.Shape shpInd 
          BorderColor     =   &H00FF00FF&
@@ -568,9 +568,10 @@ Dim bPause As Boolean   ' Flag for rotation paused.
 'Const RFCL& = &H8000&   ' Colore di assi e griglie di riferimento durante la rotazione.
 Const RFCL& = &H404080  ' Colore di assi e griglie di riferimento durante la rotazione.
 '
-Dim TCol&()         ' Tavola dei colori.
-Const NTCol& = 1280 ' Numero di colori disponibili in TCol().
-Dim ZCol&()         ' Vettore o matrice dei colori da usare.
+Dim TCol&()         ' Table of colors.
+'Const NTCol& = 1280 ' Number of colors available in TCol ().
+Const NTCol& = 1792 ' Number of colors available in TCol ().
+Dim ZCol&()         ' Vector or array of colors to be used.
 '
 Const Log10# = 2.30258509299405
 Const RadToGrd# = 180# / PI ' Fattore di conversione da [Rad] a [Grd].
@@ -1144,13 +1145,13 @@ End Sub
 
 Private Sub DrawSurface(ByVal bCol As Boolean)
 '
-'   Disegna, con API, i quadrilateri a colori o in B/N.  Disegnando le righe
-'   dall' ultima indietro fino alla prima (i.e. muovendosi verso l' osservatore),
-'   ogni quadrilatero nasconde la parte di immagine da lui coperta.
-'   Se bCol = True ai quadrilateri viene assegnato un colore proporzionale al
-'   valor medio delle coordinate Z dei quattro vertici.
+'   Draw, with API, the quadrilaterals in color or in B/W. Drawing the lines
+'    from the last back to the first (moving towards the observer), each
+'    quadrilateral hides the part of the image he covers.
+'   If bCol = True the quadrilaterals is assigned a color proportional to the
+'    mean value of the Z coordinates of the four vertices.
 '
-'   Schema del quadrilatero utilizzato dal vettore lpPoint_C():
+'   Diagram of the quadrilateral used by the lpPoint_C() vector:
 '    2 _____ 3      Vertice 1 -> lpPoint_C(1) = PRv(I, J)
 '     |     |       Vertice 2 -> lpPoint_C(2) = PRv(I, J + 1)
 '     |     |       Vertice 3 -> lpPoint_C(3) = PRv(I + 1, J + 1)
@@ -1162,11 +1163,11 @@ Private Sub DrawSurface(ByVal bCol As Boolean)
 '
     hPen = CreatePen(vbSolid, 1, vbWhite)
     hPen_O = SelectObject(pic3D.hdc, hPen)
-    hBrush = CreateSolidBrush(&H808080)         ' Imposta il colore dei
-    hBrush_O = SelectObject(pic3D.hdc, hBrush)  ' quadrilateri per disegno in B/N.
+    hBrush = CreateSolidBrush(&H808080)         ' Set the color of the
+    hBrush_O = SelectObject(pic3D.hdc, hBrush)  ' quadrilaterals for drawing in B/W.
 '
-    ' Calcolo la matrice dei vertici dei quadrilateri
-    ' proiettati sul piano di rappresentazione:
+    ' Calculating the matrix of the vertices of the quadrilaterals projected
+    '  on the representation plane:
     For J = 1 To NYV
         For I = 1 To NXV
             If bRotate Then
@@ -1180,13 +1181,12 @@ Private Sub DrawSurface(ByVal bCol As Boolean)
         Next I
     Next J
 '
-    ' Disegno i quadrilateri. In funzione di
-    ' THETA disegno per primi quelli piu'
-    ' lontani dall' osservatore:
+    ' Drawing the quadrilaterals. As a function of THETA,
+    '  first design those more 'far from the' observer:
     Quadrante = CLng(Int(THETA / PI_2))
 '
     Select Case Quadrante
-        Case 0  ' 1?quadrante.
+        Case 0  ' 1st Quadrant.
         For J = NYV - 1 To 1 Step -1
             For I = 1 To NXV - 1
                 lpPoint_C(1).X = PRv(I, J).X
@@ -1208,7 +1208,7 @@ Private Sub DrawSurface(ByVal bCol As Boolean)
             Next I
         Next J
 '
-        Case 1  ' 2?quadrante.
+        Case 1  ' 2nd Quadrant.
         For I = NXV - 1 To 1 Step -1
             For J = NYV - 1 To 1 Step -1
                 lpPoint_C(1).X = PRv(I, J).X
@@ -1230,7 +1230,7 @@ Private Sub DrawSurface(ByVal bCol As Boolean)
             Next J
         Next I
 '
-        Case 2  ' 3?quadrante.
+        Case 2  ' 3rd Quadrant.
         For J = 1 To NYV - 1
             For I = NXV - 1 To 1 Step -1
                 lpPoint_C(1).X = PRv(I, J).X
@@ -1252,7 +1252,7 @@ Private Sub DrawSurface(ByVal bCol As Boolean)
             Next I
         Next J
 '
-        Case 3  ' 4?quadrante.
+        Case 3  ' 4th Quadrant.
         For I = 1 To NXV - 1
             For J = 1 To NYV - 1
                 lpPoint_C(1).X = PRv(I, J).X
@@ -1283,6 +1283,7 @@ Private Sub DrawSurface(ByVal bCol As Boolean)
 '
 '
 End Sub
+
 Private Sub DisegnaSup_BN()
 '
 '   NON USATA.
@@ -1624,7 +1625,11 @@ Private Sub Settings(Optional ByVal bAutoScale As Boolean = True)
                 ' Calculation of the mean value of the Z coordinates of the four vertices:
                 ZMed = CSng(ZV(I, J) + ZV(I, J + 1) + ZV(I + 1, J + 1) + ZV(I + 1, J)) / 4!
                 ' and of the corresponding color:
-                ZCol(I, J) = TCol(CLng((ZMed - ZMin) * ZnCol))
+                If ZMed >= ZMin Then
+                    ZCol(I, J) = TCol(CLng((ZMed - ZMin) * ZnCol))
+                Else
+                    ZCol(I, J) = TCol(0)
+                End If
             Next I
         Next J
     End If
@@ -1789,7 +1794,7 @@ Private Sub Form_Unload(Cancel As Integer)
 '
 End Sub
 
-Private Sub optBN_Click()
+Private Sub optBW_Click()
 '
 '
     Draw
@@ -1797,6 +1802,7 @@ Private Sub optBN_Click()
 '
 '
 End Sub
+
 Private Sub optCol_Click()
 '
 '
@@ -1805,6 +1811,7 @@ Private Sub optCol_Click()
 '
 '
 End Sub
+
 Private Sub pic3D_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 '
 '
