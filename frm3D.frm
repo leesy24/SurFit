@@ -568,8 +568,7 @@ Dim bPause As Boolean   ' Flag for rotation paused.
 Const RFCL& = &H404080  ' Colore di assi e griglie di riferimento durante la rotazione.
 '
 Dim TCol&()         ' Table of colors.
-'Const NTCol& = 1280 ' Number of colors available in TCol ().
-Const NTCol& = 1792 ' Number of colors available in TCol ().
+Const NTCol& = 1280 ' Number of colors available in TCol ().
 Dim ZCol&()         ' Vector or array of colors to be used.
 '
 Const Log10# = 2.30258509299405
@@ -1494,7 +1493,7 @@ Private Sub Settings(Optional ByVal bAutoScale As Boolean = True)
 '
 '   Find and calculate commonly used settings and variables:
 '
-    Dim I&, J&, N&, ZnCol!, ZMed!
+    Dim I&, J&, N&, ZnCol!, ZMed!, ZMinCol!, ZMaxCol!
     Dim AMax#, Rid#
 '
     If bAutoScale Then
@@ -1522,20 +1521,47 @@ Private Sub Settings(Optional ByVal bAutoScale As Boolean = True)
             ' Find the minimum and maximum values of heights:
             ZMin = DMINVAL(ZV())
             ZMax = DMAXVAL(ZV())
+'
+            ' Step between colors:
+            If (ZMax > ZMin) Then
+                ZnCol = CSng(NTCol - 1) / (ZMax - ZMin)
+            End If
+'
+            ' Prepare the color vector to be assigned to the points:
+            ReDim ZCol(1 To NV)
+            For N = 1 To NV
+                ' Calculation of the corresponding color:
+                ZCol(N) = TCol(CLng((ZV(N) - ZMin) * ZnCol))
+            Next N
+'
+        Else
+            ' Find the minimum and maximum levels values for color table:
+            ZMinCol = ZMax
+            ZMaxCol = ZMin
+            For N = 1 To NV
+                If ZV(N) <> ZMin Then
+                    If ZMinCol > ZV(N) Then ZMinCol = ZV(N)
+                    If ZMaxCol < ZV(N) Then ZMaxCol = ZV(N)
+                End If
+            Next N
+'
+            ' Step between colors:
+            If (ZMaxCol > ZMinCol) Then
+                ZnCol = CSng(NTCol - 1) / (ZMaxCol - ZMinCol)
+            End If
+'
+            ' Prepare the color vector to be assigned to the points:
+            ReDim ZCol(1 To NV)
+            For N = 1 To NV
+                If ZV(N) >= ZMinCol Then
+                    ' Calculation of the corresponding color:
+                    ZCol(N) = TCol(CLng((ZV(N) - ZMinCol) * ZnCol))
+                Else
+                    ZCol(N) = &H808080 ' Grey.
+                End If
+            Next N
+'
         End If
-'
-        ' Step between colors:
-        If (ZMax > ZMin) Then
-            ZnCol = CSng(NTCol - 1) / (ZMax - ZMin)
-        End If
-'
-        ' Prepare the color vector to be assigned to the points:
-        ReDim ZCol(1 To NV)
-        For N = 1 To NV
-            ' Calculation of the corresponding color:
-            ZCol(N) = TCol(CLng((ZV(N) - ZMin) * ZnCol))
-        Next N
-'
     Else
         ' Settings for drawing a surface:
         NXV = UBound(XV)
@@ -1551,8 +1577,20 @@ Private Sub Settings(Optional ByVal bAutoScale As Boolean = True)
                     If ZMax < ZV(I, J) Then ZMax = ZV(I, J)
                 Next I
             Next J
+        Else
+            ' Find the minimum and maximum levels values for color table:
+            ZMinCol = ZMax
+            ZMaxCol = ZMin
+            For J = 1 To NYV
+                For I = 1 To NXV
+                    If ZV(I, J) <> ZMin Then
+                        If ZMinCol > ZV(I, J) Then ZMinCol = ZV(I, J)
+                        If ZMaxCol < ZV(I, J) Then ZMaxCol = ZV(I, J)
+                    End If
+                Next I
+            Next J
         End If
-        
+'
         AMax = DMAX1(Abs(XMin), Abs(XMax))
         If AMax > 1000# Then
             ' Reduces the scale of X values:
@@ -1568,7 +1606,7 @@ Private Sub Settings(Optional ByVal bAutoScale As Boolean = True)
             XEsp = 0
             sUX$ = "x"
         End If
-    
+'
         AMax = DMAX1(Abs(YMin), Abs(YMax))
         If AMax > 1000# Then
             ' Reduces the scale of Y values:
@@ -1584,7 +1622,7 @@ Private Sub Settings(Optional ByVal bAutoScale As Boolean = True)
             YEsp = 0
             sUY$ = "y"
         End If
-
+'
         AMax = DMAX1(Abs(ZMin), Abs(ZMax))
         If AMax > 1000# Then
             ' Reduces the scale of Z values:
@@ -1611,29 +1649,51 @@ Private Sub Settings(Optional ByVal bAutoScale As Boolean = True)
         For I = 1 To NPoli
             lpVertici(I) = 4
         Next I
-    '
+'
         ' Settings for the Sub DrawSurface:
         ReDim lpPoint_C(1 To 4)
 '
-        ' Step between colors:
-        If (ZMax > ZMin) Then
-            ZnCol = CSng(NTCol - 1) / (ZMax - ZMin)
-        End If
+        If bAutoScale Then
+            ' Step between colors:
+            If (ZMax > ZMin) Then
+                ZnCol = CSng(NTCol - 1) / (ZMax - ZMin)
+            End If
 '
-        ' Prepare the array of colors to assign to quadrilaterals:
-        ReDim ZCol(1 To NXV - 1, 1 To NYV - 1)
-        For J = 1 To NYV - 1
-            For I = 1 To NXV - 1
-                ' Calculation of the mean value of the Z coordinates of the four vertices:
-                ZMed = CSng(ZV(I, J) + ZV(I, J + 1) + ZV(I + 1, J + 1) + ZV(I + 1, J)) / 4!
-                ' and of the corresponding color:
-                If ZMed >= ZMin Then
-                    ZCol(I, J) = TCol(CLng((ZMed - ZMin) * ZnCol))
-                Else
-                    ZCol(I, J) = TCol(0)
-                End If
-            Next I
-        Next J
+            ' Prepare the array of colors to assign to quadrilaterals:
+            ReDim ZCol(1 To NXV - 1, 1 To NYV - 1)
+            For J = 1 To NYV - 1
+                For I = 1 To NXV - 1
+                    ' Calculation of the mean value of the Z coordinates of the four vertices:
+                    ZMed = CSng(ZV(I, J) + ZV(I, J + 1) + ZV(I + 1, J + 1) + ZV(I + 1, J)) / 4!
+                    ' and of the corresponding color:
+                    If ZMed >= ZMin Then
+                        ZCol(I, J) = TCol(CLng((ZMed - ZMin) * ZnCol))
+                    Else
+                        ZCol(I, J) = TCol(0)
+                    End If
+                Next I
+            Next J
+        Else
+            ' Step between colors:
+            If (ZMaxCol > ZMinCol) Then
+                ZnCol = CSng(NTCol - 1) / (ZMaxCol - ZMinCol)
+            End If
+'
+            ' Prepare the array of colors to assign to quadrilaterals:
+            ReDim ZCol(1 To NXV - 1, 1 To NYV - 1)
+            For J = 1 To NYV - 1
+                For I = 1 To NXV - 1
+                    ' Calculation of the mean value of the Z coordinates of the four vertices:
+                    ZMed = CSng(ZV(I, J) + ZV(I, J + 1) + ZV(I + 1, J + 1) + ZV(I + 1, J)) / 4!
+                    ' and of the corresponding color:
+                    If ZMed >= ZMinCol Then
+                        ZCol(I, J) = TCol(CLng((ZMed - ZMinCol) * ZnCol))
+                    Else
+                        ZCol(I, J) = &H808080 ' Grey.
+                    End If
+                Next I
+            Next J
+        End If
     End If
 '
 '

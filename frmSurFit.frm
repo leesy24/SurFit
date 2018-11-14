@@ -394,9 +394,9 @@ Dim TP#
 ' Impostazioni per QSHEP2D:
 Dim NQ&, NW&, NR&
 '
-Dim ZCol&()         ' Tavola dei colori.
-Const NTCol& = 1280 ' Numero di colori disponibili in ZCol().
-Dim NLiv&           ' Numero di livelli da tracciare.
+Dim ZCol&()         ' Table of colors.
+Const NTCol& = 1280 ' Number of colors available in ZCol ().
+Dim NLiv&           ' Number of levels to trace.
 '
 Dim FolderN$        ' Folder dei files dati.
 '
