@@ -371,9 +371,8 @@ Begin VB.Form frm3D
       Top             =   6600
       Width           =   1620
    End
-   Begin VB.Label lblIstruzioni 
+   Begin VB.Label lblstructions 
       BackStyle       =   0  'Transparent
-      Caption         =   "The view can be changed by moving (with the left mouse button pressed) to the end of the Y axis."
       BeginProperty Font 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -1481,6 +1480,9 @@ Private Sub Form_Load()
     bRotate = False
     bPause = False
     lblTheta = "0.0"
+    lblstructions = "The view can be changed by moving" & vbCrLf & _
+                    " (with the left mouse button pressed)" & vbCrLf & _
+                    " to the end of the Y axis."
 '
     bLoaded = True
 '
