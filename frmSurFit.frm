@@ -370,7 +370,11 @@ Attribute VB_Exposed = False
 '
 Option Explicit
 '
+Const ZDMax# = 50#   ' Max of Z
+'
 Dim ND&             ' Number of data in the vectors.
+Dim PhiD#()         ' Angle Phi data.
+Dim ThetaD#()       ' Angle Theta data.
 Dim XD#()           ' Vector data values
 Dim YD#()           ' of the surface
 Dim ZD#()           ' to be interpolated.
@@ -379,6 +383,7 @@ Dim Xs#(), Ys#()    ' Coordinates of the data point grid.
 '
 Dim NXI&, NYI&      ' Number of columns and rows in
                     ' the interpolated points grid.
+Dim PhiI#(), ThetaI#()    ' Coordinates of the interpolated points grid.
 Dim XI#(), YI#()    ' Coordinates of the interpolated points grid.
 Dim ZI#()           ' Interpolated surface.
 Dim ZI_default#     ' Default value of Interpolated surface.
@@ -648,7 +653,7 @@ End Sub
 Private Sub cmdTest_Click()
 '
 '
-    Dim I&, N&
+    Dim N&
 '
     cmdTest.Enabled = False
     Screen.MousePointer = vbHourglass
@@ -657,6 +662,7 @@ Private Sub cmdTest_Click()
     ND = CLng(RandU(6, 200))
     'D = CLng(89 * 89)
     'ND = CLng(46 * 46)
+    ReDim PhiD#(1 To ND), ThetaD#(1 To ND)
     ReDim XD#(1 To ND), YD#(1 To ND), ZD#(1 To ND)
     For N = 1 To ND
         ' Abscissas of data points:
@@ -726,8 +732,8 @@ Private Sub Test_MASUB()
     Dim A#, B#, C#, D#, Px3!, Py3!
     Dim IC&, IEX&
 '
-    ' Prepare the XI () and YI () vectors with the coordinates of
-    ' the interpolation grid:
+    ' Prepare the PhiI(), ThetaI(), XI () and YI () vectors with
+    '  the coordinates of the interpolation grid:
     GridForInterpolation A, B, C, D, 0.1
 '
     ' Parameter setting for MASUB:
@@ -868,7 +874,7 @@ Private Sub DrawLevels(ByVal A#, ByVal B#, ByVal C#, ByVal D#, _
 '
     ' Draw the surface in 3D:
     'frm3D.Surface XI#(), YI#(), ZI#(), Title$
-    frm3D.Surface XI#(), YI#(), ZI#(), Title$, False, -25#, 25#, -25#, 25#, 0#, 50#
+    frm3D.Surface PhiD#(), ThetaD#(), XI#(), YI#(), ZI#(), Title$, False, -25#, 25#, -25#, 25#, 0#, 50#
 '
 '
 '
@@ -1142,6 +1148,7 @@ Private Sub GridForInterpolation(ByRef A#, ByRef B#, ByRef C#, ByRef D#, _
     lblYMin = Format$(C, "#0.000")
     lblYMax = Format$(D, "#0.000")
 '
+    ReDim PhiI(1 To NXI), ThetaI#(1 To NYI) ' Angle phi and theta of the interpolated points grid.
     ReDim XI(1 To NXI), YI#(1 To NYI)   ' Coordinates of the interpolated points grid.
     ReDim ZI(1 To NXI, 1 To NYI)        ' Interpolated surface.
     ReDim ZC(1 To NXI, 1 To NYI)        ' Calculated surface.
@@ -1216,7 +1223,7 @@ Private Sub picOrg_Click()
 '
 '
     'frm3D.Points XD#(), YD#(), ZD#(), Title$
-    frm3D.Points XD#(), YD#(), ZD#(), Title$, False, -25#, 25#, -25#, 25#, 0#, 50#
+    frm3D.Points PhiD#(), ThetaD#(), XD#(), YD#(), ZD#(), Title$, False, -25#, 25#, -25#, 25#, 0#, 50#
 '
 '
 '
@@ -1226,7 +1233,7 @@ Private Sub picSurFit_Click()
 '
 '
     'frm3D.Surface XI#(), YI#(), ZI#(), Title$
-    frm3D.Surface XI#(), YI#(), ZI#(), Title$, False, -25#, 25#, -25#, 25#, 0#, 50#
+    frm3D.Surface PhiD#(), ThetaD#(), XI#(), YI#(), ZI#(), Title$, False, -25#, 25#, -25#, 25#, 0#, 50#
 '
 '
 '
@@ -1236,6 +1243,15 @@ Private Sub ProcessDataFile(ByVal FileN$)
 '
 '
     Dim FF%
+    Dim lND&         ' Number of data in the vectors.
+    Dim lPhiD#()     ' Angle Phi data.
+    Dim lThetaD#()   ' Angle Theta data.
+    Dim lXD#()       ' Vector data values
+    Dim lYD#()       ' of the surface
+    Dim lZD#()       ' to be interpolated.
+    Dim lZDA#    ' Average of ZD().
+    Dim lZDMin#    ' Min of ZD().
+    Dim i%
 '
     On Error GoTo ProcessDataFile_ERR
 '
@@ -1248,13 +1264,51 @@ Private Sub ProcessDataFile(ByVal FileN$)
     FF = FreeFile
     Open FileN$ For Input As #FF
 '
-    ' Read the data points from the file:
-    ND = 0
-    Do While Not EOF(FF)
-        ND = ND + 1
-        ReDim Preserve XD(1 To ND), YD(1 To ND), ZD(1 To ND)
-        Input #FF, XD(ND), YD(ND), ZD(ND)
-    Loop
+    If (False) Then
+        ' Read the data points from the file:
+        ND = 0
+        Do While Not EOF(FF)
+            ND = ND + 1
+            ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), XD(1 To ND), YD(1 To ND), ZD(1 To ND)
+            Input #FF, PhiD(ND), ThetaD(ND), XD(ND), YD(ND), ZD(ND)
+            YD(ND) = YD(ND) + 10#
+            'If (Sqr(XD(ND) ^ 2 + YD(ND) ^ 2) > 19#) Then
+            '    ND = ND - 1
+            'End If
+        Loop
+    Else
+        ' Read the data points from the file:
+        lND = 0
+        lZDA = 0
+        lZDMin = ZDMax
+        Do While Not EOF(FF)
+            lND = lND + 1
+            ReDim Preserve lPhiD(1 To lND), lThetaD(1 To lND), lXD(1 To lND), lYD(1 To lND), lZD(1 To lND)
+            Input #FF, lPhiD(lND), lThetaD(lND), lXD(lND), lYD(lND), lZD(lND)
+            lYD(lND) = lYD(lND) + 10#
+            If (Sqr(lXD(lND) ^ 2 + lYD(lND) ^ 2) > 19#) Then
+                lND = lND - 1
+            Else
+                lZDA = lZDA + lZD(lND)
+                If (lZD(lND) < lZDMin) Then lZDMin = lZD(lND)
+            End If
+        Loop
+'
+        lZDA = lZDA / lND
+'
+        ND = 0
+        For i = 1 To lND
+            If lZD(i) < lZDA + (lZDA - lZDMin) Then
+                ND = ND + 1
+                ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), XD(1 To ND), YD(1 To ND), ZD(1 To ND)
+                PhiD(ND) = lPhiD(i)
+                ThetaD(ND) = lThetaD(i)
+                XD(ND) = lXD(i)
+                YD(ND) = lYD(i)
+                ZD(ND) = lZD(i)
+            End If
+        Next i
+    End If
 '
     Call DefaultParameters
 '

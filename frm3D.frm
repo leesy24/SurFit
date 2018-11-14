@@ -241,8 +241,28 @@ Begin VB.Form frm3D
          Width           =   315
       End
    End
-   Begin VB.Label lblZ 
+   Begin VB.Label zLabel3 
+      Alignment       =   1  'Right Justify
+      BackStyle       =   0  'Transparent
+      Caption         =   "Theta:"
+      BeginProperty Font 
+         Name            =   "Small Fonts"
+         Size            =   6.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   195
+      Left            =   1200
+      TabIndex        =   29
+      Top             =   6525
+      Width           =   555
+   End
+   Begin VB.Label lblATheta 
       BorderStyle     =   1  'Fixed Single
+      Caption         =   "-00.00"
       BeginProperty Font 
          Name            =   "Small Fonts"
          Size            =   6.75
@@ -253,10 +273,65 @@ Begin VB.Form frm3D
          Strikethrough   =   0   'False
       EndProperty
       Height          =   240
-      Left            =   2820
+      Left            =   1800
+      TabIndex        =   28
+      Top             =   6510
+      Width           =   615
+   End
+   Begin VB.Label lblAPhi 
+      BorderStyle     =   1  'Fixed Single
+      Caption         =   "-00.00"
+      BeginProperty Font 
+         Name            =   "Small Fonts"
+         Size            =   6.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   240
+      Left            =   600
+      TabIndex        =   27
+      Top             =   6510
+      Width           =   615
+   End
+   Begin VB.Label zLabel1 
+      Alignment       =   1  'Right Justify
+      BackStyle       =   0  'Transparent
+      Caption         =   "Phi:"
+      BeginProperty Font 
+         Name            =   "Small Fonts"
+         Size            =   6.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   195
+      Left            =   240
+      TabIndex        =   26
+      Top             =   6525
+      Width           =   315
+   End
+   Begin VB.Label lblZ 
+      BorderStyle     =   1  'Fixed Single
+      Caption         =   "00.000"
+      BeginProperty Font 
+         Name            =   "Small Fonts"
+         Size            =   6.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   240
+      Left            =   4320
       TabIndex        =   21
       Top             =   6510
-      Width           =   855
+      Width           =   615
    End
    Begin VB.Label zLabel05 
       Alignment       =   1  'Right Justify
@@ -272,13 +347,14 @@ Begin VB.Form frm3D
          Strikethrough   =   0   'False
       EndProperty
       Height          =   195
-      Left            =   2580
+      Left            =   4080
       TabIndex        =   20
       Top             =   6525
       Width           =   195
    End
    Begin VB.Label lblX 
       BorderStyle     =   1  'Fixed Single
+      Caption         =   "00.000"
       BeginProperty Font 
          Name            =   "Small Fonts"
          Size            =   6.75
@@ -289,10 +365,10 @@ Begin VB.Form frm3D
          Strikethrough   =   0   'False
       EndProperty
       Height          =   240
-      Left            =   480
+      Left            =   2640
       TabIndex        =   19
       Top             =   6510
-      Width           =   855
+      Width           =   615
    End
    Begin VB.Label zLabel03 
       Alignment       =   1  'Right Justify
@@ -308,13 +384,14 @@ Begin VB.Form frm3D
          Strikethrough   =   0   'False
       EndProperty
       Height          =   195
-      Left            =   240
+      Left            =   2400
       TabIndex        =   18
       Top             =   6525
       Width           =   195
    End
    Begin VB.Label lblY 
       BorderStyle     =   1  'Fixed Single
+      Caption         =   "00.000"
       BeginProperty Font 
          Name            =   "Small Fonts"
          Size            =   6.75
@@ -325,10 +402,10 @@ Begin VB.Form frm3D
          Strikethrough   =   0   'False
       EndProperty
       Height          =   240
-      Left            =   1680
+      Left            =   3480
       TabIndex        =   17
       Top             =   6510
-      Width           =   855
+      Width           =   615
    End
    Begin VB.Label zLabel04 
       Alignment       =   1  'Right Justify
@@ -344,7 +421,7 @@ Begin VB.Form frm3D
          Strikethrough   =   0   'False
       EndProperty
       Height          =   195
-      Left            =   1440
+      Left            =   3240
       TabIndex        =   16
       Top             =   6525
       Width           =   195
@@ -402,10 +479,10 @@ Begin VB.Form frm3D
          Strikethrough   =   0   'False
       EndProperty
       Height          =   195
-      Left            =   4980
+      Left            =   6240
       TabIndex        =   13
       Top             =   6525
-      Width           =   1095
+      Width           =   615
    End
    Begin VB.Label zLabel02 
       Alignment       =   1  'Right Justify
@@ -421,7 +498,7 @@ Begin VB.Form frm3D
          Strikethrough   =   0   'False
       EndProperty
       Height          =   195
-      Left            =   3780
+      Left            =   4920
       TabIndex        =   12
       Top             =   6525
       Width           =   495
@@ -438,7 +515,7 @@ Begin VB.Form frm3D
          Strikethrough   =   0   'False
       EndProperty
       Height          =   240
-      Left            =   4320
+      Left            =   5400
       TabIndex        =   11
       Top             =   6510
       Width           =   795
@@ -455,7 +532,7 @@ Begin VB.Form frm3D
          Strikethrough   =   0   'False
       EndProperty
       Height          =   240
-      Left            =   6120
+      Left            =   6840
       TabIndex        =   10
       Top             =   6510
       Width           =   795
@@ -517,9 +594,10 @@ Attribute VB_Exposed = False
 '
 Option Explicit
 '
-Dim XV#(), YV#()    ' Vettori delle ascisse e delle ordinate.
-Dim ZV#()           ' Vettore delle altezze dei punti o
-                    ' matrice dei livelli della superficie.
+Dim PhiV#(), ThetaV#()    ' Vectors of the angle phi and theta.
+Dim XV#(), YV#()    ' Vectors of the abscissas and ordinates.
+Dim ZV#()           ' Vectors of the heights of the points
+                    '  or matrix of the levels of the surface.
 Dim Title$
 '
 Dim fPoints As Boolean  ' If True, draw points;
@@ -1068,7 +1146,7 @@ Picture3D_ERR:
 '
 End Function
 
-Public Sub Points(XD_I#(), YD_I#(), ZD_I#(), Optional ByVal Title_I$ = "", _
+Public Sub Points(PhiD_I#(), ThetaD_I#(), XD_I#(), YD_I#(), ZD_I#(), Optional ByVal Title_I$ = "", _
     Optional ByVal bAutoScale As Boolean = True, _
     Optional ByVal XMin_I#, Optional ByVal XMAx_I#, _
     Optional ByVal YMin_I#, Optional ByVal YMAx_I#, _
@@ -1081,6 +1159,8 @@ Public Sub Points(XD_I#(), YD_I#(), ZD_I#(), Optional ByVal Title_I$ = "", _
         Me.ZOrder vbBringToFront
     End If
 '
+    PhiV() = PhiD_I()
+    ThetaV() = ThetaD_I()
     XV() = XD_I()
     YV() = YD_I()
     ZV() = ZD_I()
@@ -1104,7 +1184,7 @@ Public Sub Points(XD_I#(), YD_I#(), ZD_I#(), Optional ByVal Title_I$ = "", _
 '
 End Sub
 
-Public Sub Surface(XI_I#(), YI_I#(), ZI_I#(), Optional ByVal Title_I$ = "", _
+Public Sub Surface(PhiD_I#(), ThetaD_I#(), XI_I#(), YI_I#(), ZI_I#(), Optional ByVal Title_I$ = "", _
     Optional ByVal bAutoScale As Boolean = True, _
     Optional ByVal XMin_I#, Optional ByVal XMAx_I#, _
     Optional ByVal YMin_I#, Optional ByVal YMAx_I#, _
@@ -1118,6 +1198,8 @@ Public Sub Surface(XI_I#(), YI_I#(), ZI_I#(), Optional ByVal Title_I$ = "", _
         Me.ZOrder vbBringToFront
     End If
 '
+    PhiV() = PhiD_I()
+    ThetaV() = ThetaD_I()
     XV() = XI_I()
     YV() = YI_I()
     ZV() = ZI_I()
@@ -1388,7 +1470,7 @@ Private Sub cmdRotate_Click()
 '
     cmdPause.Enabled = bRotate
     shpInd.Visible = False
-    UpdateCursorPositions lblX, "", lblY, "", lblZ, ""
+    UpdateCursorPositions lblAPhi, "", lblATheta, "", lblX, "", lblY, "", lblZ, ""
 '
     If bRotate Then
         Timer1.Enabled = True
@@ -1835,7 +1917,7 @@ Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y A
 '
 '
     shpInd.Visible = False
-    UpdateCursorPositions lblX, "", lblY, "", lblZ, ""
+    UpdateCursorPositions lblAPhi, "", lblATheta, "", lblX, "", lblY, "", lblZ, ""
 '
 '
 '
@@ -1881,7 +1963,7 @@ Private Sub pic3D_MouseDown(Button As Integer, Shift As Integer, X As Single, Y 
         pic3D.MousePointer = vbCustom
 '
         shpInd.Visible = False
-        UpdateCursorPositions lblX, "", lblY, "", lblZ, ""
+        UpdateCursorPositions lblAPhi, "", lblATheta, "", lblX, "", lblY, "", lblZ, ""
 '
         lblRAyx.BackColor = PCHL
         lblAlfa.BackColor = PCHL
@@ -2028,19 +2110,19 @@ Private Sub Draw(Optional ByVal bChangeView As Boolean = False)
 '
 End Sub
 
-Private Sub CercaVertice(ByVal LPx&, ByVal lPy&, ByRef Iu&, ByRef Ju&)
+Private Sub SearchVertex(ByVal LPx&, ByVal lPy&, ByRef Iu&, ByRef Ju&)
 '
-'   Cerca, nella matrice PRv(), il vertice piu' vicino alle
-'   coordinate proiettate lPx, lPy e ne ritorna gli indici
-'   di colonna e riga.  In questa matrice i vertici in primo
-'   piano sono quelli della prima riga e vengono favoriti:
+'   Search, in the PRv () matrix, the vertex closest to the projected
+'    coordinates lPx, lPy and return the column and row indexes.
+'   In this matrix the vertices in the foreground are those of the first row
+'    and are favored:
 '
     Dim I&, J&, DisY&, DisQ&, DisQMin&
 '
     DisQMin = 2147483647
     For J = 1 To NYV
-        DisY = (YV(J) - YRMin)  ' Favorisce, nella ricerca,
-                                ' i vertici con Y minore.
+        DisY = (YV(J) - YRMin)  ' It favors, in the research,
+                                '  the vertices with Y minor.
         For I = 1 To NXV
             DisQ = (PRv(I, J).X - LPx) * (PRv(I, J).X - LPx) _
                  + (PRv(I, J).Y - lPy) * (PRv(I, J).Y - lPy) + DisY
@@ -2058,7 +2140,9 @@ End Sub
 
 Private Sub UpdateCursorPositions(ByVal lblVal1 As Label, ByVal Val1$ _
                                    , ByVal lblVal2 As Label, ByVal Val2$ _
-                                   , ByVal lblVal3 As Label, ByVal Val3$)
+                                   , ByVal lblVal3 As Label, ByVal Val3$ _
+                                   , ByVal lblVal4 As Label, ByVal Val4$ _
+                                   , ByVal lblVal5 As Label, ByVal Val5$)
 '
 '   Update the values of the cursor position windows
 '    and set the highlight color:
@@ -2066,21 +2150,24 @@ Private Sub UpdateCursorPositions(ByVal lblVal1 As Label, ByVal Val1$ _
     lblVal1 = Val1$
     lblVal2 = Val2$
     lblVal3 = Val3$
+    lblVal4 = Val4$
+    lblVal5 = Val5$
 '
     lblVal1.BackColor = IIf(Len(Val1$) = 0, vbButtonFace, PCHL)
     lblVal2.BackColor = IIf(Len(Val2$) = 0, vbButtonFace, PCHL)
     lblVal3.BackColor = IIf(Len(Val3$) = 0, vbButtonFace, PCHL)
+    lblVal4.BackColor = IIf(Len(Val4$) = 0, vbButtonFace, PCHL)
+    lblVal5.BackColor = IIf(Len(Val5$) = 0, vbButtonFace, PCHL)
 '
 '
 '
 End Sub
 
-Private Function CercaPunto(ByVal LPx&, ByVal lPy&) As Long
+Private Function SearchPoint(ByVal LPx&, ByVal lPy&) As Long
 '
-'   Cerca, nel vettore PRv(), il punto piu' vicino alle
-'   coordinate proiettate lPx, lPy e ne ritorna l' indice.
-'   Il vettore viene esplorato all' indietro per trovare
-'   prima i punti in primo piano:
+'   Search, in the vector PRv (), the point closest to the projected
+'    coordinates lPx, lPy and returns the index. The vector is explored
+'    backwards to find the foreground points first:
 '
     Dim N&, Nu&, DisQ&, DisQMin&
 '
@@ -2094,7 +2181,7 @@ Private Function CercaPunto(ByVal LPx&, ByVal lPy&) As Long
         End If
     Next N
 '
-    CercaPunto = Nu
+    SearchPoint = Nu
 '
 '
 '
@@ -2113,27 +2200,31 @@ Private Sub MeasureSpace3D()
         ScreenToClient pic3D.hWnd, LPx
 '
         If fPoints Then
-            N = CercaPunto(CLng(LPx.X), CLng(LPx.Y))
+            N = SearchPoint(CLng(LPx.X), CLng(LPx.Y))
 '            pic3D.ToolTipText = ""
 '            pic3D.ToolTipText = " X = " & Format$(XV(N), "#0.000 ") & _
 '                                " Y = " & Format$(YV(N), "#0.000 ") & _
 '                                " Z = " & Format$(ZV(N), "#0.000 ")
-            UpdateCursorPositions lblX, Format$(XV(N), "#0.000 "), _
-                                     lblY, Format$(YV(N), "#0.000 "), _
-                                     lblZ, Format$(ZV(N), "#0.000 ")
+            UpdateCursorPositions lblAPhi, Format$(PhiV(N), "#0.00 "), _
+                                    lblATheta, Format$(ThetaV(N), "#0.00 "), _
+                                    lblX, Format$(XV(N), "#0.000 "), _
+                                    lblY, Format$(YV(N), "#0.000 "), _
+                                    lblZ, Format$(ZV(N), "#0.000 ")
             shpInd.Left = pic3D.ScaleX(PRv(N).X - shpIndOffx, vbPixels, vbUser) _
                           + pic3D.ScaleLeft
             shpInd.Top = pic3D.ScaleY(PRv(N).Y - shpIndOffy, vbPixels, vbUser) _
                          + pic3D.ScaleTop
         Else
-            CercaVertice CLng(LPx.X), CLng(LPx.Y), I, J
+            SearchVertex CLng(LPx.X), CLng(LPx.Y), I, J
 '            pic3D.ToolTipText = ""
 '            pic3D.ToolTipText = " X = " & Format$(XV(I), "#0.000 ") & _
 '                                " Y = " & Format$(YV(J), "#0.000 ") & _
 '                                " Z = " & Format$(ZV(I, J), "#0.000 ")
-            UpdateCursorPositions lblX, Format$(XV(I) * 10 ^ XEsp, "#0.000 "), _
-                                     lblY, Format$(YV(J) * 10 ^ YEsp, "#0.000 "), _
-                                     lblZ, Format$(ZV(I, J) * 10 ^ ZEsp, "#0.000 ")
+            UpdateCursorPositions lblAPhi, Format$(PhiV(J), "#0.00 "), _
+                                    lblATheta, Format$(ThetaV(I), "#0.00 "), _
+                                    lblX, Format$(XV(I) * 10 ^ XEsp, "#0.000 "), _
+                                    lblY, Format$(YV(J) * 10 ^ YEsp, "#0.000 "), _
+                                    lblZ, Format$(ZV(I, J) * 10 ^ ZEsp, "#0.000 ")
             shpInd.Left = pic3D.ScaleX(PRv(I, J).X - shpIndOffx, vbPixels, vbUser) _
                           + pic3D.ScaleLeft
             shpInd.Top = pic3D.ScaleY(PRv(I, J).Y - shpIndOffy, vbPixels, vbUser) _
