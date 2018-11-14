@@ -709,7 +709,7 @@ Private Sub Form_Load()
 '
     NXI = 50
     NYI = 50
-    NLiv = 10   ' Number of levels to trace.
+    NLiv = 20   ' Number of levels to trace.
 '
     optZxy(1).Value = True
     cmdTest_Click
