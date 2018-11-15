@@ -1543,7 +1543,8 @@ Private Sub Form_Load()
 '
     ' Initial values:
     'RAyx = 1!       ' Y axis length ratio to X axis length.
-    'ALFA = PI / 6!  ' Angle of the Y axis with respect to the X axis: 30 [Grd]    RAyx = 0.5       ' Y axis length ratio to X axis length.
+    'ALFA = PI / 6!  ' Angle of the Y axis with respect to the X axis: 30 [Grd]
+    RAyx = 0.5       ' Y axis length ratio to X axis length.
     ALFA = PI / 3!  ' Angle of the Y axis with respect to the X axis: 60 [Grd].
 '
     lblRAyx = Format$(RAyx, "#0.000")
