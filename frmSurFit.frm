@@ -14,14 +14,24 @@ Begin VB.Form frmSurFit
    ScaleHeight     =   6360
    ScaleWidth      =   9510
    StartUpPosition =   3  'Windows Default
-   Begin VB.CheckBox chkValoriLivelli 
+   Begin VB.CheckBox chkFilterEnable 
       Alignment       =   1  'Right Justify
-      Caption         =   "&Values of Levels:"
+      Caption         =   "&Filter Enable:"
       Height          =   255
-      Left            =   1980
+      Left            =   2990
+      TabIndex        =   31
+      Top             =   5640
+      Value           =   1  'Checked
+      Width           =   1208
+   End
+   Begin VB.CheckBox chkValuesLevels 
+      Alignment       =   1  'Right Justify
+      Caption         =   "&Val. of Levels:"
+      Height          =   255
+      Left            =   2900
       TabIndex        =   12
       Top             =   5880
-      Width           =   1550
+      Width           =   1298
    End
    Begin VB.Frame zFrame2 
       Caption         =   "Test functions:"
@@ -146,20 +156,20 @@ Begin VB.Form frmSurFit
    Begin VB.CommandButton cmdGrigliaSurFit 
       Caption         =   "Grid"
       Height          =   255
-      Left            =   8460
+      Left            =   8975
       TabIndex        =   14
       TabStop         =   0   'False
       Top             =   5880
-      Width           =   855
+      Width           =   400
    End
    Begin VB.CommandButton cmdGrigliaOrg 
       Caption         =   "Grid"
       Height          =   255
-      Left            =   3780
+      Left            =   4295
       TabIndex        =   13
       TabStop         =   0   'False
       Top             =   5880
-      Width           =   855
+      Width           =   400
    End
    Begin VB.PictureBox picSurFit 
       AutoRedraw      =   -1  'True
@@ -196,64 +206,158 @@ Begin VB.Form frmSurFit
          _Version        =   393216
       End
    End
+   Begin VB.Label zLabel08 
+      BackStyle       =   0  'Transparent
+      Caption         =   "Offset Y"
+      Height          =   195
+      Left            =   740
+      TabIndex        =   41
+      Top             =   5640
+      Width           =   610
+   End
+   Begin VB.Label lblOffsetY 
+      BorderStyle     =   1  'Fixed Single
+      Caption         =   "-00.000"
+      Height          =   255
+      Left            =   740
+      TabIndex        =   40
+      Top             =   5880
+      Width           =   610
+   End
+   Begin VB.Label zLabel09 
+      BackStyle       =   0  'Transparent
+      Caption         =   "Offset X"
+      Height          =   195
+      Left            =   120
+      TabIndex        =   39
+      Top             =   5640
+      Width           =   610
+   End
+   Begin VB.Label lblOffsetX 
+      BorderStyle     =   1  'Fixed Single
+      Caption         =   "-00.000"
+      Height          =   255
+      Left            =   120
+      TabIndex        =   38
+      Top             =   5880
+      Width           =   610
+   End
+   Begin VB.Label lblRadius 
+      BorderStyle     =   1  'Fixed Single
+      Caption         =   "00.000"
+      Height          =   255
+      Left            =   1360
+      TabIndex        =   37
+      Top             =   5880
+      Width           =   570
+   End
+   Begin VB.Label zLabel07 
+      BackStyle       =   0  'Transparent
+      Caption         =   "Radius"
+      Height          =   195
+      Left            =   1360
+      TabIndex        =   36
+      Top             =   5640
+      Width           =   495
+   End
+   Begin VB.Label lblYMid 
+      BorderStyle     =   1  'Fixed Single
+      Caption         =   "-00.000"
+      Height          =   255
+      Left            =   7930
+      TabIndex        =   35
+      Top             =   5880
+      Width           =   610
+   End
+   Begin VB.Label Label2 
+      BackStyle       =   0  'Transparent
+      Caption         =   "Y Mid:"
+      Height          =   195
+      Left            =   7930
+      TabIndex        =   34
+      Top             =   5640
+      Width           =   495
+   End
+   Begin VB.Label lblXMid 
+      BorderStyle     =   1  'Fixed Single
+      Caption         =   "-00.000"
+      Height          =   255
+      Left            =   6040
+      TabIndex        =   33
+      Top             =   5880
+      Width           =   610
+   End
+   Begin VB.Label Label1 
+      BackStyle       =   0  'Transparent
+      Caption         =   "X Mid:"
+      Height          =   195
+      Left            =   6040
+      TabIndex        =   32
+      Top             =   5640
+      Width           =   495
+   End
    Begin VB.Label lblYMax 
       BorderStyle     =   1  'Fixed Single
+      Caption         =   "-00.000"
       Height          =   255
-      Left            =   7380
+      Left            =   7310
       TabIndex        =   30
       Top             =   5880
-      Width           =   795
+      Width           =   610
    End
    Begin VB.Label zLabel06 
       BackStyle       =   0  'Transparent
       Caption         =   "Y Max:"
       Height          =   195
-      Left            =   7380
+      Left            =   7310
       TabIndex        =   29
       Top             =   5640
       Width           =   495
    End
    Begin VB.Label lblXMax 
       BorderStyle     =   1  'Fixed Single
+      Caption         =   "-00.000"
       Height          =   255
-      Left            =   6540
+      Left            =   5420
       TabIndex        =   28
       Top             =   5880
-      Width           =   795
+      Width           =   610
    End
    Begin VB.Label zLabel05 
       BackStyle       =   0  'Transparent
       Caption         =   "X Max:"
       Height          =   195
-      Left            =   6540
+      Left            =   5420
       TabIndex        =   27
       Top             =   5640
       Width           =   495
    End
    Begin VB.Label lblYMin 
       BorderStyle     =   1  'Fixed Single
+      Caption         =   "-00.000"
       Height          =   255
-      Left            =   5640
+      Left            =   6690
       TabIndex        =   26
       Top             =   5880
-      Width           =   795
+      Width           =   610
    End
    Begin VB.Label zLabel04 
       BackStyle       =   0  'Transparent
       Caption         =   "Y Min:"
       Height          =   195
-      Left            =   5640
+      Left            =   6690
       TabIndex        =   25
       Top             =   5640
       Width           =   495
    End
    Begin VB.Label lblXMin 
       BorderStyle     =   1  'Fixed Single
+      Caption         =   "-00.000"
       Height          =   255
       Left            =   4800
       TabIndex        =   24
       Top             =   5880
-      Width           =   795
+      Width           =   610
    End
    Begin VB.Label zLabel03 
       BackStyle       =   0  'Transparent
@@ -266,17 +370,18 @@ Begin VB.Form frmSurFit
    End
    Begin VB.Label lblNAdd 
       BorderStyle     =   1  'Fixed Single
+      Caption         =   "000"
       Height          =   255
-      Left            =   900
+      Left            =   2390
       TabIndex        =   20
       Top             =   5880
-      Width           =   735
+      Width           =   350
    End
    Begin VB.Label zLabel02 
       BackStyle       =   0  'Transparent
-      Caption         =   "N Add:"
+      Caption         =   "N +:"
       Height          =   195
-      Left            =   900
+      Left            =   2390
       TabIndex        =   19
       Top             =   5640
       Width           =   495
@@ -285,22 +390,23 @@ Begin VB.Form frmSurFit
       BackStyle       =   0  'Transparent
       Caption         =   "ND:"
       Height          =   195
-      Left            =   120
+      Left            =   1940
       TabIndex        =   18
       Top             =   5640
       Width           =   495
    End
    Begin VB.Label lblND 
       BorderStyle     =   1  'Fixed Single
+      Caption         =   "0000"
       Height          =   255
-      Left            =   120
+      Left            =   1940
       TabIndex        =   17
       Top             =   5880
-      Width           =   735
+      Width           =   440
    End
    Begin VB.Menu mnuFile 
       Caption         =   "&File"
-      Begin VB.Menu mnuLeggiDati 
+      Begin VB.Menu mnuLoadData 
          Caption         =   "&Load data files"
       End
       Begin VB.Menu zSep02 
@@ -376,8 +482,10 @@ Dim ND&             ' Number of data in the vectors.
 Dim PhiD#()         ' Angle Phi data.
 Dim ThetaD#()       ' Angle Theta data.
 Dim XD#()           ' Vector data values
-Dim YD#()           ' of the surface
-Dim ZD#()           ' to be interpolated.
+Dim YD#()           '  of the surface
+Dim ZD#()           '  to be interpolated.
+Dim OXD#, OYD#      ' X/Y offset values.
+Dim RD#             ' Radius of data.
 '
 Dim Xs#(), Ys#()    ' Coordinates of the data point grid.
 '
@@ -407,10 +515,11 @@ Dim FolderN$        ' Folder dei files dati.
 '
 Dim lZxy&           ' Indice della funzione di prova.
 '
-Dim bScriviVal As Boolean   ' Scrive i valori delle linee di livello.
-Dim bDrawGD As Boolean   ' Draw the darts of the gradient.
-Dim bDrawZC As Boolean   ' Draw the calculated surface.
-Dim Title$                 ' Title of the picOrg picture.
+Dim bFilterEnabled As Boolean   ' Enable filter on data file proces.
+Dim bDrawUpVal As Boolean       ' Draw up the values of the level lines.
+Dim bDrawGD As Boolean          ' Draw the darts of the gradient.
+Dim bDrawZC As Boolean          ' Draw the calculated surface.
+Dim Title$                      ' Title of the picOrg picture.
 '
 Const Me_W& = 9600          ' Dimensioni di questo
 Const Me_H& = 7200 - 255    ' Form [Twips].
@@ -574,6 +683,14 @@ Private Function Zxy(ByVal x1#, ByVal x2#) As Double
 '
 End Function
 
+Private Sub chkFilterEnable_Click()
+'
+'
+    bFilterEnabled = (chkFilterEnable.Value = vbChecked)
+'
+'
+End Sub
+
 Private Sub chkGradient_Click()
 '
 '
@@ -596,10 +713,10 @@ Private Sub chkGradient_Click()
 '
 End Sub
 
-Private Sub chkValoriLivelli_Click()
+Private Sub chkValuesLevels_Click()
 '
 '
-    bScriviVal = (chkValoriLivelli.Value = vbChecked)
+    bDrawUpVal = (chkValuesLevels.Value = vbChecked)
 '
     Screen.MousePointer = vbHourglass
 '
@@ -617,6 +734,7 @@ Private Sub chkValoriLivelli_Click()
 '
 '
 End Sub
+
 Private Sub cmdGrigliaOrg_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 '
 '
@@ -716,6 +834,8 @@ Private Sub Form_Load()
     NXI = 50
     NYI = 50
     NLiv = 20   ' Number of levels to trace.
+'
+    bFilterEnabled = (chkFilterEnable.Value = vbChecked)
 '
     optZxy(1).Value = True
     cmdTest_Click
@@ -842,7 +962,7 @@ Private Sub DrawLevels(ByVal A#, ByVal B#, ByVal C#, ByVal D#, _
         ZLin(K).lLinCol = ZCol((K - 1) * (NTCol - 1) / (NLiv - 1))
         ZLin(K).lLinSps = 1
         'ZLin(k).lLinSps = IIf(k Mod 3 = 0, 2, 1)
-        If bScriviVal Then
+        If bDrawUpVal Then
             ZLin(K).sLblTes = Format$(ZLin(K).dLinVal, "#0.000")
         Else
             ZLin(K).sLblTes = ""
@@ -1005,12 +1125,13 @@ Private Sub mnuIstruzioni_Click()
 '
 '
 End Sub
-Private Sub mnuLeggiDati_Click()
+
+Private Sub mnuLoadData_Click()
 '
 '
     Dim FN_Temp$, M$
 '
-    On Error GoTo mnuLeggi_Click_ERR
+    On Error GoTo mnuLoadData_Click_ERR
 '
     FN_Temp$ = CMDialog_Files(CMDialog1, "Open", "Data files", "*.dat;*.txt", _
                               FolderN$, , " Surface data to be interpolated")
@@ -1021,11 +1142,11 @@ Private Sub mnuLeggiDati_Click()
     End If
 '
 '
-mnuLeggi_Click_ERR:
+mnuLoadData_Click_ERR:
     If Err <> 0 And Err <> cdlCancel Then
         M$ = "Error " & Str$(Err.Number) & vbNewLine
         M$ = M$ & Err.Description
-        MsgBox M$, vbCritical, " mnuLeggi/" & Err.Source
+        MsgBox M$, vbCritical, " mnuLoadData/" & Err.Source
     End If
 '
 '
@@ -1119,7 +1240,7 @@ Private Sub GridForInterpolation(ByRef A#, ByRef B#, ByRef C#, ByRef D#, _
 '
 '   Prepare the vectors containing abscissa and order the interpolation grid.
 '   It also calculates the extremes of the interpolation coordinates,
-'   possibly extending them to the East factor:
+'   possibly extending them to the Est factor:
 '   to be used, mainly, for MASUB which is easily mistaken when the
 '   interpolation extremes coincide with the ends of the data points.
 '
@@ -1132,21 +1253,24 @@ Private Sub GridForInterpolation(ByRef A#, ByRef B#, ByRef C#, ByRef D#, _
     lblNAdd = "--"
 '
     ' Find the Max. and Min. coordinates of the data points:
-    A = DMINVAL(XD())   ' Minimo X.
-    B = DMAXVAL(XD())   ' Massimo X.
-    C = DMINVAL(YD())   ' Minimo Y.
-    D = DMAXVAL(YD())   ' Massimo Y.
-    ' And widens the East factor:
+    A = DMINVAL(XD())   ' Minimum X.
+    B = DMAXVAL(XD())   ' Maximum X.
+    C = DMINVAL(YD())   ' Minimum Y.
+    D = DMAXVAL(YD())   ' Maximum Y.
+    lblXMin = Format$(A, "#0.000")
+    lblXMax = Format$(B, "#0.000")
+    lblXMid = Format$((B + A) / 2#, "#0.000")
+    lblYMin = Format$(C, "#0.000")
+    lblYMax = Format$(D, "#0.000")
+    lblYMid = Format$((D + C) / 2#, "#0.000")
+'
+    ' And widens the Est factor:
     HX = (B - A)
     A = A - est * HX
     B = B + est * HX
     HY = (D - C)
     C = C - est * HY
     D = D + est * HY
-    lblXMin = Format$(A, "#0.000")
-    lblXMax = Format$(B, "#0.000")
-    lblYMin = Format$(C, "#0.000")
-    lblYMax = Format$(D, "#0.000")
 '
     ReDim PhiI(1 To NXI), ThetaI#(1 To NYI) ' Angle phi and theta of the interpolated points grid.
     ReDim XI(1 To NXI), YI#(1 To NYI)   ' Coordinates of the interpolated points grid.
@@ -1243,15 +1367,16 @@ Private Sub ProcessDataFile(ByVal FileN$)
 '
 '
     Dim FF%
-    Dim lND&         ' Number of data in the vectors.
-    Dim lPhiD#()     ' Angle Phi data.
-    Dim lThetaD#()   ' Angle Theta data.
-    Dim lXD#()       ' Vector data values
-    Dim lYD#()       ' of the surface
-    Dim lZD#()       ' to be interpolated.
-    Dim lZDA#    ' Average of ZD().
-    Dim lZDMin#    ' Min of ZD().
-    Dim i%
+    Dim lND&        ' Number of data in the vectors.
+    Dim lPhiD#()    ' Angle Phi data.
+    Dim lThetaD#()  ' Angle Theta data.
+    Dim lXD#()      ' Vector data values
+    Dim lYD#()      ' of the surface
+    Dim lZD#()      ' to be interpolated.
+    Dim lZDA#       ' Average of ZD().
+    Dim lZDMin#     ' Min of ZD().
+    Dim lDSkip() As Boolean   ' Flag data will skip.
+    Dim i%, j%
 '
     On Error GoTo ProcessDataFile_ERR
 '
@@ -1264,14 +1389,23 @@ Private Sub ProcessDataFile(ByVal FileN$)
     FF = FreeFile
     Open FileN$ For Input As #FF
 '
-    If (False) Then
+    ' Read the offset X/Y data from the file:
+    If (Not EOF(FF)) Then
+        Input #FF, OXD, OYD, RD
+        lblOffsetX = OXD
+        lblOffsetY = OYD
+        lblRadius = RD
+    End If
+'
+    If (bFilterEnabled = False) Then
         ' Read the data points from the file:
         ND = 0
         Do While Not EOF(FF)
             ND = ND + 1
             ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), XD(1 To ND), YD(1 To ND), ZD(1 To ND)
             Input #FF, PhiD(ND), ThetaD(ND), XD(ND), YD(ND), ZD(ND)
-            YD(ND) = YD(ND) + 10#
+            'XD(ND) = XD(ND) - OXD
+            'YD(ND) = YD(ND) - OYD
             'If (Sqr(XD(ND) ^ 2 + YD(ND) ^ 2) > 19#) Then
             '    ND = ND - 1
             'End If
@@ -1283,10 +1417,12 @@ Private Sub ProcessDataFile(ByVal FileN$)
         lZDMin = ZDMax
         Do While Not EOF(FF)
             lND = lND + 1
-            ReDim Preserve lPhiD(1 To lND), lThetaD(1 To lND), lXD(1 To lND), lYD(1 To lND), lZD(1 To lND)
+            ReDim Preserve lPhiD(1 To lND), lThetaD(1 To lND), _
+                            lXD(1 To lND), lYD(1 To lND), lZD(1 To lND)
             Input #FF, lPhiD(lND), lThetaD(lND), lXD(lND), lYD(lND), lZD(lND)
-            lYD(lND) = lYD(lND) + 10#
-            If (Sqr(lXD(lND) ^ 2 + lYD(lND) ^ 2) > 19#) Then
+            lXD(lND) = lXD(lND) - OXD
+            lYD(lND) = lYD(lND) - OYD
+            If (RD <> 0) And (Sqr(lXD(lND) ^ 2 + lYD(lND) ^ 2) > RD) Then
                 lND = lND - 1
             Else
                 lZDA = lZDA + lZD(lND)
@@ -1294,13 +1430,32 @@ Private Sub ProcessDataFile(ByVal FileN$)
             End If
         Loop
 '
+        ' Sort the vectors so that the points with major Z remain behind:
+        QuickSort5V lZD(), lXD(), lYD(), lPhiD(), lThetaD(), 1, lND, 1
+'
         lZDA = lZDA / lND
 '
+If (False) Then ' 690
+        ND = 0
+        For i = 1 To lND
+            ND = ND + 1
+            ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), _
+                            XD(1 To ND), YD(1 To ND), ZD(1 To ND)
+            PhiD(ND) = lPhiD(i)
+            ThetaD(ND) = lThetaD(i)
+            XD(ND) = lXD(i)
+            YD(ND) = lYD(i)
+            ZD(ND) = lZD(i)
+        Next i
+'
+End If
+If (False) Then ' 588
         ND = 0
         For i = 1 To lND
             If lZD(i) < lZDA + (lZDA - lZDMin) Then
                 ND = ND + 1
-                ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), XD(1 To ND), YD(1 To ND), ZD(1 To ND)
+                ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), _
+                                XD(1 To ND), YD(1 To ND), ZD(1 To ND)
                 PhiD(ND) = lPhiD(i)
                 ThetaD(ND) = lThetaD(i)
                 XD(ND) = lXD(i)
@@ -1308,6 +1463,93 @@ Private Sub ProcessDataFile(ByVal FileN$)
                 ZD(ND) = lZD(i)
             End If
         Next i
+'
+End If
+        Dim lZOk As Boolean
+        Dim lZOverCnt%
+If (False) Then ' 585
+        ReDim Preserve lDSkip(1 To lND)
+'
+        ND = 0
+        For i = 1 To lND
+            If lZD(i) < lZDA + (lZDA - lZDMin) Then
+                lZOk = False
+                lZOverCnt = 0
+                ' p 24.26 t 93.00 x -0.805 y 19.079 z 29.183
+                If lPhiD(i) = 24.26 And lThetaD(i) = 93# Then
+                    lZOverCnt = 0
+                End If
+                For j = 1 To i - 1
+                    If (lZD(j) < lZDA + (lZDA - lZDMin)) And _
+                        (lDSkip(j) = False) Then
+                        If (lXD(i) < lXD(j) + 2#) And (lXD(i) > lXD(j) - 2#) And _
+                            (lYD(i) < lYD(j) + 2#) And (lYD(i) > lYD(j) - 2#) Then
+                            lZOverCnt = lZOverCnt + 1
+                            If (lZD(i) < lZD(j) + 5#) Then
+                                If lPhiD(i) = 24.26 And lThetaD(i) = 93# Then
+                                    lZOverCnt = lZOverCnt
+                                End If
+                                lZOk = True
+                                Exit For
+                            End If
+                        End If
+                    End If
+                Next j
+                If lZOverCnt = 0 Or lZOk = True Then
+                    ND = ND + 1
+                    ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), _
+                                    XD(1 To ND), YD(1 To ND), ZD(1 To ND)
+                    PhiD(ND) = lPhiD(i)
+                    ThetaD(ND) = lThetaD(i)
+                    XD(ND) = lXD(i)
+                    YD(ND) = lYD(i)
+                    ZD(ND) = lZD(i)
+                Else
+                    lDSkip(i) = True
+                End If
+            End If
+        Next i
+End If
+If (True) Then '
+        ReDim Preserve lDSkip(1 To lND)
+'
+        ND = 0
+        For i = 1 To lND
+            lZOk = False
+            lZOverCnt = 0
+            ' p 24.26 t 93.00 x -0.805 y 19.079 z 29.183
+            If lPhiD(i) = 24.26 And lThetaD(i) = 93# Then
+                lZOverCnt = 0
+            End If
+            For j = 1 To i - 1
+                If (lDSkip(j) = False) Then
+                    If (lXD(i) < lXD(j) + 2#) And (lXD(i) > lXD(j) - 2#) And _
+                        (lYD(i) < lYD(j) + 2#) And (lYD(i) > lYD(j) - 2#) Then
+                        lZOverCnt = lZOverCnt + 1
+                        If (lZD(i) < lZD(j) + 5#) Then
+                            If lPhiD(i) = 24.26 And lThetaD(i) = 93# Then
+                                lZOverCnt = lZOverCnt
+                            End If
+                            lZOk = True
+                            Exit For
+                        End If
+                    End If
+                End If
+            Next j
+            If lZOverCnt = 0 Or lZOk = True Then
+                ND = ND + 1
+                ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), _
+                                XD(1 To ND), YD(1 To ND), ZD(1 To ND)
+                PhiD(ND) = lPhiD(i)
+                ThetaD(ND) = lThetaD(i)
+                XD(ND) = lXD(i)
+                YD(ND) = lYD(i)
+                ZD(ND) = lZD(i)
+            Else
+                lDSkip(i) = True
+            End If
+        Next i
+End If
     End If
 '
     Call DefaultParameters

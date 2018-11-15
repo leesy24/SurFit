@@ -1591,13 +1591,16 @@ Private Sub Settings(Optional ByVal bAutoScale As Boolean = True)
     If fPoints Then
         ' Point design settings:
         NV = MIN0(UBound(XV), UBound(YV), UBound(ZV))
-        ReDim Preserve XV(1 To NV)  ' Resize vectors
-        ReDim Preserve YV(1 To NV)  '  all to the
-        ReDim Preserve ZV(1 To NV)  '  same length.
+        NV = MIN0(NV, UBound(PhiV), UBound(ThetaV))
+        ReDim Preserve XV(1 To NV)      ' Resize vectors
+        ReDim Preserve YV(1 To NV)      '  all to the
+        ReDim Preserve ZV(1 To NV)      '  same length.
+        ReDim Preserve PhiV(1 To NV)    '
+        ReDim Preserve ThetaV(1 To NV)  '
         ReDim PRv(1 To NV)
 '
-        ' Sorts the vectors so that the points with major Y remain behind:
-        QuickSort3V YV(), XV(), ZV(), 1, NV
+        ' Sort the vectors so that the points with major Y remain behind:
+        QuickSort5V YV(), XV(), ZV(), PhiV(), ThetaV(), 1, NV
 '
         If bAutoScale Then
             ' Find the minimum and maximum values of heights:
@@ -1776,137 +1779,6 @@ Private Sub Settings(Optional ByVal bAutoScale As Boolean = True)
                 Next I
             Next J
         End If
-    End If
-'
-'
-'
-End Sub
-
-Private Sub QuickSort3V(ByRef ValTab#(), ByRef ValTab1#(), ByRef ValTab2#(), _
-    ByVal Low&, ByVal High&, Optional ByVal OrderDir& = -1)
-'
-'   Routine QuickSort3V:
-'    ValTab():  Vettore che si vuole ordinare.
-'    ValTab1(): Primo vettore associato.
-'    ValTab2(): Secondo vettore associato.
-'    Low:       Posizione iniziale della zona da ordinare.
-'    High:      Posizione finale della zona da ordinare.
-'    OrderDir:     Direzione dell' ordinamento:
-'                > 0 -> dal minore al maggiore.
-'                = 0 -> nessun ordinamento.
-'                < 0 -> dal maggiore al minore.
-'
-    Dim RandIndex&, I&, J&, M$
-    Dim ValTemp As Double   ' Tipo del vettore che si vuole ordinare.
-    Dim Part As Double      ' Tipo della chiave di ordinamento.
-'
-    On Error GoTo QuickSort3V_ERR
-    If OrderDir = 0 Then Exit Sub
-'
-    If Low < High Then
-'
-        If High - Low = 1 Then
-            ' Only two elements in this subdivision; swap them
-            ' if they are out of order, then end recursive calls:
-            If ((OrderDir > 0) And (ValTab(Low) > ValTab(High))) _
-            Or ((OrderDir < 0) And (ValTab(Low) < ValTab(High))) Then
-                'SWAP ValTab(Low), ValTab(High)
-                ' Vettore principale:
-                ValTemp = ValTab(Low)
-                ValTab(Low) = ValTab(High)
-                ValTab(High) = ValTemp
-                ' Primo vettore associato:
-                ValTemp = ValTab1(Low)
-                ValTab1(Low) = ValTab1(High)
-                ValTab1(High) = ValTemp
-                ' Secondo vettore associato:
-                ValTemp = ValTab2(Low)
-                ValTab2(Low) = ValTab2(High)
-                ValTab2(High) = ValTemp
-            End If
-'
-        Else
-            ' Pick a pivot element, then move it to the end:
-            RandIndex = (High + Low) / 2
-            'SWAP ValTab(High), ValTab(RandIndex)
-            ' Vettore principale:
-            ValTemp = ValTab(High)
-            ValTab(High) = ValTab(RandIndex)
-            ValTab(RandIndex) = ValTemp
-            Part = ValTab(High)
-            ' Primo vettore associato:
-            ValTemp = ValTab1(High)
-            ValTab1(High) = ValTab1(RandIndex)
-            ValTab1(RandIndex) = ValTemp
-            ' Secondo vettore associato:
-            ValTemp = ValTab2(High)
-            ValTab2(High) = ValTab2(RandIndex)
-            ValTab2(RandIndex) = ValTemp
-'
-            ' Move in from both sides towards the pivot element:
-            Do
-                I = Low: J = High
-                Do While ((OrderDir > 0) And (I < J) And (ValTab(I) <= Part)) _
-                Or ((OrderDir < 0) And (I < J) And (ValTab(I) >= Part))
-                    I = I + 1
-                Loop
-                Do While ((OrderDir > 0) And (J > I) And (ValTab(J) >= Part)) _
-                Or ((OrderDir < 0) And (J > I) And (ValTab(J) <= Part))
-                    J = J - 1
-                Loop
-'
-                If I < J Then
-                    ' We haven't reached the pivot element; it means that two
-                    ' elements on either side are out of order, so swap them:
-                    'SWAP ValTab(I), ValTab(J)
-                    ' Vettore principale:
-                    ValTemp = ValTab(I)
-                    ValTab(I) = ValTab(J)
-                    ValTab(J) = ValTemp
-                    ' Primo vettore associato:
-                    ValTemp = ValTab1(I)
-                    ValTab1(I) = ValTab1(J)
-                    ValTab1(J) = ValTemp
-                    ' Secondo vettore associato:
-                    ValTemp = ValTab2(I)
-                    ValTab2(I) = ValTab2(J)
-                    ValTab2(J) = ValTemp
-                End If
-'
-            Loop While I < J
-            ' Move the pivot element back to its proper place in the array:
-            'SWAP ValTab(I), ValTab(High)
-            ' Vettore principale:
-            ValTemp = ValTab(I)
-            ValTab(I) = ValTab(High)
-            ValTab(High) = ValTemp
-            ' Primo vettore associato:
-            ValTemp = ValTab1(I)
-            ValTab1(I) = ValTab1(High)
-            ValTab1(High) = ValTemp
-            ' Secondo vettore associato:
-            ValTemp = ValTab2(I)
-            ValTab2(I) = ValTab2(High)
-            ValTab2(High) = ValTemp
-'
-            ' Recursively call the QuickSort3V procedure (pass the smaller
-            ' subdivision first to use less stack space):
-            If (I - Low) < (High - I) Then
-                QuickSort3V ValTab(), ValTab1(), ValTab2(), Low, I - 1, OrderDir
-                QuickSort3V ValTab(), ValTab1(), ValTab2(), I + 1, High, OrderDir
-            Else
-                QuickSort3V ValTab(), ValTab1(), ValTab2(), I + 1, High, OrderDir
-                QuickSort3V ValTab(), ValTab1(), ValTab2(), Low, I - 1, OrderDir
-            End If
-        End If
-    End If
-'
-'
-QuickSort3V_ERR:
-    If (Err <> 0) Then
-        M$ = "Error " & Str$(Err.Number) & vbNewLine
-        M$ = M$ & Err.Description
-        MsgBox M$, vbCritical, " QuickSort3V"
     End If
 '
 '
