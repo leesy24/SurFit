@@ -370,7 +370,7 @@ Begin VB.Form frmSurFit
    End
    Begin VB.Label lblNAdd 
       BorderStyle     =   1  'Fixed Single
-      Caption         =   "000"
+      Caption         =   "---"
       Height          =   255
       Left            =   2390
       TabIndex        =   20
@@ -866,7 +866,9 @@ Private Sub Test_MASUB()
         MsgBox "Error in MASUB", vbCritical
         Exit Sub
     End If
-    lblNAdd = UBound(XD) - ND   ' Points added for extrapolation.
+    If IEX = 1 Then
+        lblNAdd = UBound(XD) - ND   ' Points added for extrapolation.
+    End If
 '
     DrawLevels A, B, C, D, Px3, Py3
     If bDrawGD Then
@@ -1064,6 +1066,7 @@ Private Sub DrawGradient(ByVal Px3!, ByVal Py3!)
 '
 '
 End Sub
+
 Private Sub Form_Unload(Cancel As Integer)
 '
 '
@@ -1250,7 +1253,7 @@ Private Sub GridForInterpolation(ByRef A#, ByRef B#, ByRef C#, ByRef D#, _
     ReDim Preserve XD(1 To ND)
     ReDim Preserve YD(1 To ND)
     lblND = ND
-    lblNAdd = "--"
+    'lblNAdd = "--"
 '
     ' Find the Max. and Min. coordinates of the data points:
     A = DMINVAL(XD())   ' Minimum X.
@@ -1376,7 +1379,7 @@ Private Sub ProcessDataFile(ByVal FileN$)
     Dim lZDA#       ' Average of ZD().
     Dim lZDMin#     ' Min of ZD().
     Dim lDSkip() As Boolean   ' Flag data will skip.
-    Dim i%, j%
+    Dim I%, J%
 '
     On Error GoTo ProcessDataFile_ERR
 '
@@ -1413,8 +1416,6 @@ Private Sub ProcessDataFile(ByVal FileN$)
     Else
         ' Read the data points from the file:
         lND = 0
-        lZDA = 0
-        lZDMin = ZDMax
         Do While Not EOF(FF)
             lND = lND + 1
             ReDim Preserve lPhiD(1 To lND), lThetaD(1 To lND), _
@@ -1424,133 +1425,90 @@ Private Sub ProcessDataFile(ByVal FileN$)
             lYD(lND) = lYD(lND) - OYD
             If (RD <> 0) And (Sqr(lXD(lND) ^ 2 + lYD(lND) ^ 2) > RD) Then
                 lND = lND - 1
-            Else
-                lZDA = lZDA + lZD(lND)
-                If (lZD(lND) < lZDMin) Then lZDMin = lZD(lND)
             End If
         Loop
 '
         ' Sort the vectors so that the points with major Z remain behind:
         QuickSort5V lZD(), lXD(), lYD(), lPhiD(), lThetaD(), 1, lND, 1
 '
-        lZDA = lZDA / lND
-'
-If (False) Then ' 690
-        ND = 0
-        For i = 1 To lND
-            ND = ND + 1
-            ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), _
-                            XD(1 To ND), YD(1 To ND), ZD(1 To ND)
-            PhiD(ND) = lPhiD(i)
-            ThetaD(ND) = lThetaD(i)
-            XD(ND) = lXD(i)
-            YD(ND) = lYD(i)
-            ZD(ND) = lZD(i)
-        Next i
-'
-End If
-If (False) Then ' 588
-        ND = 0
-        For i = 1 To lND
-            If lZD(i) < lZDA + (lZDA - lZDMin) Then
-                ND = ND + 1
-                ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), _
-                                XD(1 To ND), YD(1 To ND), ZD(1 To ND)
-                PhiD(ND) = lPhiD(i)
-                ThetaD(ND) = lThetaD(i)
-                XD(ND) = lXD(i)
-                YD(ND) = lYD(i)
-                ZD(ND) = lZD(i)
-            End If
-        Next i
-'
-End If
+        ' Skip point over Z axis.
         Dim lZOk As Boolean
         Dim lZOverCnt%
-If (False) Then ' 585
         ReDim Preserve lDSkip(1 To lND)
 '
         ND = 0
-        For i = 1 To lND
-            If lZD(i) < lZDA + (lZDA - lZDMin) Then
-                lZOk = False
-                lZOverCnt = 0
-                ' p 24.26 t 93.00 x -0.805 y 19.079 z 29.183
-                If lPhiD(i) = 24.26 And lThetaD(i) = 93# Then
-                    lZOverCnt = 0
-                End If
-                For j = 1 To i - 1
-                    If (lZD(j) < lZDA + (lZDA - lZDMin)) And _
-                        (lDSkip(j) = False) Then
-                        If (lXD(i) < lXD(j) + 2#) And (lXD(i) > lXD(j) - 2#) And _
-                            (lYD(i) < lYD(j) + 2#) And (lYD(i) > lYD(j) - 2#) Then
-                            lZOverCnt = lZOverCnt + 1
-                            If (lZD(i) < lZD(j) + 5#) Then
-                                If lPhiD(i) = 24.26 And lThetaD(i) = 93# Then
-                                    lZOverCnt = lZOverCnt
-                                End If
-                                lZOk = True
-                                Exit For
-                            End If
-                        End If
-                    End If
-                Next j
-                If lZOverCnt = 0 Or lZOk = True Then
-                    ND = ND + 1
-                    ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), _
-                                    XD(1 To ND), YD(1 To ND), ZD(1 To ND)
-                    PhiD(ND) = lPhiD(i)
-                    ThetaD(ND) = lThetaD(i)
-                    XD(ND) = lXD(i)
-                    YD(ND) = lYD(i)
-                    ZD(ND) = lZD(i)
-                Else
-                    lDSkip(i) = True
-                End If
-            End If
-        Next i
-End If
-If (True) Then '
-        ReDim Preserve lDSkip(1 To lND)
-'
-        ND = 0
-        For i = 1 To lND
+        lZDA = 0
+        lZDMin = ZDMax
+        For I = 1 To lND
             lZOk = False
             lZOverCnt = 0
-            ' p 24.26 t 93.00 x -0.805 y 19.079 z 29.183
-            If lPhiD(i) = 24.26 And lThetaD(i) = 93# Then
-                lZOverCnt = 0
-            End If
-            For j = 1 To i - 1
-                If (lDSkip(j) = False) Then
-                    If (lXD(i) < lXD(j) + 2#) And (lXD(i) > lXD(j) - 2#) And _
-                        (lYD(i) < lYD(j) + 2#) And (lYD(i) > lYD(j) - 2#) Then
+            For J = 1 To I - 1
+                If (lDSkip(J) = False) Then
+                    If (Abs(lXD(I) - lXD(J)) < 2#) And (Abs(lYD(I) - lYD(J)) < 2#) Then
                         lZOverCnt = lZOverCnt + 1
-                        If (lZD(i) < lZD(j) + 5#) Then
-                            If lPhiD(i) = 24.26 And lThetaD(i) = 93# Then
-                                lZOverCnt = lZOverCnt
-                            End If
+                        If (lZD(I) < lZD(J) + 3#) Then
                             lZOk = True
                             Exit For
                         End If
                     End If
                 End If
-            Next j
+            Next J
             If lZOverCnt = 0 Or lZOk = True Then
                 ND = ND + 1
                 ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), _
                                 XD(1 To ND), YD(1 To ND), ZD(1 To ND)
-                PhiD(ND) = lPhiD(i)
-                ThetaD(ND) = lThetaD(i)
-                XD(ND) = lXD(i)
-                YD(ND) = lYD(i)
-                ZD(ND) = lZD(i)
+                PhiD(ND) = lPhiD(I)
+                ThetaD(ND) = lThetaD(I)
+                XD(ND) = lXD(I)
+                YD(ND) = lYD(I)
+                ZD(ND) = lZD(I)
+                lZDA = lZDA + lZD(I)
+                If (lZD(I) < lZDMin) Then lZDMin = lZD(I)
             Else
-                lDSkip(i) = True
+                lDSkip(I) = True
             End If
-        Next i
-End If
+        Next I
     End If
+'
+    lZDA = lZDA / ND
+'
+    ' Fill data for BIN style.
+    Dim BinX#, BinY#, BinZ#, Distance#
+    Dim AddBin As Boolean
+    lND = ND
+    lblNAdd = 0
+    'BinZ = lZDA
+    BinZ = lZDMin
+    'BinZ = lZDMin + (lZDA - lZDMin) / 2#
+'
+    For I = 0 To 360 - 1 Step 10
+        BinX = RD * Sin(I * PI / 180#)
+        BinY = RD * Cos(I * PI / 180#)
+        AddBin = True
+        For J = 1 To lND
+            If (Abs(BinX - XD(J)) < 2#) And (Abs(BinY - YD(J)) < 2#) Then
+                AddBin = False
+                Exit For
+            End If
+            Distance = Sqr((BinX - XD(J)) ^ 2 + (BinY - YD(J)) ^ 2 + (BinZ - ZD(J)) ^ 2)
+            'If (Distance < (lZDA - lZDMin)) Then
+            If (Distance < 5#) Then
+                AddBin = False
+                Exit For
+            End If
+        Next J
+        If (AddBin = True) Then
+            ND = ND + 1
+            lblNAdd = lblNAdd + 1
+            ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), _
+                            XD(1 To ND), YD(1 To ND), ZD(1 To ND)
+            PhiD(ND) = I
+            ThetaD(ND) = 0
+            XD(ND) = BinX
+            YD(ND) = BinY
+            ZD(ND) = BinZ
+        End If
+    Next I
 '
     Call DefaultParameters
 '

@@ -3,14 +3,14 @@ Object = "{86CF1D34-0C5F-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCT2.OCX"
 Begin VB.Form frm3D 
    BorderStyle     =   1  'Fixed Single
    Caption         =   " 3D isometric view"
-   ClientHeight    =   6825
+   ClientHeight    =   8730
    ClientLeft      =   45
    ClientTop       =   330
    ClientWidth     =   9510
    Icon            =   "frm3D.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   455
+   ScaleHeight     =   582
    ScaleMode       =   3  'Pixel
    ScaleWidth      =   634
    Begin VB.Frame zFrame2 
@@ -183,27 +183,27 @@ Begin VB.Form frm3D
    End
    Begin VB.PictureBox pic3D 
       BackColor       =   &H00000000&
-      Height          =   5700
+      Height          =   7560
       Left            =   240
       MouseIcon       =   "frm3D.frx":014A
       MousePointer    =   2  'Cross
-      ScaleHeight     =   376
+      ScaleHeight     =   500
       ScaleMode       =   3  'Pixel
-      ScaleWidth      =   598
+      ScaleWidth      =   600
       TabIndex        =   9
       TabStop         =   0   'False
       Top             =   720
-      Width           =   9030
+      Width           =   9060
       Begin VB.CommandButton cmdCopiaGrafico 
          Height          =   285
-         Left            =   8340
+         Left            =   0
          MaskColor       =   &H000000FF&
          MousePointer    =   1  'Arrow
          Picture         =   "frm3D.frx":0454
          Style           =   1  'Graphical
          TabIndex        =   8
          ToolTipText     =   "Copy the image to the clipboard "
-         Top             =   780
+         Top             =   0
          UseMaskColor    =   -1  'True
          Width           =   480
       End
@@ -223,10 +223,10 @@ Begin VB.Form frm3D
          Caption         =   "&Col."
          ForeColor       =   &H8000000E&
          Height          =   255
-         Left            =   8160
+         Left            =   7440
          MousePointer    =   1  'Arrow
          TabIndex        =   7
-         Top             =   360
+         Top             =   60
          Value           =   -1  'True
          Width           =   735
       End
@@ -257,7 +257,7 @@ Begin VB.Form frm3D
       Height          =   195
       Left            =   1200
       TabIndex        =   29
-      Top             =   6525
+      Top             =   8400
       Width           =   555
    End
    Begin VB.Label lblATheta 
@@ -275,7 +275,7 @@ Begin VB.Form frm3D
       Height          =   240
       Left            =   1800
       TabIndex        =   28
-      Top             =   6510
+      Top             =   8370
       Width           =   615
    End
    Begin VB.Label lblAPhi 
@@ -293,7 +293,7 @@ Begin VB.Form frm3D
       Height          =   240
       Left            =   600
       TabIndex        =   27
-      Top             =   6510
+      Top             =   8370
       Width           =   615
    End
    Begin VB.Label zLabel1 
@@ -312,7 +312,7 @@ Begin VB.Form frm3D
       Height          =   195
       Left            =   240
       TabIndex        =   26
-      Top             =   6525
+      Top             =   8400
       Width           =   315
    End
    Begin VB.Label lblZ 
@@ -330,7 +330,7 @@ Begin VB.Form frm3D
       Height          =   240
       Left            =   4320
       TabIndex        =   21
-      Top             =   6510
+      Top             =   8370
       Width           =   615
    End
    Begin VB.Label zLabel05 
@@ -349,7 +349,7 @@ Begin VB.Form frm3D
       Height          =   195
       Left            =   4080
       TabIndex        =   20
-      Top             =   6525
+      Top             =   8400
       Width           =   195
    End
    Begin VB.Label lblX 
@@ -367,7 +367,7 @@ Begin VB.Form frm3D
       Height          =   240
       Left            =   2640
       TabIndex        =   19
-      Top             =   6510
+      Top             =   8370
       Width           =   615
    End
    Begin VB.Label zLabel03 
@@ -386,7 +386,7 @@ Begin VB.Form frm3D
       Height          =   195
       Left            =   2400
       TabIndex        =   18
-      Top             =   6525
+      Top             =   8400
       Width           =   195
    End
    Begin VB.Label lblY 
@@ -404,7 +404,7 @@ Begin VB.Form frm3D
       Height          =   240
       Left            =   3480
       TabIndex        =   17
-      Top             =   6510
+      Top             =   8370
       Width           =   615
    End
    Begin VB.Label zLabel04 
@@ -423,7 +423,7 @@ Begin VB.Form frm3D
       Height          =   195
       Left            =   3240
       TabIndex        =   16
-      Top             =   6525
+      Top             =   8400
       Width           =   195
    End
    Begin VB.Label zlblAutore 
@@ -431,7 +431,7 @@ Begin VB.Form frm3D
       Appearance      =   0  'Flat
       BackColor       =   &H80000005&
       BackStyle       =   0  'Transparent
-      Caption         =   "F. Languasco  fecit. 2001"
+      Caption         =   "DASAN Info Tek 2018"
       BeginProperty Font 
          Name            =   "Small Fonts"
          Size            =   6.75
@@ -443,9 +443,9 @@ Begin VB.Form frm3D
       EndProperty
       ForeColor       =   &H80000008&
       Height          =   195
-      Left            =   7620
+      Left            =   7560
       TabIndex        =   15
-      Top             =   6600
+      Top             =   8460
       Width           =   1620
    End
    Begin VB.Label lblstructions 
@@ -481,7 +481,7 @@ Begin VB.Form frm3D
       Height          =   195
       Left            =   6240
       TabIndex        =   13
-      Top             =   6525
+      Top             =   8400
       Width           =   615
    End
    Begin VB.Label zLabel02 
@@ -500,7 +500,7 @@ Begin VB.Form frm3D
       Height          =   195
       Left            =   4920
       TabIndex        =   12
-      Top             =   6525
+      Top             =   8400
       Width           =   495
    End
    Begin VB.Label lblRAyx 
@@ -517,7 +517,7 @@ Begin VB.Form frm3D
       Height          =   240
       Left            =   5400
       TabIndex        =   11
-      Top             =   6510
+      Top             =   8370
       Width           =   795
    End
    Begin VB.Label lblAlfa 
@@ -534,7 +534,7 @@ Begin VB.Form frm3D
       Height          =   240
       Left            =   6840
       TabIndex        =   10
-      Top             =   6510
+      Top             =   8370
       Width           =   795
    End
 End
@@ -1485,19 +1485,8 @@ End Sub
 
 Private Sub cmdXY_Click()
 '
-'   Imposta la vista in pianta:
 '
-    Dim DT_X!, DT_Xp&
-'
-    ' DT_X e' la larghezza totale del grafico meno
-    ' la larghezza dei bordi. Per ALFA = PI / 2 e'
-    ' anche la lunghezza dell' asse X:
-    DT_X = AsseX * (1! + RAyx * Cos(ALFA))
-    DT_Xp = pic3D.ScaleX(DT_X, vbUser, vbPixels)
-'
-    ' Con questo rapporto l' asse Y sara' l' 80%
-    ' dell' altezza totale del grafico:
-    RAyx = 0.8 * pic3D.Height / CSng(DT_Xp)
+    RAyx = 0.8
     ALFA = CSng(PI / 2#)
 '
     lblRAyx = Format$(RAyx, "#0.000")
@@ -1508,6 +1497,7 @@ Private Sub cmdXY_Click()
 '
 '
 End Sub
+
 Private Sub cmdZX_Click()
 '
 '
@@ -1552,8 +1542,9 @@ Private Sub Form_Load()
     shpInd.Height = 2 * shpIndOffy
 '
     ' Initial values:
-    RAyx = 1!       ' Y axis length ratio to X axis length.
-    ALFA = PI / 6!  ' Angle of the Y axis with respect to the X axis: 30 [Grd].
+    'RAyx = 1!       ' Y axis length ratio to X axis length.
+    'ALFA = PI / 6!  ' Angle of the Y axis with respect to the X axis: 30 [Grd]    RAyx = 0.5       ' Y axis length ratio to X axis length.
+    ALFA = PI / 3!  ' Angle of the Y axis with respect to the X axis: 60 [Grd].
 '
     lblRAyx = Format$(RAyx, "#0.000")
     lblAlfa = Format$(RadToGrd * ALFA, "#0.000")
