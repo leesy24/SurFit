@@ -1771,7 +1771,7 @@ Private Sub Settings(Optional ByVal bAutoScale As Boolean = True)
                     ' Calculation of the mean value of the Z coordinates of the four vertices:
                     ZMed = CSng(ZV(I, J) + ZV(I, J + 1) + ZV(I + 1, J + 1) + ZV(I + 1, J)) / 4!
                     ' and of the corresponding color:
-                    If ZMed >= ZMinCol Then
+                    If ZMed >= ZMinCol And ZMed <> ZMin Then
                         ZCol(I, J) = TCol(CLng((ZMed - ZMinCol) * ZnCol))
                     Else
                         ZCol(I, J) = &H808080 ' Grey.
