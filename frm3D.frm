@@ -120,7 +120,7 @@ Begin VB.Form frm3D
       TabIndex        =   22
       Top             =   0
       Width           =   1755
-      Begin VB.CommandButton cmdZY 
+      Begin VB.CheckBox chkZY 
          Caption         =   "Z - &Y"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -133,12 +133,13 @@ Begin VB.Form frm3D
          EndProperty
          Height          =   240
          Left            =   1200
+         Style           =   1  'Graphical
          TabIndex        =   2
          ToolTipText     =   "Side view "
          Top             =   240
          Width           =   435
       End
-      Begin VB.CommandButton cmdZX 
+      Begin VB.CheckBox chkZX 
          Caption         =   "&Z - X"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -151,12 +152,13 @@ Begin VB.Form frm3D
          EndProperty
          Height          =   240
          Left            =   660
+         Style           =   1  'Graphical
          TabIndex        =   1
          ToolTipText     =   "Front view "
          Top             =   240
          Width           =   435
       End
-      Begin VB.CommandButton cmdXY 
+      Begin VB.CheckBox chkXY 
          Caption         =   "&X - Y"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -169,6 +171,7 @@ Begin VB.Form frm3D
          EndProperty
          Height          =   240
          Left            =   120
+         Style           =   1  'Graphical
          TabIndex        =   0
          ToolTipText     =   "Plan view "
          Top             =   240
@@ -707,7 +710,7 @@ Private Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
 Private Declare Function WindowFromPoint Lib "user32" _
     (ByVal X As Long, ByVal Y As Long) As Long
 
-Private Sub Rotate(ByVal X0#, ByVal Y0#, ByVal Rot#, ByVal CRx#, ByVal CRy#, Xr#, Yr#)
+Private Sub ROTATE(ByVal X0#, ByVal Y0#, ByVal Rot#, ByVal CRx#, ByVal CRy#, Xr#, Yr#)
 '
 '   Routines for rotating a point:
 '
@@ -1251,7 +1254,7 @@ Private Sub DrawSurface(ByVal bCol As Boolean)
     For J = 1 To NYV
         For I = 1 To NXV
             If bRotate Then
-                Rotate XV(I), YV(J), CDbl(THETA), X0r, Y0r, Xr, Yr
+                ROTATE XV(I), YV(J), CDbl(THETA), X0r, Y0r, Xr, Yr
                 PRv(I, J).X = CLng((Ax * Xr + Bx) + (Ay * Yr + By) * CosA)
                 PRv(I, J).Y = CLng((Az * ZV(I, J) + Bz) - (Ay * Yr + By) * SinA)
             Else
@@ -1400,7 +1403,7 @@ Private Sub DisegnaSup_BN()
     For J = 1 To NYV
         For I = 1 To NXV
             If bRotate Then
-                Rotate XV(I), YV(J), THETA, X0r, Y0r, Xr, Yr
+                ROTATE XV(I), YV(J), THETA, X0r, Y0r, Xr, Yr
                 PRv(I, J).X = CLng((Ax * X0r + Bx) + (Ay * Y0r + By) * CosA)
                 PRv(I, J).Y = CLng((Az * ZV(I, J) + Bz) - (Ay * Y0r + By) * SinA)
             Else
@@ -1434,6 +1437,7 @@ Private Sub DisegnaSup_BN()
 '
 '
 End Sub
+
 Private Sub cmdCopiaGrafico_Click()
 '
 '
@@ -1483,47 +1487,96 @@ Private Sub cmdRotate_Click()
 '
 End Sub
 
-Private Sub cmdXY_Click()
+Private Sub chkXY_Click()
 '
+    If chkXY.Tag <> "" Then Exit Sub
 '
-    RAyx = 1#
-    ALFA = CSng(PI / 2#)
+    If chkXY.Value = vbChecked Then
+        chkXY.Font.Bold = True
+        chkZX.Tag = "NoClick"
+        chkZX.Value = vbUnchecked
+        chkZX.Tag = ""
+        chkZX.Font.Bold = False
+        chkZY.Tag = "NoClick"
+        chkZY.Value = vbUnchecked
+        chkZY.Tag = ""
+        chkZY.Font.Bold = False
+'
+        RAyx = 1#
+        ALFA = CSng(PI / 2#)
+    Else
+        chkXY.Font.Bold = False
+'
+        RAyx = 0.5      ' Y axis length ratio to X axis length.
+        ALFA = PI / 3!  ' Angle of the Y axis with respect to the X axis: 60 [Grd].
+    End If
 '
     lblRAyx = Format$(RAyx, "#0.000")
     lblAlfa = Format$(RadToGrd * ALFA, "#0.000")
 '
     Draw True
-'
-'
 '
 End Sub
 
-Private Sub cmdZX_Click()
+Private Sub chkZX_Click()
 '
+    If chkZX.Tag <> "" Then Exit Sub
 '
-    RAyx = 0!
-    ALFA = CSng(PI / 2#)
+    If chkZX.Value = vbChecked Then
+        chkZX.Font.Bold = True
+        chkXY.Tag = "NoClick"
+        chkXY.Value = vbUnchecked
+        chkXY.Tag = ""
+        chkXY.Font.Bold = False
+        chkZY.Tag = "NoClick"
+        chkZY.Value = vbUnchecked
+        chkZY.Tag = ""
+        chkZY.Font.Bold = False
+'
+        RAyx = 0!
+        ALFA = CSng(PI / 2#)
+    Else
+        chkZX.Font.Bold = False
+'
+        RAyx = 0.5      ' Y axis length ratio to X axis length.
+        ALFA = PI / 3!  ' Angle of the Y axis with respect to the X axis: 60 [Grd].
+    End If
 '
     lblRAyx = Format$(RAyx, "#0.000")
     lblAlfa = Format$(RadToGrd * ALFA, "#0.000")
 '
     Draw True
-'
-'
 '
 End Sub
-Private Sub cmdZY_Click()
+
+Private Sub chkZY_Click()
 '
+    If chkZY.Tag <> "" Then Exit Sub
 '
-    RAyx = 1000!
-    ALFA = 0!
+    If chkZY.Value = vbChecked Then
+        chkZY.Font.Bold = True
+        chkXY.Tag = "NoClick"
+        chkXY.Value = vbUnchecked
+        chkXY.Tag = ""
+        chkXY.Font.Bold = False
+        chkZX.Tag = "NoClick"
+        chkZX.Value = vbUnchecked
+        chkZX.Tag = ""
+        chkZX.Font.Bold = False
+'
+        RAyx = 1000!
+        ALFA = 0!
+    Else
+        chkZY.Font.Bold = False
+'
+        RAyx = 0.5      ' Y axis length ratio to X axis length.
+        ALFA = PI / 3!  ' Angle of the Y axis with respect to the X axis: 60 [Grd].
+    End If
 '
     lblRAyx = Format$(RAyx, "#0.000")
     lblAlfa = Format$(RadToGrd * ALFA, "#0.000")
 '
     Draw True
-'
-'
 '
 End Sub
 
@@ -1836,12 +1889,32 @@ Private Sub pic3D_MouseDown(Button As Integer, Shift As Integer, X As Single, Y 
 '
 '
 End Sub
+
 Private Sub pic3D_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 '
 '
     Dim I&, J&, N&, LAxPx!, LxPx!, LyPx!, LPx As POINTAPI
 '
     If (Button = vbLeftButton) Then
+        If (chkXY.Value = vbChecked) Then
+            chkXY.Tag = "NoClick"
+            chkXY.Value = vbUnchecked
+            chkXY.Font.Bold = False
+            chkXY.Tag = ""
+        End If
+        If (chkZX.Value = vbChecked) Then
+            chkZX.Tag = "NoClick"
+            chkZX.Value = vbUnchecked
+            chkZX.Font.Bold = False
+            chkZX.Tag = ""
+        End If
+        If (chkZY.Value = vbChecked) Then
+            chkZY.Tag = "NoClick"
+            chkZY.Value = vbUnchecked
+            chkZY.Font.Bold = False
+            chkZY.Tag = ""
+        End If
+'
         ' Sposta la vista:
         LAxPx = Ax * AsseX      ' Lunghezza asse X [Pixels].
         LxPx = Ax * (X - XRMin) ' Posizione orizzontale del cursore [Pixels dall' asse Z].
@@ -1863,6 +1936,7 @@ Private Sub pic3D_MouseMove(Button As Integer, Shift As Integer, X As Single, Y 
 '
 '
 End Sub
+
 Private Sub pic3D_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 '
 '
@@ -1891,7 +1965,7 @@ Private Sub DrawPoints(ByVal bCol As Boolean)
     ' Disegno i punti proiettati sul piano di rappresentazione:
     For N = 1 To NV
         If bRotate Then
-            Rotate XV(N), YV(N), CDbl(THETA), X0r, Y0r, Xr, Yr
+            ROTATE XV(N), YV(N), CDbl(THETA), X0r, Y0r, Xr, Yr
             PRv(N).X = CLng((Ax * Xr + Bx) + (Ay * Yr + By) * CosA)
             PRv(N).Y = CLng((Az * ZV(N) + Bz) - (Ay * Yr + By) * SinA)
         Else
