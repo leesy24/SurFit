@@ -555,7 +555,7 @@ Attribute VB_Exposed = False
 ' Aggiornamento...: 21/3/2002 (aggiunta la rotazione).
 ' Versione........: 1.1 a 32 bits (provvisoria, in via di sviluppo).
 ' Sistema.........: VB6 sotto Windows NT.
-' Scritto da......: F. Languasco 
+' Scritto da......: F. Languasco
 ' E-Mail..........: MC7061@mclink.it
 ' DownLoads a.....: http://members.xoom.virgilio.it/flanguasco/
 '                   http://www.flanguasco.org
@@ -1486,7 +1486,7 @@ End Sub
 Private Sub cmdXY_Click()
 '
 '
-    RAyx = 0.8
+    RAyx = 1#
     ALFA = CSng(PI / 2#)
 '
     lblRAyx = Format$(RAyx, "#0.000")

@@ -465,7 +465,7 @@ Attribute VB_Exposed = False
 ' Data............: 21/9/2001
 ' Versione........: 1.0 a 32 bits.
 ' Sistema.........: VB6 sotto Windows NT.
-' Scritto da......: F. Languasco 
+' Scritto da......: F. Languasco
 ' E-Mail..........: MC7061@mclink.it
 ' DownLoads a.....: http://members.xoom.virgilio.it/flanguasco/
 '                   http://www.flanguasco.org
@@ -1413,7 +1413,8 @@ Private Sub ProcessDataFile(ByVal FileN$)
             '    ND = ND - 1
             'End If
         Loop
-    Else
+        lblNAdd = 0
+    Else ' Else of If (bFilterEnabled = False) Then
         ' Read the data points from the file:
         lND = 0
         Do While Not EOF(FF)
@@ -1468,47 +1469,48 @@ Private Sub ProcessDataFile(ByVal FileN$)
                 lDSkip(I) = True
             End If
         Next I
-    End If
 '
-    lZDA = lZDA / ND
+        lZDA = lZDA / ND
 '
-    ' Fill data for BIN style.
-    Dim BinX#, BinY#, BinZ#, Distance#
-    Dim AddBin As Boolean
-    lND = ND
-    lblNAdd = 0
-    'BinZ = lZDA
-    BinZ = lZDMin
-    'BinZ = lZDMin + (lZDA - lZDMin) / 2#
+        ' Fill data for BIN style.
+        Dim BinX#, BinY#, BinZ#, Distance#
+        Dim AddBin As Boolean
+        lND = ND
+        lblNAdd = 0
+        'BinZ = lZDA
+        BinZ = lZDMin
+        'BinZ = lZDMin + (lZDA - lZDMin) / 2#
 '
-    For I = 0 To 360 - 1 Step 10
-        BinX = RD * Sin(I * PI / 180#)
-        BinY = RD * Cos(I * PI / 180#)
-        AddBin = True
-        For J = 1 To lND
-            If (Abs(BinX - XD(J)) < 2#) And (Abs(BinY - YD(J)) < 2#) Then
-                AddBin = False
-                Exit For
+        For I = 0 To 360 - 1 Step 10
+            BinX = RD * Sin(I * PI / 180#)
+            BinY = RD * Cos(I * PI / 180#)
+            AddBin = True
+            For J = 1 To lND
+                If (Abs(BinX - XD(J)) < 2#) And (Abs(BinY - YD(J)) < 2#) Then
+                    AddBin = False
+                    Exit For
+                End If
+                Distance = Sqr((BinX - XD(J)) ^ 2 + (BinY - YD(J)) ^ 2 + (BinZ - ZD(J)) ^ 2)
+                'If (Distance < (lZDA - lZDMin)) Then
+                If (Distance < 5#) Then
+                    AddBin = False
+                    Exit For
+                End If
+            Next J
+            If (AddBin = True) Then
+                ND = ND + 1
+                ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), _
+                                XD(1 To ND), YD(1 To ND), ZD(1 To ND)
+                PhiD(ND) = I
+                ThetaD(ND) = 0
+                XD(ND) = BinX
+                YD(ND) = BinY
+                ZD(ND) = BinZ
             End If
-            Distance = Sqr((BinX - XD(J)) ^ 2 + (BinY - YD(J)) ^ 2 + (BinZ - ZD(J)) ^ 2)
-            'If (Distance < (lZDA - lZDMin)) Then
-            If (Distance < 5#) Then
-                AddBin = False
-                Exit For
-            End If
-        Next J
-        If (AddBin = True) Then
-            ND = ND + 1
-            lblNAdd = lblNAdd + 1
-            ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), _
-                            XD(1 To ND), YD(1 To ND), ZD(1 To ND)
-            PhiD(ND) = I
-            ThetaD(ND) = 0
-            XD(ND) = BinX
-            YD(ND) = BinY
-            ZD(ND) = BinZ
-        End If
-    Next I
+        Next I
+'
+        lblNAdd = ND - lND
+    End If ' End of If (bFilterEnabled = False) Then
 '
     Call DefaultParameters
 '
