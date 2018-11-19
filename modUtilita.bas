@@ -596,7 +596,7 @@ Public Sub QuickSort5V(ByRef ValTab#(), ByRef ValTab1#(), ByRef ValTab2#(), _
 '                = 0 -> no sorting.
 '                < 0 -> from the major to the minor.
 '
-    Dim RandIndex&, i&, j&, M$
+    Dim RandIndex&, I&, J&, M$
     Dim ValTemp As Double   ' Type of the vector that you want to order.
     Dim Part As Double      ' Type of sorting key.
 '
@@ -661,74 +661,74 @@ Public Sub QuickSort5V(ByRef ValTab#(), ByRef ValTab1#(), ByRef ValTab2#(), _
 '
             ' Move in from both sides towards the pivot element:
             Do
-                i = Low: j = High
-                Do While ((OrderDir > 0) And (i < j) And (ValTab(i) <= Part)) _
-                Or ((OrderDir < 0) And (i < j) And (ValTab(i) >= Part))
-                    i = i + 1
+                I = Low: J = High
+                Do While ((OrderDir > 0) And (I < J) And (ValTab(I) <= Part)) _
+                Or ((OrderDir < 0) And (I < J) And (ValTab(I) >= Part))
+                    I = I + 1
                 Loop
-                Do While ((OrderDir > 0) And (j > i) And (ValTab(j) >= Part)) _
-                Or ((OrderDir < 0) And (j > i) And (ValTab(j) <= Part))
-                    j = j - 1
+                Do While ((OrderDir > 0) And (J > I) And (ValTab(J) >= Part)) _
+                Or ((OrderDir < 0) And (J > I) And (ValTab(J) <= Part))
+                    J = J - 1
                 Loop
 '
-                If i < j Then
+                If I < J Then
                     ' We haven't reached the pivot element; it means that two
                     ' elements on either side are out of order, so swap them:
                     'SWAP ValTab(i), ValTab(J)
                     ' Main Vector:
-                    ValTemp = ValTab(i)
-                    ValTab(i) = ValTab(j)
-                    ValTab(j) = ValTemp
+                    ValTemp = ValTab(I)
+                    ValTab(I) = ValTab(J)
+                    ValTab(J) = ValTemp
                     ' First associated vector:
-                    ValTemp = ValTab1(i)
-                    ValTab1(i) = ValTab1(j)
-                    ValTab1(j) = ValTemp
+                    ValTemp = ValTab1(I)
+                    ValTab1(I) = ValTab1(J)
+                    ValTab1(J) = ValTemp
                     ' Second associated vector:
-                    ValTemp = ValTab2(i)
-                    ValTab2(i) = ValTab2(j)
-                    ValTab2(j) = ValTemp
+                    ValTemp = ValTab2(I)
+                    ValTab2(I) = ValTab2(J)
+                    ValTab2(J) = ValTemp
                     '
-                    ValTemp = ValTab3(i)
-                    ValTab3(i) = ValTab3(j)
-                    ValTab3(j) = ValTemp
+                    ValTemp = ValTab3(I)
+                    ValTab3(I) = ValTab3(J)
+                    ValTab3(J) = ValTemp
                     '
-                    ValTemp = ValTab4(i)
-                    ValTab4(i) = ValTab4(j)
-                    ValTab4(j) = ValTemp
+                    ValTemp = ValTab4(I)
+                    ValTab4(I) = ValTab4(J)
+                    ValTab4(J) = ValTemp
                 End If
 '
-            Loop While i < j
+            Loop While I < J
             ' Move the pivot element back to its proper place in the array:
             'SWAP ValTab(i), ValTab(High)
             ' Main Vector:
-            ValTemp = ValTab(i)
-            ValTab(i) = ValTab(High)
+            ValTemp = ValTab(I)
+            ValTab(I) = ValTab(High)
             ValTab(High) = ValTemp
             ' First associated vector:
-            ValTemp = ValTab1(i)
-            ValTab1(i) = ValTab1(High)
+            ValTemp = ValTab1(I)
+            ValTab1(I) = ValTab1(High)
             ValTab1(High) = ValTemp
             ' Second associated vector:
-            ValTemp = ValTab2(i)
-            ValTab2(i) = ValTab2(High)
+            ValTemp = ValTab2(I)
+            ValTab2(I) = ValTab2(High)
             ValTab2(High) = ValTemp
             '
-            ValTemp = ValTab3(i)
-            ValTab3(i) = ValTab3(High)
+            ValTemp = ValTab3(I)
+            ValTab3(I) = ValTab3(High)
             ValTab3(High) = ValTemp
             '
-            ValTemp = ValTab4(i)
-            ValTab4(i) = ValTab4(High)
+            ValTemp = ValTab4(I)
+            ValTab4(I) = ValTab4(High)
             ValTab4(High) = ValTemp
 '
             ' Recursively call the QuickSort5V procedure (pass the smaller
             ' subdivision first to use less stack space):
-            If (i - Low) < (High - i) Then
-                QuickSort5V ValTab(), ValTab1(), ValTab2(), ValTab3(), ValTab4(), Low, i - 1, OrderDir
-                QuickSort5V ValTab(), ValTab1(), ValTab2(), ValTab3(), ValTab4(), i + 1, High, OrderDir
+            If (I - Low) < (High - I) Then
+                QuickSort5V ValTab(), ValTab1(), ValTab2(), ValTab3(), ValTab4(), Low, I - 1, OrderDir
+                QuickSort5V ValTab(), ValTab1(), ValTab2(), ValTab3(), ValTab4(), I + 1, High, OrderDir
             Else
-                QuickSort5V ValTab(), ValTab1(), ValTab2(), ValTab3(), ValTab4(), i + 1, High, OrderDir
-                QuickSort5V ValTab(), ValTab1(), ValTab2(), ValTab3(), ValTab4(), Low, i - 1, OrderDir
+                QuickSort5V ValTab(), ValTab1(), ValTab2(), ValTab3(), ValTab4(), I + 1, High, OrderDir
+                QuickSort5V ValTab(), ValTab1(), ValTab2(), ValTab3(), ValTab4(), Low, I - 1, OrderDir
             End If
         End If
     End If
@@ -739,6 +739,187 @@ QuickSort5V_ERR:
         M$ = "Error " & Str$(Err.Number) & vbNewLine
         M$ = M$ & Err.Description
         MsgBox M$, vbCritical, " QuickSort5V"
+    End If
+'
+'
+'
+End Sub
+
+Public Sub QuickSort5Double1Long(ByRef ValTab#(), ByRef ValTab1#(), ByRef ValTab2#(), _
+    ByRef ValTab3#(), ByRef ValTab4#(), ByRef ValTab5&(), _
+    ByVal Low&, ByVal High&, Optional ByVal OrderDir& = -1)
+'
+'   Routine QuickSort5Double1Long:
+'    ValTab():  Vector that you want to order.
+'    ValTab1(): First associated vector.
+'    ValTab2(): Second associated vector.
+'    Low:       Initial position of the area to be ordered.
+'    High:      Final position of the area to be ordered.
+'    OrderDir:     Direction of the sorting:
+'                > 0 -> from the minor to the major.
+'                = 0 -> no sorting.
+'                < 0 -> from the major to the minor.
+'
+    Dim RandIndex&, I&, J&, M$
+    Dim DoubleValTemp As Double   ' Type of the vector that you want to order.
+    Dim LongValTemp As Long   ' Type of the vector that you want to order.
+    Dim Part As Double      ' Type of sorting key.
+'
+    On Error GoTo QuickSort5Double1Long_ERR
+    If OrderDir = 0 Then Exit Sub
+'
+    If Low < High Then
+'
+        If High - Low = 1 Then
+            ' Only two elements in this subdivision; swap them
+            ' if they are out of order, then end recursive calls:
+            If ((OrderDir > 0) And (ValTab(Low) > ValTab(High))) _
+            Or ((OrderDir < 0) And (ValTab(Low) < ValTab(High))) Then
+                'SWAP ValTab(Low), ValTab(High)
+                ' Main Vector:
+                DoubleValTemp = ValTab(Low)
+                ValTab(Low) = ValTab(High)
+                ValTab(High) = DoubleValTemp
+                ' First associated vector:
+                DoubleValTemp = ValTab1(Low)
+                ValTab1(Low) = ValTab1(High)
+                ValTab1(High) = DoubleValTemp
+                ' Second associated vector:
+                DoubleValTemp = ValTab2(Low)
+                ValTab2(Low) = ValTab2(High)
+                ValTab2(High) = DoubleValTemp
+                '
+                DoubleValTemp = ValTab3(Low)
+                ValTab3(Low) = ValTab3(High)
+                ValTab3(High) = DoubleValTemp
+                '
+                DoubleValTemp = ValTab4(Low)
+                ValTab4(Low) = ValTab4(High)
+                ValTab4(High) = DoubleValTemp
+                '
+                LongValTemp = ValTab5(Low)
+                ValTab5(Low) = ValTab5(High)
+                ValTab5(High) = LongValTemp
+            End If
+'
+        Else
+            ' Pick a pivot element, then move it to the end:
+            RandIndex = (High + Low) / 2
+            'SWAP ValTab(High), ValTab(RandIndex)
+            ' Main Vector:
+            DoubleValTemp = ValTab(High)
+            ValTab(High) = ValTab(RandIndex)
+            ValTab(RandIndex) = DoubleValTemp
+            Part = ValTab(High)
+            ' First associated vector:
+            DoubleValTemp = ValTab1(High)
+            ValTab1(High) = ValTab1(RandIndex)
+            ValTab1(RandIndex) = DoubleValTemp
+            ' Second associated vector:
+            DoubleValTemp = ValTab2(High)
+            ValTab2(High) = ValTab2(RandIndex)
+            ValTab2(RandIndex) = DoubleValTemp
+            '
+            DoubleValTemp = ValTab3(High)
+            ValTab3(High) = ValTab3(RandIndex)
+            ValTab3(RandIndex) = DoubleValTemp
+            '
+            DoubleValTemp = ValTab4(High)
+            ValTab4(High) = ValTab4(RandIndex)
+            ValTab4(RandIndex) = DoubleValTemp
+            '
+            LongValTemp = ValTab5(High)
+            ValTab5(High) = ValTab5(RandIndex)
+            ValTab5(RandIndex) = LongValTemp
+'
+            ' Move in from both sides towards the pivot element:
+            Do
+                I = Low: J = High
+                Do While ((OrderDir > 0) And (I < J) And (ValTab(I) <= Part)) _
+                Or ((OrderDir < 0) And (I < J) And (ValTab(I) >= Part))
+                    I = I + 1
+                Loop
+                Do While ((OrderDir > 0) And (J > I) And (ValTab(J) >= Part)) _
+                Or ((OrderDir < 0) And (J > I) And (ValTab(J) <= Part))
+                    J = J - 1
+                Loop
+'
+                If I < J Then
+                    ' We haven't reached the pivot element; it means that two
+                    ' elements on either side are out of order, so swap them:
+                    'SWAP ValTab(i), ValTab(J)
+                    ' Main Vector:
+                    DoubleValTemp = ValTab(I)
+                    ValTab(I) = ValTab(J)
+                    ValTab(J) = DoubleValTemp
+                    ' First associated vector:
+                    DoubleValTemp = ValTab1(I)
+                    ValTab1(I) = ValTab1(J)
+                    ValTab1(J) = DoubleValTemp
+                    ' Second associated vector:
+                    DoubleValTemp = ValTab2(I)
+                    ValTab2(I) = ValTab2(J)
+                    ValTab2(J) = DoubleValTemp
+                    '
+                    DoubleValTemp = ValTab3(I)
+                    ValTab3(I) = ValTab3(J)
+                    ValTab3(J) = DoubleValTemp
+                    '
+                    DoubleValTemp = ValTab4(I)
+                    ValTab4(I) = ValTab4(J)
+                    ValTab4(J) = DoubleValTemp
+                    '
+                    LongValTemp = ValTab5(I)
+                    ValTab5(I) = ValTab5(J)
+                    ValTab5(J) = LongValTemp
+                End If
+'
+            Loop While I < J
+            ' Move the pivot element back to its proper place in the array:
+            'SWAP ValTab(i), ValTab(High)
+            ' Main Vector:
+            DoubleValTemp = ValTab(I)
+            ValTab(I) = ValTab(High)
+            ValTab(High) = DoubleValTemp
+            ' First associated vector:
+            DoubleValTemp = ValTab1(I)
+            ValTab1(I) = ValTab1(High)
+            ValTab1(High) = DoubleValTemp
+            ' Second associated vector:
+            DoubleValTemp = ValTab2(I)
+            ValTab2(I) = ValTab2(High)
+            ValTab2(High) = DoubleValTemp
+            '
+            DoubleValTemp = ValTab3(I)
+            ValTab3(I) = ValTab3(High)
+            ValTab3(High) = DoubleValTemp
+            '
+            DoubleValTemp = ValTab4(I)
+            ValTab4(I) = ValTab4(High)
+            ValTab4(High) = DoubleValTemp
+            '
+            LongValTemp = ValTab5(I)
+            ValTab5(I) = ValTab5(High)
+            ValTab5(High) = LongValTemp
+'
+            ' Recursively call the QuickSort5Double1Long procedure (pass the smaller
+            ' subdivision first to use less stack space):
+            If (I - Low) < (High - I) Then
+                QuickSort5Double1Long ValTab(), ValTab1(), ValTab2(), ValTab3(), ValTab4(), ValTab5(), Low, I - 1, OrderDir
+                QuickSort5Double1Long ValTab(), ValTab1(), ValTab2(), ValTab3(), ValTab4(), ValTab5(), I + 1, High, OrderDir
+            Else
+                QuickSort5Double1Long ValTab(), ValTab1(), ValTab2(), ValTab3(), ValTab4(), ValTab5(), I + 1, High, OrderDir
+                QuickSort5Double1Long ValTab(), ValTab1(), ValTab2(), ValTab3(), ValTab4(), ValTab5(), Low, I - 1, OrderDir
+            End If
+        End If
+    End If
+'
+'
+QuickSort5Double1Long_ERR:
+    If (Err <> 0) Then
+        M$ = "Error " & Str$(Err.Number) & vbNewLine
+        M$ = M$ & Err.Description
+        MsgBox M$, vbCritical, " QuickSort5Double1Long"
     End If
 '
 '

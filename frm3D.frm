@@ -660,19 +660,19 @@ Private Type POINTAPI
      Y As Long          '     "
 End Type
 '
-' Variabili per la Sub DrawPoints:
-Dim PRv() As POINTAPI       ' Vettore dei punti o matrice dei vertici dei
-                            ' quadrilateri proiettati sul piano di rappresentazione
-                            ' (e' usata anche dalle Subs DisegnaSup_BN e DrawSurface).
-Const lRP& = 4              ' Raggio del disegno dei punti [Pixels].
+' Variables for the Sub DrawPoints:
+Dim PRv() As POINTAPI       ' Vector of the points or matrix of the vertices of the
+                            '  quadrilaterals projected on the representation plane
+                            '  (it is also used by the Subs DrawSup_BN and DrawSurface).
+Const lRP& = 4              ' Dot drawing radius [Pixels].
 '
 ' Variabili per la Sub DisegnaSup_BN:
 Dim NPoli&                  ' N?di quadrilateri in una riga.
 Dim lpPoint() As POINTAPI   ' Vettore dei vertici di una riga.
 Dim lpVertici&()            ' Vettore del N?di vertici di ogni poligono.
 '
-' Variabili per la Sub DrawSurface:
-Dim lpPoint_C() As POINTAPI ' Vettore dei vertici di un quadrilatero.
+' Variables for the Sub DrawSurface:
+Dim lpPoint_C() As POINTAPI ' Vector of the vertices of a quadrilateral.
 '
 ' Costanti per la ricerca della posizione 3D:
 Const shpIndOffx& = lRP + 2 ' Offset orizzontale e verticale del cerchio
@@ -710,7 +710,7 @@ Private Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
 Private Declare Function WindowFromPoint Lib "user32" _
     (ByVal X As Long, ByVal Y As Long) As Long
 
-Private Sub ROTATE(ByVal X0#, ByVal Y0#, ByVal Rot#, ByVal CRx#, ByVal CRy#, Xr#, Yr#)
+Private Sub ROTATE(ByVal X0#, ByVal Y0#, ByVal Rot#, ByVal CRx#, ByVal CRy#, ByRef Xr#, ByRef Yr#)
 '
 '   Routines for rotating a point:
 '
@@ -1948,34 +1948,223 @@ Private Sub pic3D_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As
 '
 '
 End Sub
+
+Private Sub QuickSort1Double1POINTAPI1Long( _
+    ByRef ValTab#(), ByRef ValTab1() As POINTAPI, ByRef ValTab2&(), _
+    ByVal Low&, ByVal High&, Optional ByVal OrderDir& = -1)
+'
+'   Routine QuickSort1Double1POINTAPI1Long:
+'    ValTab():  Vector that you want to order.
+'    ValTab1(): First associated vector.
+'    ValTab2(): Second associated vector.
+'    Low:       Initial position of the area to be ordered.
+'    High:      Final position of the area to be ordered.
+'    OrderDir:     Direction of the sorting:
+'                > 0 -> from the minor to the major.
+'                = 0 -> no sorting.
+'                < 0 -> from the major to the minor.
+'
+    Dim RandIndex&, I&, J&, M$
+    Dim DoubleValTemp As Double   ' Type of the vector that you want to order.
+    Dim POINTAPIValTemp As POINTAPI   ' Type of the vector that you want to order.
+    Dim LongValTemp As Long   ' Type of the vector that you want to order.
+    Dim Part As Double      ' Type of sorting key.
+'
+    On Error GoTo QuickSort1Double1POINTAPI1Long_ERR
+    If OrderDir = 0 Then Exit Sub
+'
+    If Low < High Then
+'
+        If High - Low = 1 Then
+            ' Only two elements in this subdivision; swap them
+            ' if they are out of order, then end recursive calls:
+            If ((OrderDir > 0) And (ValTab(Low) > ValTab(High))) _
+            Or ((OrderDir < 0) And (ValTab(Low) < ValTab(High))) Then
+                'SWAP ValTab(Low), ValTab(High)
+                ' Main Vector:
+                DoubleValTemp = ValTab(Low)
+                ValTab(Low) = ValTab(High)
+                ValTab(High) = DoubleValTemp
+                ' First associated vector:
+                POINTAPIValTemp = ValTab1(Low)
+                ValTab1(Low) = ValTab1(High)
+                ValTab1(High) = POINTAPIValTemp
+                ' Second associated vector:
+                LongValTemp = ValTab2(Low)
+                ValTab2(Low) = ValTab2(High)
+                ValTab2(High) = LongValTemp
+            End If
+'
+        Else
+            ' Pick a pivot element, then move it to the end:
+            RandIndex = (High + Low) / 2
+            'SWAP ValTab(High), ValTab(RandIndex)
+            ' Main Vector:
+            DoubleValTemp = ValTab(High)
+            ValTab(High) = ValTab(RandIndex)
+            ValTab(RandIndex) = DoubleValTemp
+            Part = ValTab(High)
+            ' First associated vector:
+            POINTAPIValTemp = ValTab1(High)
+            ValTab1(High) = ValTab1(RandIndex)
+            ValTab1(RandIndex) = POINTAPIValTemp
+            ' Second associated vector:
+            LongValTemp = ValTab2(High)
+            ValTab2(High) = ValTab2(RandIndex)
+            ValTab2(RandIndex) = LongValTemp
+'
+            ' Move in from both sides towards the pivot element:
+            Do
+                I = Low: J = High
+                Do While ((OrderDir > 0) And (I < J) And (ValTab(I) <= Part)) _
+                Or ((OrderDir < 0) And (I < J) And (ValTab(I) >= Part))
+                    I = I + 1
+                Loop
+                Do While ((OrderDir > 0) And (J > I) And (ValTab(J) >= Part)) _
+                Or ((OrderDir < 0) And (J > I) And (ValTab(J) <= Part))
+                    J = J - 1
+                Loop
+'
+                If I < J Then
+                    ' We haven't reached the pivot element; it means that two
+                    ' elements on either side are out of order, so swap them:
+                    'SWAP ValTab(i), ValTab(J)
+                    ' Main Vector:
+                    DoubleValTemp = ValTab(I)
+                    ValTab(I) = ValTab(J)
+                    ValTab(J) = DoubleValTemp
+                    ' First associated vector:
+                    POINTAPIValTemp = ValTab1(I)
+                    ValTab1(I) = ValTab1(J)
+                    ValTab1(J) = POINTAPIValTemp
+                    ' Second associated vector:
+                    LongValTemp = ValTab2(I)
+                    ValTab2(I) = ValTab2(J)
+                    ValTab2(J) = LongValTemp
+                End If
+'
+            Loop While I < J
+            ' Move the pivot element back to its proper place in the array:
+            'SWAP ValTab(i), ValTab(High)
+            ' Main Vector:
+            DoubleValTemp = ValTab(I)
+            ValTab(I) = ValTab(High)
+            ValTab(High) = DoubleValTemp
+            ' First associated vector:
+            POINTAPIValTemp = ValTab1(I)
+            ValTab1(I) = ValTab1(High)
+            ValTab1(High) = POINTAPIValTemp
+            ' Second associated vector:
+            LongValTemp = ValTab2(I)
+            ValTab2(I) = ValTab2(High)
+            ValTab2(High) = LongValTemp
+'
+            ' Recursively call the QuickSort1Double1POINTAPI1Long procedure (pass the smaller
+            ' subdivision first to use less stack space):
+            If (I - Low) < (High - I) Then
+                QuickSort1Double1POINTAPI1Long ValTab(), ValTab1(), ValTab2(), Low, I - 1, OrderDir
+                QuickSort1Double1POINTAPI1Long ValTab(), ValTab1(), ValTab2(), I + 1, High, OrderDir
+            Else
+                QuickSort1Double1POINTAPI1Long ValTab(), ValTab1(), ValTab2(), I + 1, High, OrderDir
+                QuickSort1Double1POINTAPI1Long ValTab(), ValTab1(), ValTab2(), Low, I - 1, OrderDir
+            End If
+        End If
+    End If
+'
+'
+QuickSort1Double1POINTAPI1Long_ERR:
+    If (Err <> 0) Then
+        M$ = "Error " & Str$(Err.Number) & vbNewLine
+        M$ = M$ & Err.Description
+        MsgBox M$, vbCritical, " QuickSort1Double1POINTAPI1Long"
+    End If
+'
+'
+'
+End Sub
+
 Private Sub DrawPoints(ByVal bCol As Boolean)
 '
-'   Disegna, con API, i punti specificati nei vettori XV(), YV() e ZV().
-'   Se bCol = True ai punti viene assegnato un colore proporzionale alla
-'   loro altezza:
+' Draw, with API, the points specified in the XV (), YV () and ZV () vectors.
+' If bCol = True the points are assigned a color proportional to their height:
 '
     Dim N&, hPen&, hPen_O&, hBrush&, hBrush_O&, lR1&
-    Dim Xr#, Yr#
+    Dim Xr#(), Yr#(), Zr#()
+    Dim PRc&()  ' Color of the point.
+
+'
+    'If ALFA < 0 Then
+    '    ' Sort the vectors so that the points with minor Z remain behind:
+    '    QuickSort5Double1Long ZV(), XV(), YV(), PhiV(), ThetaV(), ZCol(), 1, NV
+    'Else
+    '    ' Sort the vectors so that the points with major Z remain behind:
+    '    QuickSort5Double1Long ZV(), XV(), YV(), PhiV(), ThetaV(), ZCol(), 1, NV, 1
+    'End If
+'
+    ' Prepare the rotate vectors:
+    ReDim Preserve Xr(1 To NV), Yr(1 To NV), Zr(1 To NV)
+'
+    If bRotate Then
+        ' Caculate the rotate vectors:
+        For N = 1 To NV
+            ROTATE XV(N), YV(N), CDbl(THETA), X0r, Y0r, Xr(N), Yr(N)
+        Next N
+        ' Copy point vectors:
+        Zr() = ZV()
+    Else
+        ' Copy point vectors:
+        Xr() = XV()
+        Yr() = YV()
+        Zr() = ZV()
+    End If
+'
+    ' Prepare the color of points projected:
+    ReDim Preserve PRc(1 To NV)
+'
+    ' Copy color of points projected:
+    PRc() = ZCol()
+'
+    ' Caculate the points projected on the representation plane:
+    For N = 1 To NV
+        PRv(N).X = CLng((Ax * Xr(N) + Bx) + (Ay * Yr(N) + By) * CosA)
+        PRv(N).Y = CLng((Az * Zr(N) + Bz) - (Ay * Yr(N) + By) * SinA)
+    Next N
+'
+    ' Sort the vectors with:
+    If ALFA < 0 Then ' 0 [Grd].
+        '  so that the points with minor Z remain behind:
+        QuickSort1Double1POINTAPI1Long Zr(), PRv(), PRc(), 1, NV
+    ElseIf ALFA < PI / 6! Then ' 30 [Grd].
+        If RAyx < 1! Then
+            '  so that the points with minor Y remain behind:
+            QuickSort1Double1POINTAPI1Long Yr(), PRv(), PRc(), 1, NV
+        Else
+            '  so that the points with major X remain behind:
+            QuickSort1Double1POINTAPI1Long Xr(), PRv(), PRc(), 1, NV, 1
+        End If
+    ElseIf ALFA < PI / 3! Then ' 60 [Grd].
+        If RAyx < 0.5 Then
+            '  so that the points with minor Y remain behind:
+            QuickSort1Double1POINTAPI1Long Yr(), PRv(), PRc(), 1, NV
+        Else
+            '  so that the points with major Z remain behind:
+            QuickSort1Double1POINTAPI1Long Zr(), PRv(), PRc(), 1, NV, 1
+        End If
+    Else
+        '  so that the points with major Z remain behind:
+        QuickSort1Double1POINTAPI1Long Zr(), PRv(), PRc(), 1, NV, 1
+    End If
 '
     hPen = CreatePen(vbSolid, 1, vbWhite)
     hPen_O = SelectObject(pic3D.hdc, hPen)
     hBrush = CreateSolidBrush(&H808080) 'pic3D.BackColor)
     hBrush_O = SelectObject(pic3D.hdc, hBrush)
 '
-    ' Disegno i punti proiettati sul piano di rappresentazione:
+    ' Drawing the points projected on the representation plane:
     For N = 1 To NV
-        If bRotate Then
-            ROTATE XV(N), YV(N), CDbl(THETA), X0r, Y0r, Xr, Yr
-            PRv(N).X = CLng((Ax * Xr + Bx) + (Ay * Yr + By) * CosA)
-            PRv(N).Y = CLng((Az * ZV(N) + Bz) - (Ay * Yr + By) * SinA)
-        Else
-            PRv(N).X = CLng((Ax * XV(N) + Bx) + (Ay * YV(N) + By) * CosA)
-            PRv(N).Y = CLng((Az * ZV(N) + Bz) - (Ay * YV(N) + By) * SinA)
-        End If
-'
         If bCol Then
             lR1 = DeleteObject(hBrush)
-            hBrush = CreateSolidBrush(ZCol(N))
+            hBrush = CreateSolidBrush(PRc(N))
             lR1 = SelectObject(pic3D.hdc, hBrush)
         End If
 '
