@@ -1376,7 +1376,7 @@ Private Sub ProcessDataFile(ByVal FileN$)
     Dim lXD#()      ' Vector data values
     Dim lYD#()      ' of the surface
     Dim lZD#()      ' to be interpolated.
-    Dim lZDA#       ' Average of ZD().
+    Dim lZDAvg#     ' Average of ZD().
     Dim lZDMin#     ' Min of ZD().
     Dim lDSkip() As Boolean   ' Flag data will skip.
     Dim I%, J%
@@ -1438,7 +1438,7 @@ Private Sub ProcessDataFile(ByVal FileN$)
         ReDim Preserve lDSkip(1 To lND)
 '
         ND = 0
-        lZDA = 0
+        lZDAvg = 0
         lZDMin = ZDMax
         For I = 1 To lND
             lZOk = False
@@ -1463,23 +1463,23 @@ Private Sub ProcessDataFile(ByVal FileN$)
                 XD(ND) = lXD(I)
                 YD(ND) = lYD(I)
                 ZD(ND) = lZD(I)
-                lZDA = lZDA + lZD(I)
+                lZDAvg = lZDAvg + lZD(I)
                 If (lZD(I) < lZDMin) Then lZDMin = lZD(I)
             Else
                 lDSkip(I) = True
             End If
         Next I
 '
-        lZDA = lZDA / ND
+        lZDAvg = lZDAvg / ND
 '
         ' Fill data for BIN style.
         Dim BinX#, BinY#, BinZ#, Distance#
         Dim AddBin As Boolean
         lND = ND
         lblNAdd = 0
-        'BinZ = lZDA
+        'BinZ = lZDAvg
         BinZ = lZDMin
-        'BinZ = lZDMin + (lZDA - lZDMin) / 2#
+        'BinZ = lZDMin + (lZDAvg - lZDMin) / 2#
 '
         For I = 0 To 360 - 1 Step 10
             BinX = RD * Sin(I * PI / 180#)
@@ -1491,7 +1491,7 @@ Private Sub ProcessDataFile(ByVal FileN$)
                     Exit For
                 End If
                 Distance = Sqr((BinX - XD(J)) ^ 2 + (BinY - YD(J)) ^ 2 + (BinZ - ZD(J)) ^ 2)
-                'If (Distance < (lZDA - lZDMin)) Then
+                'If (Distance < (lZDAvg - lZDMin)) Then
                 If (Distance < 5#) Then
                     AddBin = False
                     Exit For

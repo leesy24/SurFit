@@ -1269,7 +1269,7 @@ Private Sub DrawSurface(ByVal bCol As Boolean)
     Quadrante = CLng(Int(THETA / PI_2))
 '
     Select Case Quadrante
-        Case 0  ' 1st Quadrant.
+        Case 0  ' 1st Quadrant. 0 ~ 90
         For J = NYV - 1 To 1 Step -1
             For I = 1 To NXV - 1
                 lpPoint_C(1).X = PRv(I, J).X
@@ -1291,7 +1291,7 @@ Private Sub DrawSurface(ByVal bCol As Boolean)
             Next I
         Next J
 '
-        Case 1  ' 2nd Quadrant.
+        Case 1  ' 2nd Quadrant. 90 ~ 180
         For I = NXV - 1 To 1 Step -1
             For J = NYV - 1 To 1 Step -1
                 lpPoint_C(1).X = PRv(I, J).X
@@ -1313,7 +1313,7 @@ Private Sub DrawSurface(ByVal bCol As Boolean)
             Next J
         Next I
 '
-        Case 2  ' 3rd Quadrant.
+        Case 2  ' 3rd Quadrant. 180 ~ 270
         For J = 1 To NYV - 1
             For I = NXV - 1 To 1 Step -1
                 lpPoint_C(1).X = PRv(I, J).X
@@ -1335,7 +1335,7 @@ Private Sub DrawSurface(ByVal bCol As Boolean)
             Next I
         Next J
 '
-        Case 3  ' 4th Quadrant.
+        Case 3  ' 4th Quadrant. 270 ~ 360
         For I = 1 To NXV - 1
             For J = 1 To NYV - 1
                 lpPoint_C(1).X = PRv(I, J).X
@@ -1816,10 +1816,16 @@ Private Sub Settings(Optional ByVal bAutoScale As Boolean = True)
                     ' Calculation of the mean value of the Z coordinates of the four vertices:
                     ZMed = CSng(ZV(I, J) + ZV(I, J + 1) + ZV(I + 1, J + 1) + ZV(I + 1, J)) / 4!
                     ' and of the corresponding color:
-                    If ZMed >= ZMinCol And ZMed <> ZMin Then
-                        ZCol(I, J) = TCol(CLng((ZMed - ZMinCol) * ZnCol))
-                    Else
+                    If ZMed < ZMinCol _
+                        Or ZMed = ZMin _
+                        Or CSng(ZV(I, J)) = ZMin _
+                        Or CSng(ZV(I, J + 1)) = ZMin _
+                        Or CSng(ZV(I + 1, J + 1)) = ZMin _
+                        Or CSng(ZV(I + 1, J)) = ZMin _
+                        Then
                         ZCol(I, J) = &H808080 ' Grey.
+                    Else
+                        ZCol(I, J) = TCol(CLng((ZMed - ZMinCol) * ZnCol))
                     End If
                 Next I
             Next J
@@ -2089,70 +2095,24 @@ Private Sub DrawPoints(ByVal bCol As Boolean)
 ' If bCol = True the points are assigned a color proportional to their height:
 '
     Dim N&, hPen&, hPen_O&, hBrush&, hBrush_O&, lR1&
-    Dim Xr#(), Yr#(), Zr#()
-    Dim PRc&()  ' Color of the point.
-
-'
-    'If ALFA < 0 Then
-    '    ' Sort the vectors so that the points with minor Z remain behind:
-    '    QuickSort5Double1Long ZV(), XV(), YV(), PhiV(), ThetaV(), ZCol(), 1, NV
-    'Else
-    '    ' Sort the vectors so that the points with major Z remain behind:
-    '    QuickSort5Double1Long ZV(), XV(), YV(), PhiV(), ThetaV(), ZCol(), 1, NV, 1
-    'End If
-'
-    ' Prepare the rotate vectors:
-    ReDim Preserve Xr(1 To NV), Yr(1 To NV), Zr(1 To NV)
+    Dim Xr#, Yr#
+    Dim Quadrante&
 '
     If bRotate Then
         ' Caculate the rotate vectors:
         For N = 1 To NV
-            ROTATE XV(N), YV(N), CDbl(THETA), X0r, Y0r, Xr(N), Yr(N)
+            ROTATE XV(N), YV(N), CDbl(THETA), X0r, Y0r, Xr, Yr
+'
+            ' Caculate the points projected on the representation plane:
+            PRv(N).X = CLng((Ax * Xr + Bx) + (Ay * Yr + By) * CosA)
+            PRv(N).Y = CLng((Az * ZV(N) + Bz) - (Ay * Yr + By) * SinA)
         Next N
-        ' Copy point vectors:
-        Zr() = ZV()
     Else
-        ' Copy point vectors:
-        Xr() = XV()
-        Yr() = YV()
-        Zr() = ZV()
-    End If
-'
-    ' Prepare the color of points projected:
-    ReDim Preserve PRc(1 To NV)
-'
-    ' Copy color of points projected:
-    PRc() = ZCol()
-'
-    ' Caculate the points projected on the representation plane:
-    For N = 1 To NV
-        PRv(N).X = CLng((Ax * Xr(N) + Bx) + (Ay * Yr(N) + By) * CosA)
-        PRv(N).Y = CLng((Az * Zr(N) + Bz) - (Ay * Yr(N) + By) * SinA)
-    Next N
-'
-    ' Sort the vectors with:
-    If ALFA < 0 Then ' 0 [Grd].
-        '  so that the points with minor Z remain behind:
-        QuickSort1Double1POINTAPI1Long Zr(), PRv(), PRc(), 1, NV
-    ElseIf ALFA < PI / 6! Then ' 30 [Grd].
-        If RAyx < 1! Then
-            '  so that the points with minor Y remain behind:
-            QuickSort1Double1POINTAPI1Long Yr(), PRv(), PRc(), 1, NV
-        Else
-            '  so that the points with major X remain behind:
-            QuickSort1Double1POINTAPI1Long Xr(), PRv(), PRc(), 1, NV, 1
-        End If
-    ElseIf ALFA < PI / 3! Then ' 60 [Grd].
-        If RAyx < 0.5 Then
-            '  so that the points with minor Y remain behind:
-            QuickSort1Double1POINTAPI1Long Yr(), PRv(), PRc(), 1, NV
-        Else
-            '  so that the points with major Z remain behind:
-            QuickSort1Double1POINTAPI1Long Zr(), PRv(), PRc(), 1, NV, 1
-        End If
-    Else
-        '  so that the points with major Z remain behind:
-        QuickSort1Double1POINTAPI1Long Zr(), PRv(), PRc(), 1, NV, 1
+        ' Caculate the points projected on the representation plane:
+        For N = 1 To NV
+            PRv(N).X = CLng((Ax * XV(N) + Bx) + (Ay * YV(N) + By) * CosA)
+            PRv(N).Y = CLng((Az * ZV(N) + Bz) - (Ay * YV(N) + By) * SinA)
+        Next N
     End If
 '
     hPen = CreatePen(vbSolid, 1, vbWhite)
@@ -2160,17 +2120,36 @@ Private Sub DrawPoints(ByVal bCol As Boolean)
     hBrush = CreateSolidBrush(&H808080) 'pic3D.BackColor)
     hBrush_O = SelectObject(pic3D.hdc, hBrush)
 '
-    ' Drawing the points projected on the representation plane:
-    For N = 1 To NV
-        If bCol Then
-            lR1 = DeleteObject(hBrush)
-            hBrush = CreateSolidBrush(PRc(N))
-            lR1 = SelectObject(pic3D.hdc, hBrush)
-        End If
+    ' Drawing the quadrilaterals. As a function of THETA,
+    '  first design those more 'far from the' observer:
+    Quadrante = CLng(Int(THETA / PI_2))
 '
-        Ellipse pic3D.hdc, PRv(N).X - lRP, PRv(N).Y - lRP, _
-                           PRv(N).X + lRP, PRv(N).Y + lRP
-    Next N
+    Select Case Quadrante
+        Case 0, 1   ' 1st Quadrant. 0 ~ 90 and 2nd Quadrant. 90 ~ 180
+            ' Drawing the points projected on the representation plane:
+            For N = 1 To NV
+                If bCol Then
+                    lR1 = DeleteObject(hBrush)
+                    hBrush = CreateSolidBrush(ZCol(N))
+                    lR1 = SelectObject(pic3D.hdc, hBrush)
+                End If
+'
+                Ellipse pic3D.hdc, PRv(N).X - lRP, PRv(N).Y - lRP, _
+                                   PRv(N).X + lRP, PRv(N).Y + lRP
+            Next N
+        Case 2, 3   ' 3rd Quadrant. 180 ~ 270 and 4th Quadrant. 270 ~ 360
+            ' Drawing the points projected on the representation plane:
+            For N = NV To 1 Step -1
+                If bCol Then
+                    lR1 = DeleteObject(hBrush)
+                    hBrush = CreateSolidBrush(ZCol(N))
+                    lR1 = SelectObject(pic3D.hdc, hBrush)
+                End If
+'
+                Ellipse pic3D.hdc, PRv(N).X - lRP, PRv(N).Y - lRP, _
+                                   PRv(N).X + lRP, PRv(N).Y + lRP
+            Next N
+    End Select
 '
     lR1 = SelectObject(pic3D.hdc, hPen_O)
     lR1 = SelectObject(pic3D.hdc, hBrush_O)
