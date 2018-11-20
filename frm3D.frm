@@ -1266,7 +1266,7 @@ Private Sub DrawSurface(ByVal bCol As Boolean)
 '
     ' Drawing the quadrilaterals. As a function of THETA,
     '  first design those more 'far from the' observer:
-    Quadrante = CLng(Int(THETA / PI_2))
+    Quadrante = CLng(Int((THETA + ALFA) / PI_2)) Mod 4
 '
     Select Case Quadrante
         Case 0  ' 1st Quadrant. 0 ~ 90
@@ -1503,7 +1503,7 @@ Private Sub chkXY_Click()
         chkZY.Font.Bold = False
 '
         RAyx = 1#
-        ALFA = CSng(PI / 2#)
+        ALFA = PI / 2!
     Else
         chkXY.Font.Bold = False
 '
@@ -1534,7 +1534,7 @@ Private Sub chkZX_Click()
         chkZY.Font.Bold = False
 '
         RAyx = 0!
-        ALFA = CSng(PI / 2#)
+        ALFA = PI / 2!
     Else
         chkZX.Font.Bold = False
 '
