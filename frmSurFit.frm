@@ -476,7 +476,12 @@ Attribute VB_Exposed = False
 '
 Option Explicit
 '
-Const ZDMax# = 50#   ' Max of Z
+Const XDMin# = -25# ' Min of X grid
+Const XDMax# = 25#  ' Max of X
+Const YDMin# = -25# ' Min of Y
+Const YDMax# = 25#  ' Max of Y
+Const ZDMin# = 0#   ' Min of Z
+Const ZDMax# = 50#  ' Max of Z
 '
 Dim ND&             ' Number of data in the vectors.
 Dim PhiD#()         ' Angle Phi data.
@@ -785,10 +790,8 @@ Private Sub cmdTest_Click()
     For N = 1 To ND
         ' Abscissas of data points:
         XD(N) = RandU(-10, 10)
-        'XD(N) = RandU(-25, 25)
         ' Ordinates of data points:
         YD(N) = RandU(-10, 10)
-        'YD(N) = RandU(-25, 25)
     Next N
 '
     Call DefaultParameters
@@ -838,7 +841,21 @@ Private Sub Form_Load()
     bFilterEnabled = (chkFilterEnable.Value = vbChecked)
 '
     optZxy(1).Value = True
-    cmdTest_Click
+'
+'    cmdTest_Click
+'
+    Dim FN_Temp$
+'
+    If mnuRecent.UBound = 0 Then
+        mnuLoadData_Click
+    Else
+        FN_Temp$ = mnuRecent(1).Caption
+        FN_Temp$ = Right$(FN_Temp$, Len(FN_Temp$) - 3)
+'
+        If BreakDown(FN_Temp$, FolderN$, Title$) Then
+            ProcessDataFile FN_Temp$
+        End If
+    End If
 '
 '
 '
@@ -930,7 +947,7 @@ Private Sub DrawLevels(ByVal A#, ByVal B#, ByVal C#, ByVal D#, _
 '
 '   Displaying level curves:
 '
-    Dim I&, J&, K&, N&, ZMin#, ZMax#, ZDif#, GMax2#, Msg$
+    Dim I&, J&, K&, N&, ZMin#, ZMax#, ZDif#, Msg$
     ReDim ZLin(1 To NLiv) As LineaLivello_Type
 '
     ' Set the graphic:
@@ -996,7 +1013,7 @@ Private Sub DrawLevels(ByVal A#, ByVal B#, ByVal C#, ByVal D#, _
 '
     ' Draw the surface in 3D:
     'frm3D.Surface XI#(), YI#(), ZI#(), Title$
-    frm3D.Surface PhiD#(), ThetaD#(), XI#(), YI#(), ZI#(), Title$, False, -25#, 25#, -25#, 25#, 0#, 50#
+    frm3D.Surface PhiD#(), ThetaD#(), XI#(), YI#(), ZI#(), Title$, False, XDMin, XDMax, YDMin, YDMax, ZDMin, ZDMax
 '
 '
 '
@@ -1350,7 +1367,7 @@ Private Sub picOrg_Click()
 '
 '
     'frm3D.Points XD#(), YD#(), ZD#(), Title$
-    frm3D.Points PhiD#(), ThetaD#(), XD#(), YD#(), ZD#(), Title$, False, -25#, 25#, -25#, 25#, 0#, 50#
+    frm3D.Points PhiD#(), ThetaD#(), XD#(), YD#(), ZD#(), Title$, False, XDMin, XDMax, YDMin, YDMax, ZDMin, ZDMax
 '
 '
 '
@@ -1360,7 +1377,7 @@ Private Sub picSurFit_Click()
 '
 '
     'frm3D.Surface XI#(), YI#(), ZI#(), Title$
-    frm3D.Surface PhiD#(), ThetaD#(), XI#(), YI#(), ZI#(), Title$, False, -25#, 25#, -25#, 25#, 0#, 50#
+    frm3D.Surface PhiD#(), ThetaD#(), XI#(), YI#(), ZI#(), Title$, False, XDMin, XDMax, YDMin, YDMax, ZDMin, ZDMax
 '
 '
 '
