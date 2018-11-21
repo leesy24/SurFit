@@ -1489,29 +1489,37 @@ Private Sub ProcessDataFile(ByVal FileN$)
 '
         lZDAvg = lZDAvg / ND
 '
-        ' Fill data for BIN style.
-        Dim BinX#, BinY#, BinZ#, Distance#
+        ' Fill data for BIN shape.
+        Dim BinX#, BinY#, Distance#, DistanceMin#, DistanceMinZ#
         Dim AddBin As Boolean
+        Const DistanceRangeMin# = 2#
+        Dim DistanceRangeMax#
+        DistanceRangeMax = RD
+'
         lND = ND
         lblNAdd = 0
-        'BinZ = lZDAvg
-        BinZ = lZDMin
-        'BinZ = lZDMin + (lZDAvg - lZDMin) / 2#
 '
         For I = 0 To 360 - 1 Step 10
             BinX = RD * Sin(I * PI / 180#)
             BinY = RD * Cos(I * PI / 180#)
             AddBin = True
+            DistanceMin = XDMax ' or YDMax
+            DistanceMinZ = lZDAvg
             For J = 1 To lND
-                If (Abs(BinX - XD(J)) < 2#) And (Abs(BinY - YD(J)) < 2#) Then
+                If (Abs(BinX - XD(J)) < DistanceRangeMin) _
+                    And (Abs(BinY - YD(J)) < DistanceRangeMin) Then
                     AddBin = False
                     Exit For
                 End If
-                Distance = Sqr((BinX - XD(J)) ^ 2 + (BinY - YD(J)) ^ 2 + (BinZ - ZD(J)) ^ 2)
+                Distance = Sqr((BinX - XD(J)) ^ 2 + (BinY - YD(J)) ^ 2)
                 'If (Distance < (lZDAvg - lZDMin)) Then
-                If (Distance < 5#) Then
+                If (Distance < DistanceRangeMin) Then
                     AddBin = False
                     Exit For
+                End If
+                If (Distance < DistanceMin) Then
+                    DistanceMin = Distance
+                    DistanceMinZ = ZD(J)
                 End If
             Next J
             If (AddBin = True) Then
@@ -1519,10 +1527,18 @@ Private Sub ProcessDataFile(ByVal FileN$)
                 ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), _
                                 XD(1 To ND), YD(1 To ND), ZD(1 To ND)
                 PhiD(ND) = I
-                ThetaD(ND) = 0
+                ThetaD(ND) = DistanceMin
                 XD(ND) = BinX
                 YD(ND) = BinY
-                ZD(ND) = BinZ
+                If (DistanceMin > DistanceRangeMax#) Then
+                    ZD(ND) = lZDMin
+                Else
+                    ZD(ND) = _
+                        (lZDMin - DistanceMinZ) _
+                        / (DistanceRangeMax - 0) _
+                        * DistanceMin _
+                        + DistanceMinZ
+                End If
             End If
         Next I
 '
