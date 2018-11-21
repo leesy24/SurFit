@@ -900,7 +900,7 @@ Private Sub Test_MASUB()
 '
 End Sub
 
-Private Sub DisegnaGriglia(Quadro As PictureBox, dXI#(), dYI#())
+Private Sub DisegnaGriglia(Painting As PictureBox, dXI#(), dYI#())
 '
 '   Disegna una griglia alle coordinate definite
 '   nei vettori dX() e dY():
@@ -913,11 +913,11 @@ Private Sub DisegnaGriglia(Quadro As PictureBox, dXI#(), dYI#())
     YMax = dYI(UBound(dYI))
 '
     For I = 1 To UBound(dXI)
-        Quadro.Line (dXI(I), YMin)-(dXI(I), YMax), vbYellow
+        Painting.Line (dXI(I), YMin)-(dXI(I), YMax), vbYellow
     Next I
 '
     For J = 1 To UBound(dYI)
-        Quadro.Line (XMin, dYI(J))-(XMax, dYI(J)), vbYellow
+        Painting.Line (XMin, dYI(J))-(XMax, dYI(J)), vbYellow
     Next J
 '
 '
@@ -951,9 +951,9 @@ Private Sub DrawLevels(ByVal A#, ByVal B#, ByVal C#, ByVal D#, _
     ReDim ZLin(1 To NLiv) As LineaLivello_Type
 '
     ' Set the graphic:
-    Quadro picOrg, A, B, C, D, , , 3, Px3, Py3, "Data points: " & Title$, _
+    Painting picOrg, A, B, C, D, , , 3, Px3, Py3, "Data points: " & Title$, _
                   "x", "y", True
-    Quadro picSurFit, A, B, C, D, , , , , , "Interpolated surface", "x", "y", True
+    Painting picSurFit, A, B, C, D, , , , , , "Interpolated surface", "x", "y", True
 '
     ' Displaying data points:
     For N = 1 To ND

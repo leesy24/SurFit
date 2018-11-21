@@ -1039,7 +1039,8 @@ Public Function DMAX1(ParamArray vD() As Variant) As Double
 '
 '
 End Function
-Public Function Quadro(ByVal Foglio As PictureBox, _
+
+Public Function Painting(ByVal Sheet As PictureBox, _
     ByVal X0!, ByVal Xn!, ByVal Y0!, ByVal Yn!, _
     Optional ByVal FormatVX$ = "#0.0##", _
     Optional ByVal FormatVY$ = "#0.0##", _
@@ -1049,44 +1050,43 @@ Public Function Quadro(ByVal Foglio As PictureBox, _
     Optional ByVal UnitaY$ = "", _
     Optional ByVal AutoRed As Boolean = False) As Boolean
 '
-'   Routine, di uso generale, per la scalatura di un foglio
-'   adatto a rappresentare un grafico y = f(x).
-'    Foglio:    PictureBox da scalare.
-'    X0:        Valore minimo di ascissa da rappresentare.
-'    Xn:        Valore massimo di ascissa da rappresentare.
-'               Deve essere X0 < Xn.
-'    Y0:        Valore minimo di ordinata da rappresentare.
-'    Yn:        Valore massimo di ordinata da rappresentare.
-'               Deve essere Y0 <= Yn.
-'    FormatVX$: Stringa di formato dei valori sull' asse X.
-'    FormatVY$: Stringa di formato dei valori sull' asse Y.
-'    Npx:       N?di Pixels di cui si vuole conoscere
-'    PxN_X:      larghezza in [vbUser] e
-'    PxN_Y:      altezza in [vbUser].
-'    Title$:   Titolo del grafico.
-'    UnitaX$:   Unita' (o titolo) dell' asse X.
-'    UnitaY$:   Unita' (o titolo) dell' asse Y.
-'    AutoRed:   Stato di Foglio.AutoRedraw dopo il disegno del quadro.
+'   Routine, of general use, for the scaling of a sheet suitable
+'    to represent a graph y = f (x).
+'    Sheet:     PictureBox to scale.
+'    X0:        Minimum value of abscissa to be represented.
+'    Xn:        Maximum value of abscissa to be represented.
+'               It must be X0 <Xn.
+'    Y0:        Minimum value of the ordinate to be represented.
+'    Yn:        Maximum value of the ordinate to be represented.
+'               It must be Y0 <= Yn.
+'    FormatVX$: Format string of values on the X axis.
+'    FormatVY$: Format string of values on the Y axis.
+'    Npx:       Number of Pixels you want to know
+'    PxN_X:     width in [vbUser].
+'    PxN_Y:     height in [vbUser].
+'    Title$:    Title of the graph.
+'    UnitaX$:   Unit (or title) of the X axis.
+'    UnitaY$:   Unit (or title) of the Y axis.
+'    AutoRed:   State of Sheet.AutoRedraw after drawing the painting.
 '
     Dim I&, XI!, D_X!, rrx!, YI!, D_Y!, rry!, Tx$
     Dim QxMin!, QxMax!, QyMin!, QyMax!, B0!, Bn!, TxW!
     Dim TitL!, TitT!, TitW!, TitH!, Po4_X!, Po4_Y!
     Const Log10! = 2.30258509299405 ' Log(10#)
-    Const DYMin! = 0.0001           ' Ampiezza min. della scala Y.
+    Const DYMin! = 0.0001           ' Min. width of the Y scale
 '
-    On Error GoTo Quadro_ERR
-    ' Verifica la correttezza delle scale:
-    If X0 >= Xn Then Err.Raise 1001, "Quadro", "Error scale X."
-    If Y0 > Yn Then Err.Raise 1001, "Quadro", "Error scale Y."
+    On Error GoTo Painting_ERR
+    ' Check the correctness of the stairs:
+    If X0 >= Xn Then Err.Raise 1001, "Painting", "Error scale X."
+    If Y0 > Yn Then Err.Raise 1001, "Painting", "Error scale Y."
 '
-    ' Imposta i dati di Font dei valori
-    ' degli assi:
-    Foglio.FontName = "MS Sans Serif"
-    Foglio.FontSize = 8
-    Foglio.FontBold = False
+    ' Set Font data of axis values:
+    Sheet.FontName = "MS Sans Serif"
+    Sheet.FontSize = 8
+    Sheet.FontBold = False
 '
-    ' Calcola la spaziatura dei valori scritti
-    ' sull' asse X: la sequenza e' 1, 2, 2.5 e 5:
+    ' Calculates the spacing of the values written on the X axis:
+    '  the sequence Is 1, 2, 2.5 And 5:
     D_X = Xn - X0
     rrx = 10! ^ Ceil(Log(D_X / 20!) / Log10)
     Do While D_X / rrx < 5!
@@ -1097,15 +1097,14 @@ Public Function Quadro(ByVal Foglio As PictureBox, _
     Xn = rrx * Ceil(Round(Xn / rrx, 3))
     D_X = Xn - X0
 '
-    ' Imposta una scala minima
-    ' per l' asse Y:
+    ' Set a minimum scale for the Y axis:
     If Yn - Y0 < DYMin Then
         Y0 = Y0 - DYMin / 2!
         Yn = Yn + DYMin / 2!
     End If
 '
-    ' Calcola la spaziatura dei valori scritti
-    ' sull' asse Y: la sequenza e' 1, 2, 2.5 e 5:
+    ' Calculates the spacing of the values written on the Y axis:
+    '  the sequence is 1, 2, 2.5 and 5:
     D_Y = Yn - Y0
     rry = 10! ^ Ceil(Log(D_Y / 20!) / Log10)
     Do While D_Y / rry < 5!
@@ -1116,135 +1115,129 @@ Public Function Quadro(ByVal Foglio As PictureBox, _
     Yn = rry * Ceil(Round(Yn / rry, 3))
     D_Y = Yn - Y0
 '
-    ' Il bordo a destra dipende dalla
-    ' presenza, o meno, di un' etichetta:
+    ' The border on the right depends on the presence, or not, of a label:
     If UnitaX$ = "" Then
         Bn = D_X / 20!
     Else
         Bn = D_X / 10!
     End If
 '
-    ' Il bordo a sinistra deve essere sufficiente
-    ' a contenere il valore Y piu' largo:
-    TxW = Foglio.TextWidth(Format$(Y0, FormatVY$) & " ")
-    If TxW < Foglio.TextWidth(Format$(Yn, FormatVY$) & " ") Then
-        TxW = Foglio.TextWidth(Format$(Yn, FormatVY$) & " ")
+    ' The left edge must be sufficient to hold the largest Y value:
+    TxW = Sheet.TextWidth(Format$(Y0, FormatVY$) & " ")
+    If TxW < Sheet.TextWidth(Format$(Yn, FormatVY$) & " ") Then
+        TxW = Sheet.TextWidth(Format$(Yn, FormatVY$) & " ")
     End If
-    B0 = TxW * (D_X + Bn) / (Foglio.ScaleWidth - TxW)
+    B0 = TxW * (D_X + Bn) / (Sheet.ScaleWidth - TxW)
     If B0 < D_X / 10! Then B0 = D_X / 10!
 '
-    ' Imposta i bordi orizzontali
-    ' e verticali:
+    ' Set horizontal and vertical borders:
     QxMin = X0 - B0
     QxMax = Xn + Bn
     QyMin = Y0 - D_Y / 10!
     QyMax = Yn + D_Y / 7!
 '
-    ' Cancella il Foglio e imposta la scala:
-    Foglio.Picture = LoadPicture("")
-    Foglio.Scale (QxMin, QyMax)-(QxMax, QyMin)
-    ' La scalatura deve essere permanente:
-    Foglio.AutoRedraw = True
-    ' Calcola larghezza ed altezza di Npx pixels:
-    PxN_X = Abs(Foglio.ScaleX(Npx, vbPixels, vbUser))
-    PxN_Y = Abs(Foglio.ScaleY(Npx, vbPixels, vbUser))
-    ' Calcola larghezza ed altezza di 4 points:
-    Po4_X = Foglio.ScaleX(4, vbPoints, vbUser)
-    Po4_Y = Foglio.ScaleY(4, vbPoints, vbUser)
+    ' Delete the sheet and set the scale:
+    Sheet.Picture = LoadPicture("")
+    Sheet.Scale (QxMin, QyMax)-(QxMax, QyMin)
+    ' The scaling must be permanent:
+    Sheet.AutoRedraw = True
+    ' Calculate width and height of Npx pixels:
+    PxN_X = Abs(Sheet.ScaleX(Npx, vbPixels, vbUser))
+    PxN_Y = Abs(Sheet.ScaleY(Npx, vbPixels, vbUser))
+    ' Calculate the width and height of 4 points:
+    Po4_X = Sheet.ScaleX(4, vbPoints, vbUser)
+    Po4_Y = Sheet.ScaleY(4, vbPoints, vbUser)
 '
-    Foglio.DrawMode = vbCopyPen
-    Foglio.DrawWidth = 1
-    Foglio.DrawStyle = vbDash
-    Foglio.ForeColor = vbGreen
-    ' Traccia la griglia verticale e scrive
-    ' i valori dell' asse X:
+    Sheet.DrawMode = vbCopyPen
+    Sheet.DrawWidth = 1
+    Sheet.DrawStyle = vbDash
+    Sheet.ForeColor = vbGreen
+    ' Draw the vertical grid and write the values of the X axis:
     For XI = X0 To Xn + 0.1 * rrx Step rrx
-        Foglio.Line (XI, Y0)-(XI, Yn), vbGreen
+        Sheet.Line (XI, Y0)-(XI, Yn), vbGreen
         Tx$ = Format$(XI, FormatVX$)
-        ' Verifica che il formato scelto non
-        ' induca ad errori di rappresentazione:
+        ' Verify that the chosen format does not lead to representation errors:
         If Abs(XI - Val(Tx$)) < rrx / 10 Then
-            Foglio.CurrentX = XI - Foglio.TextWidth(Tx$) / 2!
-            Foglio.CurrentY = Y0 - D_Y / 70!
-            Foglio.Print Tx$;
+            Sheet.CurrentX = XI - Sheet.TextWidth(Tx$) / 2!
+            Sheet.CurrentY = Y0 - D_Y / 70!
+            Sheet.Print Tx$;
         End If
     Next XI
-    ' Scrive l' etichetta dell' asse X:
+    ' Write the label of the X axis:
     If UnitaX$ <> "" Then
-        ' Etichetta tutta a destra:
-        'Foglio.CurrentX = QxMax - Foglio.TextWidth(UnitaX$ & " ")
-        ' Etichetta in centro tra l' ultimo valore ed il bordo a destra:
-        Foglio.CurrentX = (Foglio.CurrentX + QxMax - Foglio.TextWidth(UnitaX$)) / 2!
-        Foglio.Print UnitaX$;
+        ' All right label:
+        'Sheet.CurrentX = QxMax - Sheet.TextWidth(UnitaX$ & " ")
+        ' Label in the center between the last value and the border on the right:
+        Sheet.CurrentX = (Sheet.CurrentX + QxMax - Sheet.TextWidth(UnitaX$)) / 2!
+        Sheet.Print UnitaX$;
     End If
-    ' Traccia l' asse Y:
+    ' Draw the Y axis:
     If (X0 <= 0!) And (0! <= Xn) Then
-        Foglio.DrawStyle = vbSolid
-        Foglio.Line (0!, Y0)-(0!, QyMax - D_Y / 30!), vbGreen
-        Foglio.Line (0!, QyMax - D_Y / 30!) _
+        Sheet.DrawStyle = vbSolid
+        Sheet.Line (0!, Y0)-(0!, QyMax - D_Y / 30!), vbGreen
+        Sheet.Line (0!, QyMax - D_Y / 30!) _
                    -(-Po4_X / 2!, Po4_Y + QyMax - D_Y / 30!), vbGreen
-        Foglio.Line (0!, QyMax - D_Y / 30!) _
+        Sheet.Line (0!, QyMax - D_Y / 30!) _
                    -(Po4_X / 2!, Po4_Y + QyMax - D_Y / 30!), vbGreen
     End If
 '
-    Foglio.DrawStyle = vbDash
-    ' Traccia la griglia orizzontale e scrive
-    ' i valori dell' asse Y:
+    Sheet.DrawStyle = vbDash
+    ' Draw the horizontal grid and write the values of the Y axis:
     For YI = Y0 To Yn + 0.1 * rry Step rry
-        Foglio.Line (X0, YI)-(Xn, YI), vbGreen
+        Sheet.Line (X0, YI)-(Xn, YI), vbGreen
         Tx$ = Format$(YI, FormatVY$)
-        Foglio.CurrentX = QxMin
-        Foglio.CurrentY = YI - Foglio.TextHeight(Tx$) / 2!
-        Foglio.Print Tx$;
+        Sheet.CurrentX = QxMin
+        Sheet.CurrentY = YI - Sheet.TextHeight(Tx$) / 2!
+        Sheet.Print Tx$;
     Next YI
-    ' Scrive l' etichetta dell' asse Y:
+    ' Write the Y axis label:
     If UnitaY$ <> "" Then
-        Foglio.CurrentX = QxMin
-        Foglio.CurrentY = QyMax
-        Foglio.Print UnitaY$;
+        Sheet.CurrentX = QxMin
+        Sheet.CurrentY = QyMax
+        Sheet.Print UnitaY$;
     End If
-    ' Traccia l' asse X:
+    ' Draw the X axis:
     If (Y0 <= 0!) And (0! <= Yn) Then
-        Foglio.DrawStyle = vbSolid
-        Foglio.Line (X0, 0!)-(QxMax - D_X / 30!, 0!), vbGreen
-        Foglio.Line (QxMax - D_X / 30!, 0!) _
+        Sheet.DrawStyle = vbSolid
+        Sheet.Line (X0, 0!)-(QxMax - D_X / 30!, 0!), vbGreen
+        Sheet.Line (QxMax - D_X / 30!, 0!) _
                    -(QxMax - D_X / 30! - Po4_X, -Po4_Y / 2!), vbGreen
-        Foglio.Line (QxMax - D_X / 30!, 0!) _
+        Sheet.Line (QxMax - D_X / 30!, 0!) _
                    -(QxMax - D_X / 30! - Po4_X, Po4_Y / 2!), vbGreen
     End If
 '
-    ' Scrive il titolo del grafico:
+    ' Write the chart title:
     If Title$ <> "" Then
-        Foglio.FontSize = 12
-        Foglio.FontBold = True
-        Foglio.ForeColor = vbRed
+        Sheet.FontSize = 12
+        Sheet.FontBold = True
+        Sheet.ForeColor = vbRed
 '
-        TitW = Foglio.TextWidth(Title$)
-        TitH = Foglio.TextHeight(Title$)
-        ' Verifica che il titolo stia tutto nel Foglio:
-        If TitW <= Foglio.ScaleWidth Then
+        TitW = Sheet.TextWidth(Title$)
+        TitH = Sheet.TextHeight(Title$)
+        ' Verify that the title is all in the Sheet:
+        If TitW <= Sheet.ScaleWidth Then
             TitL = (QxMin + QxMax - TitW) / 2!
-        ' e se no' lo taglia:
+        ' and if not, cut it:
         Else
-            TitL = Foglio.ScaleLeft
+            TitL = Sheet.ScaleLeft
             Tx$ = " . . . ."
             Title$ = Left$(Title$, Int(Len(Title$) * _
-            (Foglio.ScaleWidth - Foglio.TextWidth(Tx$)) / TitW)) & Tx$
+            (Sheet.ScaleWidth - Sheet.TextWidth(Tx$)) / TitW)) & Tx$
         End If
         TitT = QyMax
-        ' Cancella l' area su cui andra' scritto il titolo:
-        'Foglio.Line (TitL, TitT)-(TitL + TitW, TitT + TitH), Foglio.BackColor, BF
-        Foglio.CurrentX = TitL
-        Foglio.CurrentY = TitT
-        Foglio.Print Title$
+        ' Delete the area on which the title will be written:
+        'Sheet.Line (TitL, TitT)-(TitL + TitW, TitT + TitH), Sheet.BackColor, BF
+        Sheet.CurrentX = TitL
+        Sheet.CurrentY = TitT
+        Sheet.Print Title$
     End If
 '
-    Foglio.DrawStyle = vbSolid
-    Foglio.AutoRedraw = AutoRed
+    Sheet.DrawStyle = vbSolid
+    Sheet.AutoRedraw = AutoRed
 '
 '
-Quadro_ERR:
-    Quadro = (Err = 0)
+Painting_ERR:
+    Painting = (Err = 0)
     If Err <> 0 Then
         MsgBox Err.Description, vbCritical, Err.Source
     End If
@@ -1252,6 +1245,7 @@ Quadro_ERR:
 '
 '
 End Function
+
 Public Function Ceil(ByVal X As Double) As Double
 '
 '   Funzione di arrotondamento, per numeri reali,

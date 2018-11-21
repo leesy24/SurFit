@@ -727,7 +727,7 @@ Private Sub ROTATE(ByVal X0#, ByVal Y0#, ByVal Rot#, ByVal CRx#, ByVal CRy#, ByR
 '
 End Sub
 
-Private Function Picture3D(ByVal Foglio As PictureBox, _
+Private Function Picture3D(ByVal Sheet As PictureBox, _
     ByRef X0!, ByRef Xn!, ByRef Y0!, ByRef Yn!, ByRef Z0!, ByRef Zn!, _
     Optional ByVal ALFA! = PI / 6!, Optional ByRef RAyx! = 1!, _
     Optional ByRef Ax!, Optional ByRef Bx!, _
@@ -747,7 +747,7 @@ Private Function Picture3D(ByVal Foglio As PictureBox, _
 '   Routine, of general use, for the preparation of a sheet suitable
 '   to represent, in axonometry, a graph z = f (x, y).
 '    Input parameters:
-'     Foglio:    PictureBox to climb.
+'     Sheet:    PictureBox to climb.
 '     X0:        Minimum value of the abscissa to be represented.
 '     Xn:        Maximum abscissa value to be represented.
 '                It must be X0 < Xn.
@@ -770,7 +770,7 @@ Private Function Picture3D(ByVal Foglio As PictureBox, _
 '     UnitaY$:   Unit (or title) of the Y axis.
 '     UnitaZ$:   Unit (or title) of the Z axis.
 '     RifCol:    Color of the reference axes and grids.
-'     AutoRed:   State of Foglio.AutoRedraw after drawing the painting.
+'     AutoRed:   State of Sheet.AutoRedraw after drawing the painting.
 '    Output parameters:
 '     X0:        Minimum abscissa value represented.
 '     Xn:        Maximum abscissa value represented.
@@ -863,45 +863,45 @@ Private Function Picture3D(ByVal Foglio As PictureBox, _
     Dim DT_X!, DT_Z!, DPz!, DDz!, TxHt!, TxHb!
 '
     ' Set Font data of axis and title values:
-    Foglio.FontName = "MS Sans Serif"
-    Foglio.FontBold = False
+    Sheet.FontName = "MS Sans Serif"
+    Sheet.FontBold = False
 '
     CosA = Cos(ALFA)
     SinA = Sin(ALFA)
 '
     'Cancel the previous stairs:
-    Foglio.ScaleMode = vbPixels
+    Sheet.ScaleMode = vbPixels
 '
     ' The left edge must be sufficient to contain the largest Z value:
-    Foglio.FontSize = 8
-    TxWs = MAX0(Foglio.TextWidth(Format$(-Abs(Z0), FormatVZ$) & "W"), _
-               Foglio.TextWidth(Format$(-Abs(Zn), FormatVZ$) & "W"), _
-               Foglio.TextWidth(UnitaZ$ & "W"))
+    Sheet.FontSize = 8
+    TxWs = MAX0(Sheet.TextWidth(Format$(-Abs(Z0), FormatVZ$) & "W"), _
+               Sheet.TextWidth(Format$(-Abs(Zn), FormatVZ$) & "W"), _
+               Sheet.TextWidth(UnitaZ$ & "W"))
 '
     ' The border on the right must be sufficient to contain
     '  the Xn value and the UnitaX $ label:
-    TxWd = Foglio.TextWidth(Format$(-Abs(Xn), FormatVZ$) & "W") _
-         + Foglio.TextWidth(UnitaX$ & "W")
+    TxWd = Sheet.TextWidth(Format$(-Abs(Xn), FormatVZ$) & "W") _
+         + Sheet.TextWidth(UnitaX$ & "W")
 '
     ' The borders on the left and on the right are:
     DT_X = LAx * (1! + RAyx * CosA)
-    BDen = DT_X / (Foglio.ScaleWidth - TxWs - TxWd)
+    BDen = DT_X / (Sheet.ScaleWidth - TxWs - TxWd)
     Bl = TxWs * BDen
     Br = TxWd * BDen
 '
     ' The border below is 2 times the height of the values:
-    TxHb = 2! * Abs(Foglio.TextHeight("W"))
+    TxHb = 2! * Abs(Sheet.TextHeight("W"))
 '
     ' The edge above is 2 times the height of the values plus 2 times the height of the title:
-    Foglio.FontSize = 12
-    TxHt = TxHb + 2! * Abs(Foglio.TextHeight(Title$))
+    Sheet.FontSize = 12
+    TxHt = TxHb + 2! * Abs(Sheet.TextHeight(Title$))
 '
     ' The edges above and below are:
-    DDz = Foglio.ScaleWidth * LAx * RAyx * SinA / (Bl + DT_X + Br)
-    DPz = Abs(Foglio.ScaleHeight) - DDz - TxHt - TxHb
+    DDz = Sheet.ScaleWidth * LAx * RAyx * SinA / (Bl + DT_X + Br)
+    DPz = Abs(Sheet.ScaleHeight) - DDz - TxHt - TxHb
     If DPz <= 0 Then DPz = 0.001
     DT_Z = LAz * (1! + DDz / DPz)
-    BDen = DT_Z / (Abs(Foglio.ScaleHeight) + TxHb + TxHt)
+    BDen = DT_Z / (Abs(Sheet.ScaleHeight) + TxHb + TxHt)
     BB = TxHb * BDen
     Bt = TxHt * BDen
 '
@@ -919,16 +919,16 @@ Private Function Picture3D(ByVal Foglio As PictureBox, _
     QzMax = Z0 + DT_Z + Bt
 '
     ' Set the scale and delete the Sheet:
-    'Foglio.Picture = LoadPicture("")
-    Foglio.Scale (QxMin, QzMax)-(QxMax, QzMin)
-    Foglio.Line (QxMin, QzMin)-(QxMax, QzMax), Foglio.BackColor, BF ' This is faster than
-                                                                    '  Foglio.Cls.
+    'Sheet.Picture = LoadPicture("")
+    Sheet.Scale (QxMin, QzMax)-(QxMax, QzMin)
+    Sheet.Line (QxMin, QzMin)-(QxMax, QzMax), Sheet.BackColor, BF ' This is faster than
+                                                                    '  Sheet.Cls.
     ' The drawing of the painting must be permanent:
-    Foglio.AutoRedraw = True
+    Sheet.AutoRedraw = True
 '
     ' Width and height of 1 pixel in [vbUser]:
-    Px1_X = Abs(Foglio.ScaleX(1, vbPixels, vbUser))
-    Px1_Z = Abs(Foglio.ScaleY(1, vbPixels, vbUser))
+    Px1_X = Abs(Sheet.ScaleX(1, vbPixels, vbUser))
+    Px1_Z = Abs(Sheet.ScaleY(1, vbPixels, vbUser))
     Ryx = Px1_Z / Px1_X ' Y/X scale ratio.
 '
     ' Calculate width and height of Npx pixels in [vbUser]:
@@ -943,69 +943,69 @@ Private Function Picture3D(ByVal Foglio As PictureBox, _
     LyCosA = LAy * CosA
     LySinA = Ryx * LAy * SinA
 '
-    If Foglio.ScaleY(LAz, vbUser, vbPixels) > 0 Then
+    If Sheet.ScaleY(LAz, vbUser, vbPixels) > 0 Then
     End If
 '
 '-------------------------------------------------------------------------------------
 '   Draw axes, grids and write scale values.
 '
-    Foglio.FontSize = 8
-    Foglio.DrawWidth = 1
-    Foglio.ForeColor = RifCol
-    Foglio.DrawMode = vbCopyPen
+    Sheet.FontSize = 8
+    Sheet.DrawWidth = 1
+    Sheet.ForeColor = RifCol
+    Sheet.DrawMode = vbCopyPen
 '
     ' Check the separation of the labels:
     Dim TxW!
-    TxW = DMAX1(Foglio.TextWidth(Format$(X0, FormatVX$)), _
-               Foglio.TextWidth(Format$(Xn, FormatVX$)))
+    TxW = DMAX1(Sheet.TextWidth(Format$(X0, FormatVX$)), _
+               Sheet.TextWidth(Format$(Xn, FormatVX$)))
     bVlX = (LAx / rrx) * TxW < LAx
 '
-    TxW = DMAX1(Foglio.TextWidth(Format$(Y0, FormatVY$)), _
-               Foglio.TextWidth(Format$(Yn, FormatVY$)))
-    TxH = Abs(Foglio.TextHeight("W"))
+    TxW = DMAX1(Sheet.TextWidth(Format$(Y0, FormatVY$)), _
+               Sheet.TextWidth(Format$(Yn, FormatVY$)))
+    TxH = Abs(Sheet.TextHeight("W"))
     bVlY = ((Yn - Y0) / rry) * TxW < LyCosA
     bVlY = bVlY Or (((Yn - Y0) / rry) * TxH < LySinA)
 '
     bVlZ = (LAz / rrz) * TxH < LAz
 '
     ' Draw the X axis:
-    Foglio.DrawStyle = vbSolid
-    Foglio.Line (X0, Z0)-(Xn + EstAx, Z0)
+    Sheet.DrawStyle = vbSolid
+    Sheet.Line (X0, Z0)-(Xn + EstAx, Z0)
     If bVlX Then
-        Foglio.Line (Xn + EstAx, Z0) _
+        Sheet.Line (Xn + EstAx, Z0) _
                    -(Xn + EstAx - TaccheX, Z0 + TaccheZ / 2!)
-        Foglio.Line (Xn + EstAx, Z0) _
+        Sheet.Line (Xn + EstAx, Z0) _
                    -(Xn + EstAx - TaccheX, Z0 - TaccheZ / 2!)
         ' and write the label of the X axis:
         If Len(UnitaX$) > 0 Then
-            Foglio.CurrentX = Xn + Foglio.TextWidth(Xn & "W")
-            Foglio.Print UnitaX$;
+            Sheet.CurrentX = Xn + Sheet.TextWidth(Xn & "W")
+            Sheet.Print UnitaX$;
         End If
     End If
 '
     ' Draw the Y axis:
-    Foglio.Line (X0, Z0)-(X0 + (LAy + EstAx) * CosA, _
+    Sheet.Line (X0, Z0)-(X0 + (LAy + EstAx) * CosA, _
                           Z0 + (LAy + EstAx) * SinA * Ryx)
     If bVlY Then
         ' and write the Y axis label:
         If Len(UnitaY$) > 0 Then
-            Foglio.CurrentY = Foglio.CurrentY - Foglio.TextHeight("W")
-            Foglio.Print UnitaY$;
+            Sheet.CurrentY = Sheet.CurrentY - Sheet.TextHeight("W")
+            Sheet.Print UnitaY$;
         End If
     End If
 '
     ' Draw the Z axis:
-    Foglio.Line (X0, Z0)-(X0, Zn + EstAz)
+    Sheet.Line (X0, Z0)-(X0, Zn + EstAz)
     If bVlZ Then
-        Foglio.Line (X0, Zn + EstAz) _
+        Sheet.Line (X0, Zn + EstAz) _
                    -(X0 - TaccheX / 2!, Zn + EstAz - TaccheZ)
-        Foglio.Line (X0, Zn + EstAz) _
+        Sheet.Line (X0, Zn + EstAz) _
                    -(X0 + TaccheX / 2!, Zn + EstAz - TaccheZ)
         ' and write the Z axis label:
         If Len(UnitaZ$) > 0 Then
-            Foglio.CurrentX = QxMin
-            Foglio.CurrentY = Zn + EstAz - Foglio.TextHeight("W") / 2!
-            Foglio.Print UnitaZ$;
+            Sheet.CurrentX = QxMin
+            Sheet.CurrentY = Zn + EstAz - Sheet.TextHeight("W") / 2!
+            Sheet.Print UnitaZ$;
         End If
     End If
 '
@@ -1014,18 +1014,18 @@ Private Function Picture3D(ByVal Foglio As PictureBox, _
     Dim rrx_10!
 '
     rrx_10 = rrx / 10!
-    Foglio.DrawStyle = vbDot
+    Sheet.DrawStyle = vbDot
     For XI = X0 To Xn + rrx_10 Step rrx
-        Foglio.Line (XI + LyCosA, Z0 + LySinA + LAz)-(XI + LyCosA, Z0 + LySinA)
-        Foglio.Line -(XI, Z0)
-        Foglio.Line -(XI, Z0 - TaccheZ)
+        Sheet.Line (XI + LyCosA, Z0 + LySinA + LAz)-(XI + LyCosA, Z0 + LySinA)
+        Sheet.Line -(XI, Z0)
+        Sheet.Line -(XI, Z0 - TaccheZ)
         If bVlX Then
             Tx$ = Format$(XI, FormatVX$)
             ' Verify that the chosen format does not lead
             '  to representation errors:
             If (Abs(XI - Val(Tx$)) < rrx_10) Then
-                Foglio.CurrentX = XI - Foglio.TextWidth(Tx$) / 2!
-                Foglio.Print Tx$;
+                Sheet.CurrentX = XI - Sheet.TextWidth(Tx$) / 2!
+                Sheet.Print Tx$;
             End If
         End If
     Next XI
@@ -1041,8 +1041,8 @@ Private Function Picture3D(ByVal Foglio As PictureBox, _
     For YI = Y0 To Yn + rry_10 Step rry
         Yx = Xn + (YI - Y0) * LyCosA_Y
         Yz = Z0 + (YI - Y0) * LySinA_Y
-        Foglio.Line (Yx, Yz)-(Yx - LAx, Yz)
-        Foglio.Line -(Foglio.CurrentX, Yz + LAz)
+        Sheet.Line (Yx, Yz)-(Yx - LAx, Yz)
+        Sheet.Line -(Sheet.CurrentX, Yz + LAz)
         If bVlY Then
             Tx$ = Format$(YI, FormatVY$)
             ' Verify that the chosen format does not lead
@@ -1051,15 +1051,15 @@ Private Function Picture3D(ByVal Foglio As PictureBox, _
                 ' The positions of the Y labels depend on
                 '  the presence of those Z:
                 If bVlZ Then
-                    Foglio.Line -(Foglio.CurrentX, Foglio.CurrentY + EstAz)
-                    Foglio.CurrentX = Foglio.CurrentX - Foglio.TextWidth(Tx$) / 2!
-                    Foglio.CurrentY = Foglio.CurrentY - Foglio.TextHeight(Tx$)
+                    Sheet.Line -(Sheet.CurrentX, Sheet.CurrentY + EstAz)
+                    Sheet.CurrentX = Sheet.CurrentX - Sheet.TextWidth(Tx$) / 2!
+                    Sheet.CurrentY = Sheet.CurrentY - Sheet.TextHeight(Tx$)
                 Else
-                    Foglio.Line -(Foglio.CurrentX - TaccheX, Foglio.CurrentY)
-                    Foglio.CurrentX = Foglio.CurrentX - Foglio.TextWidth(Tx$)
-                    Foglio.CurrentY = Foglio.CurrentY - Foglio.TextHeight(Tx$) / 2!
+                    Sheet.Line -(Sheet.CurrentX - TaccheX, Sheet.CurrentY)
+                    Sheet.CurrentX = Sheet.CurrentX - Sheet.TextWidth(Tx$)
+                    Sheet.CurrentY = Sheet.CurrentY - Sheet.TextHeight(Tx$) / 2!
                 End If
-                Foglio.Print Tx$;
+                Sheet.Print Tx$;
             End If
         End If
     Next YI
@@ -1071,17 +1071,17 @@ Private Function Picture3D(ByVal Foglio As PictureBox, _
 '
     rrz_10 = rrz / 10!
     For ZI = Z0 To Zn + rrz_10 Step rrz
-        Foglio.Line (X0 - TaccheX, ZI)-(X0, ZI)
-        Foglio.Line -(X0 + LyCosA, ZI + LySinA)
-        Foglio.Line -(Foglio.CurrentX + LAx, Foglio.CurrentY)
+        Sheet.Line (X0 - TaccheX, ZI)-(X0, ZI)
+        Sheet.Line -(X0 + LyCosA, ZI + LySinA)
+        Sheet.Line -(Sheet.CurrentX + LAx, Sheet.CurrentY)
         If bVlZ Then
             Tx$ = Format$(ZI, FormatVZ$)
             ' Verify that the chosen format does not lead
             '  to representation errors:
             If (Abs(ZI - Val(Tx$)) < rrz_10) Then
-                Foglio.CurrentX = QxMin
-                Foglio.CurrentY = ZI - Foglio.TextHeight(Tx$) / 2!
-                Foglio.Print Tx$;
+                Sheet.CurrentX = QxMin
+                Sheet.CurrentY = ZI - Sheet.TextHeight(Tx$) / 2!
+                Sheet.Print Tx$;
             End If
         End If
     Next ZI
@@ -1092,28 +1092,28 @@ Private Function Picture3D(ByVal Foglio As PictureBox, _
     Dim TitL!, TitT!, TitW!, TitH!
 '
     If Len(Title$) > 0 Then
-        Foglio.FontSize = 12
-        Foglio.FontBold = True
-        Foglio.ForeColor = vbRed
+        Sheet.FontSize = 12
+        Sheet.FontBold = True
+        Sheet.ForeColor = vbRed
 '
-        TitW = Foglio.TextWidth(Title$)
-        TitH = Foglio.TextHeight(Title$)
+        TitW = Sheet.TextWidth(Title$)
+        TitH = Sheet.TextHeight(Title$)
         ' Verify that the title is all in the Sheet:
-        If TitW <= Foglio.ScaleWidth Then
+        If TitW <= Sheet.ScaleWidth Then
             TitL = (QxMin + QxMax - TitW) / 2!
         Else
             ' and if not, cut it:
-            TitL = Foglio.ScaleLeft
+            TitL = Sheet.ScaleLeft
             Tx$ = " . . . ."
             Title$ = Left$(Title$, Int(Len(Title$) * _
-            (Foglio.ScaleWidth - Foglio.TextWidth(Tx$)) / TitW)) & Tx$
+            (Sheet.ScaleWidth - Sheet.TextWidth(Tx$)) / TitW)) & Tx$
         End If
         TitT = QzMax
         ' Delete the area on which the title will be written:
-        'Foglio.Line (TitL, TitT)-(TitL + TitW, TitT + TitH), Foglio.BackColor, BF
-        Foglio.CurrentX = TitL
-        Foglio.CurrentY = TitT
-        Foglio.Print Title$
+        'Sheet.Line (TitL, TitT)-(TitL + TitW, TitT + TitH), Sheet.BackColor, BF
+        Sheet.CurrentX = TitL
+        Sheet.CurrentY = TitT
+        Sheet.Print Title$
     End If
 '
 '-------------------------------------------------------------------------------------
@@ -1121,22 +1121,22 @@ Private Function Picture3D(ByVal Foglio As PictureBox, _
 '
     Dim C0_Px!, Cn_Px!
 '
-    C0_Px = Foglio.ScaleX(X0 - Foglio.ScaleLeft, vbUser, vbPixels)
-    Cn_Px = Foglio.ScaleX(Xn - Foglio.ScaleLeft, vbUser, vbPixels)
+    C0_Px = Sheet.ScaleX(X0 - Sheet.ScaleLeft, vbUser, vbPixels)
+    Cn_Px = Sheet.ScaleX(Xn - Sheet.ScaleLeft, vbUser, vbPixels)
     Ax = (Cn_Px - C0_Px) / LAx
     Bx = (C0_Px * Xn - Cn_Px * X0) / LAx
 '
-    Ay = Foglio.ScaleX(LAy / D_Y, vbUser, vbPixels)
+    Ay = Sheet.ScaleX(LAy / D_Y, vbUser, vbPixels)
     By = -Ay * Y0
 '
-    C0_Px = Foglio.ScaleY(Z0 - Foglio.ScaleTop, vbUser, vbPixels)
-    Cn_Px = Foglio.ScaleY(Zn - Foglio.ScaleTop, vbUser, vbPixels)
+    C0_Px = Sheet.ScaleY(Z0 - Sheet.ScaleTop, vbUser, vbPixels)
+    Cn_Px = Sheet.ScaleY(Zn - Sheet.ScaleTop, vbUser, vbPixels)
     Az = (Cn_Px - C0_Px) / LAz
     Bz = (C0_Px * Zn - Cn_Px * Z0) / LAz
 '
     ' And leave the Sheet set:
-    Foglio.DrawStyle = vbSolid
-    Foglio.AutoRedraw = AutoRed
+    Sheet.DrawStyle = vbSolid
+    Sheet.AutoRedraw = AutoRed
 '
 '
 Picture3D_ERR:
