@@ -1266,7 +1266,13 @@ Private Sub DrawSurface(ByVal bCol As Boolean)
 '
     ' Drawing the quadrilaterals. As a function of THETA,
     '  first design those more 'far from the' observer:
-    Quadrante = CLng(Int((THETA + ALFA) / PI_2)) Mod 4
+    If (THETA + ALFA) < 0# And (THETA + ALFA) >= (-1#) * PI_2 Then
+        Quadrante = CLng(Int((THETA + ALFA) / PI_2) + 4) Mod 4
+    ElseIf (THETA + ALFA) < (-1#) * PI_2 And (THETA + ALFA) > (-1#) * PI Then
+        Quadrante = CLng(Int((THETA + ALFA) / PI_2) + 2) Mod 4
+    Else
+        Quadrante = CLng(Int((THETA + ALFA) / PI_2)) Mod 4
+    End If
 '
     Select Case Quadrante
         Case 0  ' 1st Quadrant. 0 ~ 90
