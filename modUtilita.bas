@@ -18,6 +18,8 @@ Public Const PI# = 3.14159265358979    ' 4# * Atn(1#)
 Public Const PI2# = 2# * PI
 Public Const PI_2# = PI / 2#           ' 90?in [Rad].
 '
+Private Const MAXRECENTFILES = 10
+'
 '--- GetLocale: ----------------------------------------------------------------
 Private Declare Function GetLocaleInfo Lib "kernel32" Alias "GetLocaleInfoA" _
     (ByVal Locale As Long, ByVal LCType As Long, ByVal lpLCData As String, _
@@ -30,12 +32,12 @@ Private Const LOCALE_SDATE& = &H1D
 Private Const LOCALE_STIME& = &H1E
 
 Public Sub UpdateRecentFiles(ByVal mnuRecent As Object, ByVal FileRec$ _
-    , Optional ByVal MAXFIL& = 5)
+    , Optional ByVal MAXFIL& = MAXRECENTFILES)
 '
 '   Add the FileRec $ file to the mnuRecent () menu.
 '   mnuRecent is a menu item, with an index:
 '   mnuRecent (0) is the title, the files to be memorized start from
-'   the mnuRecent position (1).
+'    the mnuRecent position (1).
 '   If FileRec $ is already present it moves it to the first place.
 '   MAXFIL is the maximum number of recent files to remember:
 '   it can be different depending on the application using this routine (0 <MAXFIL <10).
@@ -82,7 +84,7 @@ Public Sub LoadRecentFiles(ByVal mnuRecent As Object, ByVal Section$ _
     , Optional ByVal MAXFIL& = 5, Optional ByVal VerificationFE As Boolean = True)
 '
 '   It reads from the Windows Registry and if the "Product Name" of the project
-'   is defined, the recent files are added to the menu mnuRecent ().
+'    is defined, the recent files are added to the menu mnuRecent ().
 '   If VerificationFE = True also verifies the existence of the files to be added:
 '
     Dim I&, FileRec$
@@ -105,10 +107,10 @@ Public Sub LoadRecentFiles(ByVal mnuRecent As Object, ByVal Section$ _
 '
 End Sub
 
-Public Sub SalvaFilesRecenti(ByVal mnuRecent As Object, ByVal Section$)
+Public Sub SaveRecentFiles(ByVal mnuRecent As Object, ByVal Section$)
 '
-'   Salva nel Registry di Windows e se e' definito il "Product Name"
-'   del progetto, i files recenti contenuti nel menu mnuRecent():
+'   Save in the Windows Registry and if the "Product Name" of the project is
+'    defined, the recent files contained in the menu mnuRecent ():
 '
     Dim I&, FileRec$
 '
@@ -123,13 +125,14 @@ Public Sub SalvaFilesRecenti(ByVal mnuRecent As Object, ByVal Section$)
 '
 '
 End Sub
-Public Sub SalvaPosizioneForm(ByVal frmF As Form _
+
+Public Sub SaveFormsPositions(ByVal frmF As Form _
     , Optional ByVal Dimensioni As Boolean = False)
 '
-'   Salva, sul Registry di Window e se e' definito il
-'   "Product Name" del progetto, la posizione finale
-'   del Form frmF.  Da usare nell' evento frmF_Unload.
-'   Se Dimensioni = True salva anche le dimensioni:
+'   Save, on the Window Registry and if the "Product Name" of the project is
+'    defined, the final position of the Form frmF.
+'   To be used in the frmF_Unload event.
+'   If Size = True also saves the dimensions:
 '
     If (frmF.WindowState <> vbMinimized) And (App.ProductName <> "") Then
         SaveSetting App.ProductName, "FormsPositions", frmF.Name & "_Left", frmF.Left
@@ -145,7 +148,7 @@ Public Sub SalvaPosizioneForm(ByVal frmF As Form _
 '
 End Sub
 
-Public Sub LoadPositionForm(ByVal frmF As Form, ByRef frmF_Left&, ByRef frmF_Top& _
+Public Sub LoadFormsPositions(ByVal frmF As Form, ByRef frmF_Left&, ByRef frmF_Top& _
     , Optional ByRef frmF_Width&, Optional ByRef frmF_Height&)
 '
 '   It reads, if the "Product Name" of the project is defined, the initial
@@ -169,6 +172,7 @@ Public Sub LoadPositionForm(ByVal frmF As Form, ByRef frmF_Left&, ByRef frmF_Top
 '
 '
 End Sub
+
 Public Function DATAN2(ByVal Y#, ByVal X#) As Double
 '
 '   Ritorna il Valore dell' ArcoTangente di y/x
@@ -193,6 +197,7 @@ Public Function DATAN2(ByVal Y#, ByVal X#) As Double
 '
 '
 End Function
+
 Public Function KAscNumInteri(ByVal KA%, _
     Optional ByVal NEG As Boolean = False) As Integer
 '
@@ -228,6 +233,7 @@ Public Function KAscNumInteri(ByVal KA%, _
 '
 '
 End Function
+
 Public Function KAscNumReali(ByVal KA As Integer _
     , Optional ByVal NEG As Boolean = False) As Integer
 '
@@ -287,14 +293,15 @@ Public Function KAscNumReali(ByVal KA As Integer _
 '
 '
 End Function
+
 Private Sub GetLocale(Optional ByRef DS$, Optional ByRef MS$, _
     Optional ByRef GS$, Optional ByRef TS$)
 '
-'   Trova i separatori del sistema:
-'    DS$:   separatore decimale.
-'    MS$:   separatore delle migliaia.
-'    GS$:   separatore dei giorni.
-'    TS$:   separatore delle ore.
+'   Find the system separators:
+'    DS$:   decimal separator.
+'    MS$:   thousands separator.
+'    GS$:   days separator.
+'    TS$:   time separator.
 '
     DS$ = "  "
     MS$ = "  "
@@ -317,7 +324,7 @@ End Sub
 
 Public Function IsLoaded(ByVal frmF As Form) As Boolean
 '
-'   Ritorna True se il Form frmF e' gia' caricato in memoria:
+'   Return True if the Form frmF is already loaded in memory:
 '
     Dim I&
 '

@@ -824,7 +824,7 @@ Private Sub Form_Load()
 '
     Dim Me_L&, Me_T&
 '
-    LoadPositionForm Me, Me_L, Me_T
+    LoadFormsPositions Me, Me_L, Me_T
     Me.Move Me_L, Me_T, Me_W, Me_H
 '
     LoadRecentFiles Me.mnuRecent, "PointsData"
@@ -1073,9 +1073,9 @@ Private Sub Form_Unload(Cancel As Integer)
     If IsLoaded(frmIstruzioni) Then Unload frmIstruzioni
     If IsLoaded(frm3D) Then Unload frm3D
 '
-    SalvaFilesRecenti Me.mnuRecent, "PointsData"
+    SaveRecentFiles Me.mnuRecent, "PointsData"
 '
-    SalvaPosizioneForm Me
+    SaveFormsPositions Me
 '
 '
 '

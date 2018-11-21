@@ -634,7 +634,7 @@ Private Sub Form_Load()
     Dim I&, C&, R&
     Dim Me_L&, Me_T&
 '
-    LoadPositionForm Me, Me_L, Me_T
+    LoadFormsPositions Me, Me_L, Me_T
     Me.Move Me_L, Me_T ', Me_W, Me_H
 '
     lblND = ND
@@ -678,7 +678,7 @@ End Sub
 Private Sub Form_Unload(Cancel As Integer)
 '
 '
-    SalvaPosizioneForm Me
+    SaveFormsPositions Me
 '
 '
 '

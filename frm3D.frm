@@ -1585,7 +1585,7 @@ Private Sub Form_Load()
 '
     Dim Me_L&, Me_T&
 '
-    LoadPositionForm Me, Me_L, Me_T
+    LoadFormsPositions Me, Me_L, Me_T
     Me.Move Me_L, Me_T ', Me_W, Me_H
 '
     TCol() = ColorTable(NTCol)
@@ -1855,7 +1855,7 @@ Private Sub Form_Unload(Cancel As Integer)
     bLoaded = False
     DoEvents
 '
-    SalvaPosizioneForm Me
+    SaveFormsPositions Me
 '
 '
 '
