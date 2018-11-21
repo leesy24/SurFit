@@ -550,7 +550,7 @@ Attribute VB_Exposed = False
 ' Descrizione.....: Form, per la rappresentazione in 3D, di
 '                   punti o di superfici (vista assonometrica).
 ' Nome dei Files..: frm3D.frm, fr3D.frx
-'                   modUtilita.bas
+'                   modUtility.bas
 ' Data............: 10/12/2001
 ' Aggiornamento...: 1/2/2002  (aggiunta la rappresentazione a punti).
 ' Aggiornamento...: 17/3/2002 (sistemate alcune incongruenze di

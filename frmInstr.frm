@@ -1,13 +1,13 @@
 VERSION 5.00
 Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "RICHTX32.OCX"
-Begin VB.Form frmIstruzioni 
+Begin VB.Form frmInstructions 
    AutoRedraw      =   -1  'True
    Caption         =   " Instructions:"
    ClientHeight    =   3960
    ClientLeft      =   60
    ClientTop       =   345
    ClientWidth     =   7680
-   Icon            =   "frmIstr.frx":0000
+   Icon            =   "frmInstr.frx":0000
    LinkTopic       =   "Form1"
    LockControls    =   -1  'True
    ScaleHeight     =   3960
@@ -25,10 +25,10 @@ Begin VB.Form frmIstruzioni
       Enabled         =   -1  'True
       ReadOnly        =   -1  'True
       ScrollBars      =   3
-      TextRTF         =   $"frmIstr.frx":0442
+      TextRTF         =   $"frmInstr.frx":0442
    End
 End
-Attribute VB_Name = "frmIstruzioni"
+Attribute VB_Name = "frmInstructions"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
@@ -36,7 +36,7 @@ Attribute VB_Exposed = False
 '================================================================
 ' Descrizione.....: Form, di uso generale, per la visualizzazione
 '                   di un File di istruzioni.
-' Nome dei Files..: frmIstr.frm, frmIstr.frx
+' Nome dei Files..: frmInstr.frm, frmInstr.frx
 ' Data............: 15/9/1999
 ' Versione........: 1.0 a 32 bits.
 ' Sistema.........: Visual Basic 6.0 sotto Windows NT 4.0
@@ -47,7 +47,7 @@ Attribute VB_Exposed = False
 '================================================================
 '
 '   Nel Form di origine usare il codice:
-'    frmIstruzioni.Apri FileIstruzioni$ [, Title$] [, Posizione&] [, SForm as Form]
+'    frmInstructions.Apri FileIstruzioni$ [, Title$] [, Posizione&] [, SForm as Form]
 '
 '     FileIstruzioni$:    Nome, completo di path e di tipo .txt o .rtf,
 '                         con le istruzioni da visualizzare.

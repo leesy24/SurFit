@@ -455,13 +455,13 @@ Attribute VB_Exposed = False
 ' Descrizione.....: Form di prova per le routines di "Surface
 '                   Fitting".
 ' Nome dei Files..: frmSurFit.frm, frmSurFit.frx
-'                   frmImpostazioni.frm, frmImpostazioni.frx
+'                   frmSettings.frm, frmSettings.frx
 '                   frm3D.frm, frm3D.frx
-'                   frmIstr.frm, frmIstr.frx
+'                   frmInstr.frm, frmInstr.frx
 '                   InfoCr.frm, InfoCr.frx
 '                   modKTB2D.bas, modMASUB.bas, modQSHEP2D
-'                   modGradiente2D.bas, Livelli.bas
-'                   modUtilita.bas
+'                   modGradiente2D.bas, Layers.bas
+'                   modUtility.bas
 ' Data............: 21/9/2001
 ' Versione........: 1.0 a 32 bits.
 ' Sistema.........: VB6 sotto Windows NT.
@@ -1087,7 +1087,7 @@ End Sub
 Private Sub Form_Unload(Cancel As Integer)
 '
 '
-    If IsLoaded(frmIstruzioni) Then Unload frmIstruzioni
+    If IsLoaded(frmInstructions) Then Unload frmInstructions
     If IsLoaded(frm3D) Then Unload frm3D
 '
     SaveRecentFiles Me.mnuRecent, "PointsData"
@@ -1110,7 +1110,7 @@ End Sub
 Private Sub mnuImpostazioni_Click()
 '
 '
-    If frmImpostazioni.Apri(ND, NXI, NYI, NLiv, Par, NQ, NW, NR, TP) Then
+    If frmSettings.Apri(ND, NXI, NYI, NLiv, Par, NQ, NW, NR, TP) Then
         Screen.MousePointer = vbHourglass
     '
         ' Chiama la routine di interpolazione
@@ -1140,7 +1140,7 @@ End Sub
 Private Sub mnuIstruzioni_Click()
 '
 '
-    frmIstruzioni.Apri App.Path & "\Istr.rtf"
+    frmInstructions.Apri App.Path & "\Instr.rtf"
 '
 '
 '

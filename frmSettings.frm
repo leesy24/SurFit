@@ -1,13 +1,13 @@
 VERSION 5.00
 Object = "{5E9E78A0-531B-11CF-91F6-C2863C385E30}#1.0#0"; "MSFLXGRD.OCX"
-Begin VB.Form frmImpostazioni 
+Begin VB.Form frmSettings 
    BorderStyle     =   1  'Fixed Single
    Caption         =   " Settings"
    ClientHeight    =   4440
    ClientLeft      =   45
    ClientTop       =   330
    ClientWidth     =   6930
-   Icon            =   "frmImpostazioni.frx":0000
+   Icon            =   "frmSettings.frx":0000
    LinkTopic       =   "Form1"
    LockControls    =   -1  'True
    MaxButton       =   0   'False
@@ -203,7 +203,7 @@ Begin VB.Form frmImpostazioni
          EndProperty
          Height          =   285
          Left            =   3840
-         Picture         =   "frmImpostazioni.frx":014A
+         Picture         =   "frmSettings.frx":014A
          Style           =   1  'Graphical
          TabIndex        =   22
          Top             =   1200
@@ -305,7 +305,7 @@ Begin VB.Form frmImpostazioni
          GridLines       =   2
          ScrollBars      =   1
          MousePointer    =   99
-         MouseIcon       =   "frmImpostazioni.frx":067C
+         MouseIcon       =   "frmSettings.frx":067C
       End
       Begin VB.Label zLabel12 
          Alignment       =   1  'Right Justify
@@ -515,7 +515,7 @@ Begin VB.Form frmImpostazioni
       Width           =   915
    End
 End
-Attribute VB_Name = "frmImpostazioni"
+Attribute VB_Name = "frmSettings"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
@@ -524,8 +524,8 @@ Attribute VB_Exposed = False
 ' Descrizione.....: Form per l' impostazione dei parametri delle
 '                   routines di "Surface Fitting".
 ' Nome dei Files..: frmSurFit.frm, frmSurFit.frx
-'                   frmImpostazioni.frm, frmImpostazioni.frx
-'                   modUtilita.bas
+'                   frmSettings.frm, frmSettings.frx
+'                   modUtility.bas
 ' Data............: 21/9/2001
 ' Versione........: 1.0 a 32 bits.
 ' Sistema.........: VB6 sotto Windows NT.

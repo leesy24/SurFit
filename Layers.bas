@@ -1,7 +1,7 @@
 Attribute VB_Name = "modLivelli"
 '==============================================================
 ' Descrizione.....: Subroutine CONREC
-' Nome dei Files..: Livelli.bas
+' Nome dei Files..: Layers.bas
 ' Data............: Nov. 1990 - 1?Versione in QuickBasic,
 '                   F. Languasco - URL Colworth
 ' Aggiornamento...: 26/7/1999

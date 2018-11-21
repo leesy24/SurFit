@@ -1,8 +1,8 @@
-Attribute VB_Name = "modUtilita"
+Attribute VB_Name = "modUtility"
 '================================================================
 ' Descrizione.....: Collezione di routines e costanti di utilita'
 '                   per il "Surface Fitting".
-' Nome dei Files..: modUtilita.bas
+' Nome dei Files..: modUtility.bas
 ' Data............: 21/9/2001
 ' Versione........: 1.0 a 32 bits.
 ' Sistema.........: VB6 sotto Windows NT.

@@ -1,9 +1,9 @@
-Attribute VB_Name = "modGradiente"
+Attribute VB_Name = "modGradient"
 '=============================================================
 ' Descrizione.....: Routine di calcolo, con il metodo delle
 '                   differenze finite, del gradiente di una
 '                   superficie.
-' Nome dei Files..: modGradiente.bas
+' Nome dei Files..: modGradient.bas
 ' Data............: 21/9/2001
 ' Versione........: 1.0 a 32 bits.
 ' Sistema.........: VB6 sotto Windows NT.
