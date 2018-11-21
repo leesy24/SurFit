@@ -1503,7 +1503,7 @@ Private Sub ProcessDataFile(ByVal FileN$)
             BinX = RD * Sin(I * PI / 180#)
             BinY = RD * Cos(I * PI / 180#)
             AddBin = True
-            DistanceMin = XDMax ' or YDMax
+            DistanceMin = DMAX1(XDMax, YDMax)
             DistanceMinZ = lZDAvg
             For J = 1 To lND
                 If (Abs(BinX - XD(J)) < DistanceRangeMin) _
