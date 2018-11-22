@@ -1424,11 +1424,12 @@ Private Sub ProcessDataFile(ByVal FileN$)
             ND = ND + 1
             ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), XD(1 To ND), YD(1 To ND), ZD(1 To ND)
             Input #FF, PhiD(ND), ThetaD(ND), XD(ND), YD(ND), ZD(ND)
-            'XD(ND) = XD(ND) - OXD
-            'YD(ND) = YD(ND) - OYD
-            'If (Sqr(XD(ND) ^ 2 + YD(ND) ^ 2) > 19#) Then
-            '    ND = ND - 1
-            'End If
+            If (XD(ND) = 0 And YD(ND) = 0 And ZD(ND) = 50) Then
+                ND = ND - 1
+            Else
+                XD(ND) = XD(ND) - OXD
+                YD(ND) = YD(ND) - OYD
+            End If
         Loop
         lblNAdd = 0
     Else ' Else of If (bFilterEnabled = False) Then
