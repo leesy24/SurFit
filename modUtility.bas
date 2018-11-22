@@ -1,22 +1,22 @@
 Attribute VB_Name = "modUtility"
 '================================================================
-' Descrizione.....: Collezione di routines e costanti di utilita'
-'                   per il "Surface Fitting".
-' Nome dei Files..: modUtility.bas
-' Data............: 21/9/2001
-' Versione........: 1.0 a 32 bits.
-' Sistema.........: VB6 sotto Windows NT.
-' Scritto da......: F. Languasco
-' E-Mail..........: MC7061@mclink.it
-' DownLoads a.....: http://members.xoom.it/flanguasco/
-'                   http://www.flanguasco.org
+' Description.......: Collection of routines and utility constants
+'                      for "Surface Fitting".
+' Name of the Files.: modUtility.bas
+' Date..............: 21/9/2001
+' Version...........: 1.0 at 32 bits.
+' System............: VB6 under Windows NT.
+' Written by........: F. Languasco
+' E-Mail............: MC7061@mclink.it
+' Down Loads by.....: http://members.xoom.it/flanguasco/
+'                     http://www.flanguasco.org
 '================================================================
 '
 Option Explicit
 '
 Public Const PI# = 3.14159265358979    ' 4# * Atn(1#)
 Public Const PI2# = 2# * PI
-Public Const PI_2# = PI / 2#           ' 90?in [Rad].
+Public Const PI_2# = PI / 2#           ' 90¡Æ in [Rad].
 '
 Private Const MAXRECENTFILES = 10
 '
@@ -152,7 +152,7 @@ Public Sub LoadFormsPositions(ByVal frmF As Form, ByRef frmF_Left&, ByRef frmF_T
     , Optional ByRef frmF_Width&, Optional ByRef frmF_Height&)
 '
 '   It reads, if the "Product Name" of the project is defined, the initial
-'   position and the dimensions of the Form frmF stored on the Window Registry.
+'    position and the dimensions of the Form frmF stored on the Window Registry.
 '   To be used in the frmF_Load event and with frmF.StartUpPosition = vbStartUpManual:
 '
     If App.ProductName <> "" Then
@@ -175,9 +175,8 @@ End Sub
 
 Public Function DATAN2(ByVal Y#, ByVal X#) As Double
 '
-'   Ritorna il Valore dell' ArcoTangente di y/x
-'   come implementata dal FORTRAN.
-'   E':    -PI < DATAN2 <= PI.
+'   Return the ArcTangent value of y / x as implemented by FORTRAN.
+'   It is:    -PI < DATAN2 <= PI.
 '
     Select Case X
         Case Is > 0#
@@ -201,24 +200,23 @@ End Function
 Public Function KAscNumInteri(ByVal KA%, _
     Optional ByVal NEG As Boolean = False) As Integer
 '
-'   Ritorna solo i caratteri validi per un campo
-'   contenente un numero intero (anche negativo se
-'   viene passato il valore Neg = True).
-'   Tutti gli altri caratteri vengono annullati.
-'   Va' usato nella procedura KeyPress di TextB come:
-'   KeyAscii = KAscNumInteri(KeyAscii [, Neg])
+'   Returns only the valid characters for a field containing an integer
+'    (even negative if the value Neg = True) is passed.
+'   All other characters are canceled.
+'   It should be used in the KeyPress procedure of TextB as:
+'   KeyAscii = KAscNumInteri (KeyAscii [, Neg])
 '
     Dim KeyMinus%
-    Dim TextB As TextBox    ' Solo per TextBoxes.
-    'Dim TextB As Control    ' Anche per Combo, etc...
+    Dim TextB As TextBox    ' Only for TextBoxes.
+    'Dim TextB As Control    ' Also for Combo, etc ...
 '
-    Const myKeyMinus% = 45  ' E' il valore effettivamente ritornato
-                            ' alla pressione del tasto - ;
-                            ' vbKeySubtract (= 109) non funziona.
+    Const myKeyMinus% = 45  ' It is the value actually returned when
+                            '  the - key is pressed;
+                            ' vbKeySubtract (= 109) does not work.
 '
     Set TextB = Screen.ActiveControl
 '
-    ' Filtro per il segno "-":
+    ' Filter for the "-" sign:
     If (Left$(TextB.Text, 1) <> "-" Or TextB.SelText = TextB.Text) _
     And NEG And TextB.SelStart = 0 Then KeyMinus = myKeyMinus
 '
@@ -237,39 +235,37 @@ End Function
 Public Function KAscNumReali(ByVal KA As Integer _
     , Optional ByVal NEG As Boolean = False) As Integer
 '
-'   Ritorna solo i caratteri validi per un campo
-'   contenente un numero reale (anche negativo se
-'   viene passato il valore Neg = True).
-'   Tutti gli altri caratteri vengono annullati.
-'   Usa le impostazioni locali del separatore decimale.
-'   Va' usato nella procedura KeyPress di TextB come:
-'   KeyAscii = KAscNumReali(KeyAscii [, Neg])
-'   Questa versione accetta anche numeri in notazione
-'   scientifica.
+'   Returns only the valid characters for a field containing a real number
+'    (even negative if the value Neg = True) is passed.
+'   All other characters are canceled.
+'   Use the locale settings of the decimal separator.
+'   It should be used in the KeyPress procedure of TextB as:
+'   KeyAscii = KAscNumReali (KeyAscii [, Neg])
+'   This version also accepts numbers in scientific notation.
 '
     Dim KeyDecimal%, KeyMinus%, KeyE%
-    Dim TextB As TextBox    ' Solo per TextBoxes.
-    'Dim TextB As Control    ' Anche per Combo, etc...
+    Dim TextB As TextBox    ' Only for TextBoxes.
+    'Dim TextB As Control    ' Also for Combo, etc ...
     Dim SD$, SM$, myKeyDecimal%
 '
-    Const myKeyMinus% = 45      ' E' il valore effettivamente ritornato
-                                ' alla pressione del -;
-                                ' vbKeySubtract (= 109)  non funziona.
-    GetLocale SD$, SM$          ' Trova le impostazioni locali dei
-    myKeyDecimal% = Asc(SD$)    ' separatori decimale e delle migliaia.
+    Const myKeyMinus% = 45      ' It is the value actually returned to
+                                '  the pressure of -;
+                                ' vbKeySubtract (= 109) does not work.
+    GetLocale SD$, SM$          ' Find the local settings of the decimal
+    myKeyDecimal% = Asc(SD$)    '  and thousands separators.
 '
     Set TextB = Screen.ActiveControl
 '
-    ' Filtro per il separatore decimale:
+    ' Filter for decimal separator:
     If (InStr(TextB.Text, SD$) = 0 _
     And Not (TextB.SelStart = 0 And Left$(TextB.Text, 1) = "-")) _
     Or TextB.SelText = TextB.Text Then KeyDecimal = myKeyDecimal
 '
-    ' Filtro per il segno "-":
+    ' Filter for the "-" sign:
     If (Left$(TextB.Text, 1) <> "-" Or TextB.SelText = TextB.Text) _
     And NEG And TextB.SelStart = 0 Then KeyMinus = myKeyMinus
 '
-    ' Filtro per la notazione scientifica:
+    ' Filter for scientific notation:
     If TextB.SelStart > 0 Then
         KA = Asc(UCase$(Chr$(KA)))
         If (InStr(TextB.Text, "E") = 0 _
@@ -934,42 +930,40 @@ QuickSort5Double1Long_ERR:
 End Sub
 
 Public Function CMDialog_Files(ByVal CMDialog As CommonDialog, ByVal Oper$, _
-    ByVal Tipo$, ByVal Ext$, Optional ByVal DirNome$ = "", _
+    ByVal FType$, ByVal Ext$, Optional ByVal DirNome$ = "", _
     Optional ByVal FileNome$ = "", Optional ByVal Title$ = "") As String
 '
-'   Imposta i valori di una finestra per la gestione dei Files
-'   e ritorna il nome completo del File scelto.
-'   La gestione degli errori (e.g. cdlCancel) va' fatta nella
-'   routine chiamante.
+'   Set the values of a window for file management and return the full name of
+'    the chosen file.
+'   Error handling (e.g. cdlCancel) must be done in the calling routine.
 '
-'   Parametri:
-'    CMDialog:  e' il controllo Common Dialog che si intende usare.
-'    Oper$:     operazione da eseguire (solo "Save" o "Open").
-'    Tipo$:     tipo dei files da proporre (e.g. "Filtri IIR").
-'    Ext$:      estensioni dei files da proporre (e.g. "*.dat[;*.txt]").
-'    DirNome$:  Folder di default.
-'    FileNome$: nome del File di default.
-'    Title$:   titolo della finestra.
+'   Parameters:
+'    CMDialog:  it is the Common Dialog control that you intend to use.
+'    Oper$:     operation to be performed (only "Save" or "Open").
+'    FType$:    type of files to propose (e.g. "IIR filters").
+'    Ext$:      file extensions to propose (e.g. "* .dat [; *. Txt]").
+'    DirNome$:  Folder by default.
+'    FileNome$: default File name.
+'    Title$:    title of the window.
 '
     Dim Filter$
 '
     If Oper$ <> "Open" And Oper$ <> "Save" Then Err.Raise 5
 '
-    ' Prepara ed imposta tipo ed estensioni dei
-    ' files da proporre:
-    Filter$ = Tipo$ & " (" & Ext$ & ")|" & Ext$ & "|"
+    ' Prepare and set the type and extensions of the files to be proposed:
+    Filter$ = FType$ & " (" & Ext$ & ")|" & Ext$ & "|"
     Filter$ = Filter$ & "Tutti i Files (*.*)|*.*"
     CMDialog.Filter = Filter$
     CMDialog.FilterIndex = 1
 '
-    ' Imposta il Folder di default:
+    ' Set the default Folder:
     If DirNome$ <> "" Then
         CMDialog.InitDir = DirNome$
     Else
         CMDialog.InitDir = App.Path
     End If
 '
-    ' Imposta il File Name di default:
+    ' Set the default File Name:
     If FileNome$ <> "" Then
         CMDialog.FileName = FileNome$
     Else
@@ -980,18 +974,17 @@ Public Function CMDialog_Files(ByVal CMDialog As CommonDialog, ByVal Oper$, _
         End If
     End If
 '
-    ' Scrive il titolo della finestra:
+    ' Write the window title:
     CMDialog.DialogTitle = " " & Title$
 '
-    ' Controlla l' esistenza del File, chiede conferma
-    ' se File Already Exists, nasconde la casella Read Only:
+    ' Check the existence of the file, ask for confirmation if File Already
+    '  Exists, hide the Read Only box:
     CMDialog.Flags = cdlOFNFileMustExist + cdlOFNOverwritePrompt _
                    + cdlOFNHideReadOnly
-    ' e permette il Cancel:
+    ' and allows the Cancel:
     CMDialog.CancelError = True
 '
-    ' Apre la finestra con
-    ' l' operazione richiesta:
+    ' Opens the window with the requested operation:
     If Oper$ = "Open" Then
         CMDialog.ShowOpen
     ElseIf Oper$ = "Save" Then
@@ -1003,9 +996,10 @@ Public Function CMDialog_Files(ByVal CMDialog As CommonDialog, ByVal Oper$, _
 '
 '
 End Function
+
 Public Function DMIN1(ParamArray vD() As Variant) As Double
 '
-'   Implementa la funzione DMIN1(D1, D2, ...DN) del FORTRAN:
+'   Implements the DMIN1(D1, D2, ... DN) function of the FORTRAN:
 '
     Dim J&, J1&, J2&, vDMin As Variant
 '
@@ -1021,9 +1015,10 @@ Public Function DMIN1(ParamArray vD() As Variant) As Double
 '
 '
 End Function
+
 Public Function DMAX1(ParamArray vD() As Variant) As Double
 '
-'   Implementa la funzione DMAX1(D1, D2, ...DN) del FORTRAN:
+'   Implements the DMAX1(D1, D2, ... DN) function of the FORTRAN:
 '
     Dim J&, J1&, J2&, vDMax As Variant
 '
@@ -1248,8 +1243,8 @@ End Function
 
 Public Function Ceil(ByVal X As Double) As Double
 '
-'   Funzione di arrotondamento, per numeri reali,
-'   all' intero uguale o immediatamente superiore:
+'   Rounding function, for real numbers, to the whole equal or
+'    immediately superior:
 '
     If X = Int(X) Then
         Ceil = X
@@ -1260,9 +1255,10 @@ Public Function Ceil(ByVal X As Double) As Double
 '
 '
 End Function
+
 Public Function MAX0(ParamArray vD() As Variant) As Long
 '
-'   Implementa la funzione MAX0(K1, K2, ...KN) del FORTRAN:
+'   Implements the function MAX0(K1, K2, ... KN) of the FORTRAN:
 '
     Dim J&, J1&, J2&, vDMax As Variant
 '
@@ -1278,9 +1274,10 @@ Public Function MAX0(ParamArray vD() As Variant) As Long
 '
 '
 End Function
+
 Public Function MIN0(ParamArray vD() As Variant) As Long
 '
-'   Implementa la funzione MIN0(K1, K2, ...KN) del FORTRAN:
+'   Implements the function MIN0(K1, K2, ... KN) of the FORTRAN:
 '
     Dim J&, J1&, J2&, vDMin As Variant
 '
@@ -1296,16 +1293,17 @@ Public Function MIN0(ParamArray vD() As Variant) As Long
 '
 '
 End Function
+
 Public Function BreakDown(ByVal Full$, Optional ByRef PName$, _
     Optional ByRef FName$, Optional ByRef Ext$) As Boolean
 '
-'   Scompone un nome di File completo di Path nelle sue parti:
-'    Full$  = Nome completo del File.
-'    PName$ = Path del File (con \ finale).
-'    FName$ = Nome del File con Estensione.
-'    Ext$   = .Estensione del File.
+'   Breaks a complete Path file name into its parts:
+'    Full$  = Full name of the file.
+'    PName$ = File Path (with \ final).
+'    FName$ = File name with extension.
+'    Ext$   = .File extension.
 '
-'   Se il File non esiste scompone il nome e ritorna False.
+'   If the file does not exist it breaks the name and returns False.
 '
     Dim Sloc&, Dot&
 '
@@ -1335,9 +1333,10 @@ Public Function BreakDown(ByVal Full$, Optional ByRef PName$, _
 '
 '
 End Function
+
 Private Function FileExists(ByVal FileN$) As Boolean
 '
-'   Verifica l' esistenza del file FileN$:
+'   Check the existence of the FileN $ file:
 '
     Dim res&
 '
@@ -1350,10 +1349,11 @@ Private Function FileExists(ByVal FileN$) As Boolean
 '
 '
 End Function
+
 Public Function Atan2(ByVal Y#, ByVal X#) As Double
 '
-'   Ritorna il Valore dell' ArcoTangente di y/x su 4 Quadranti.
-'   E':    0 <= Atan2 < 2 * PI.
+'   Returns the value of the ArcTangent of y / x on 4 Quadrants.
+'   It is:    0 <= Atan2 < 2 * PI.
 '
     Select Case X
         Case Is > 0#
@@ -1376,8 +1376,8 @@ End Function
 
 Public Function DMINVAL(dVet#()) As Double
 '
-'   Ritorna il valore minimo contenuto nel vettore dVet().
-'   Implementa l' equivalente funzione del FORTRAN.
+'   Returns the minimum value contained in the vector dVet().
+'   Implements the equivalent function of the FORTRAN.
 '
     Dim J&, J1&, J2&, dDMin#
 '
@@ -1393,10 +1393,11 @@ Public Function DMINVAL(dVet#()) As Double
 '
 '
 End Function
+
 Public Function DMAXVAL(dVet#()) As Double
 '
-'   Ritorna il valore massimo contenuto nel vettore dVet().
-'   Implementa l' equivalente funzione del FORTRAN.
+'   Returns the maximum value contained in the vector dVet().
+'   Implements the equivalent function of the FORTRAN.
 '
     Dim J&, J1&, J2&, dDMax#
 '
