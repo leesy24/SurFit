@@ -1439,11 +1439,17 @@ Private Sub ProcessDataFile(ByVal FileN$)
             ReDim Preserve lPhiD(1 To lND), lThetaD(1 To lND), _
                             lXD(1 To lND), lYD(1 To lND), lZD(1 To lND)
             Input #FF, lPhiD(lND), lThetaD(lND), lXD(lND), lYD(lND), lZD(lND)
+            If (lXD(lND) = 0 And lYD(lND) = 0 And lZD(lND) = 50) Then
+                lND = lND - 1
+                GoTo Continue
+            End If
             lXD(lND) = lXD(lND) - OXD
             lYD(lND) = lYD(lND) - OYD
             If (RD <> 0) And (Sqr(lXD(lND) ^ 2 + lYD(lND) ^ 2) > RD) Then
                 lND = lND - 1
+                GoTo Continue
             End If
+Continue:
         Loop
 '
         ' Sort the vectors so that the points with major Z remain behind:
@@ -1464,7 +1470,7 @@ Private Sub ProcessDataFile(ByVal FileN$)
                 If (lDSkip(J) = False) Then
                     If (Abs(lXD(I) - lXD(J)) < 2#) And (Abs(lYD(I) - lYD(J)) < 2#) Then
                         lZOverCnt = lZOverCnt + 1
-                        If (lZD(I) < lZD(J) + 3#) Then
+                        If (lZD(I) < lZD(J) + 2#) Then
                             lZOk = True
                             Exit For
                         End If
