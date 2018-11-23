@@ -1,15 +1,15 @@
 Attribute VB_Name = "modUtility"
 '================================================================
-' Description.......: Collection of routines and utility constants
-'                      for "Surface Fitting".
-' Name of the Files.: modUtility.bas
-' Date..............: 21/9/2001
-' Version...........: 1.0 at 32 bits.
-' System............: VB6 under Windows NT.
-' Written by........: F. Languasco
-' E-Mail............: MC7061@mclink.it
-' Down Loads by.....: http://members.xoom.it/flanguasco/
-'                     http://www.flanguasco.org
+' Description......: Collection of routines and utility constants
+'                     for "Surface Fitting".
+' Name of the Files: modUtility.bas
+' Date.............: 21/9/2001
+' Version..........: 1.0 at 32 bits.
+' System...........: VB6 under Windows NT.
+' Written by.......: F. Languasco
+' E-Mail...........: MC7061@mclink.it
+' Download by......: http://members.xoom.it/flanguasco/
+'                    http://www.flanguasco.org
 '================================================================
 '
 Option Explicit

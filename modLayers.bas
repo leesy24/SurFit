@@ -1,139 +1,135 @@
-Attribute VB_Name = "modLivelli"
+Attribute VB_Name = "modLayers"
 '==============================================================
-' Descrizione.....: Subroutine CONREC
-' Nome dei Files..: Layers.bas
-' Data............: Nov. 1990 - 1?Versione in QuickBasic,
-'                   F. Languasco - URL Colworth
-' Aggiornamento...: 26/7/1999
-' Aggiornamento...: 24/7/2001 (aggiunta etichettatura delle
-'                   linee di livello).
-' Aggiornamento...: 20/10/2001 (aggiunta la generazione dei
-'                   punti delle linee di livello: CONREC_pK).
-' Versione........: 2.0 a 32 bits.
-' Sistema.........: Visual Basic 6.0 sotto Windows NT.
-' Scritto da......: F. Languasco 
-' E-Mail..........: MC7061@mclink.it
-' DownLoads a.....: http://members.xoom.virgilio.it/flanguasco/
-'                   http://www.flanguasco.org
+' Description......: Subroutine CONREC
+' Name of the Files: modLayers.bas
+' Date.............: Nov. 1990 - 1?Versione in QuickBasic,
+'                    F. Languasco - URL Colworth
+' Update...........: 26/7/1999
+' Update...........: 24/7/2001 (addition of labeling of the
+'                     level lines).
+' Update...........: 20/10/2001 (added the generation of points
+'                     of the level lines: CONREC_pK).
+' Version..........: 2.0 at 32 bits.
+' System...........: Visual Basic 6.0 under Windows NT.
+' Written by.......: F. Languasco
+' E-Mail...........: MC7061@mclink.it
+' Download by......: http://members.xoom.virgilio.it/flanguasco/
+'                    http://www.flanguasco.org
 '==============================================================
 '
-'   Subroutine CONREC per il tracciamento delle curve di livello:
+'   CONREC subroutine for tracking level curves:
 '
-'   I valori della superficie da tracciare devono essere passati
-'   nella matrice D(1 to IUB, 1 to JUB): questa rappresenta una
-'   griglia con colonne da 1 a IUB e righe da 1 a JUB.
+'   The values of the surface to be traced must be passed in the matrix
+'    D(1 to IUB, 1 to JUB): this represents a grid with columns from 1 to IUB
+'    and rows from 1 to JUB.
 '
-'   Le coordinate reali di colonne e righe, alle quali corrispondono
-'   i valori di livello della matrice D(.., ..), vengono passate nei
-'   vettori X(1 to IUB), Y(1 to JUB): queste non devono necessariamente
-'   essere equispaziate e normalmente, corrispondono alla scalatura
-'   del foglio (Page) su cui si vuole disegnare.
+'   The actual coordinates of columns and rows, to which the level values of
+'    the matrix D(.., ..) correspond, are passed in the vectors X(1 to IUB),
+'    Y(1 to JUB): these do not necessarily have to be equispaced and normally,
+'    they correspond to the scaling of the sheet (Page) on which you want to
+'    draw.
 '
-'   Gli NL valori a cui si intendono tracciare le linee di livello
-'   vengono passati nel vettore ZLTipo(1 to NL).dLinVal: questi valori
-'   non devono necessariamente essere equispaziati ma devono essere
-'   in ordine crescente.  Nei vettori ZLTipo(1 to NL).lLinCol e
-'   ZLTipo(1 to NL).lLinSps vengono specificati i colori (in formato RGB)
-'   e gli spessori con cui tracciare le corrispondenti curve di livello.
+'   The NL values to which the level lines are to be drawn are passed into the
+'    vector ZLType(1 to NL).dLinVal:
+'   these values do not necessarily have to be equispaced but must be in
+'    increasing order. In the ZLTipo(1 to NL).lLinCol and ZLTipo(1 to NL)
+'    .lLinSps vectors, the colors (in RGB format) and the thicknesses with
+'    which to draw the corresponding level curves are specified.
 '
-'   Nei vettori ZLTipo(1 to NL).sLblTes, ZLTipo(1 to NL).lLblCol e
-'   ZLTipo(1 to NL).lLblFSz vengono passati i testi, i colori e le
-'   dimensioni delle etichette che si vogliono scrivere in corrispondenza
-'   di ciascuna line di livello.
+'   In the vectors ZLTipo(1 to NL).sLblTes, ZLTipo(1 to NL).lLblCol and
+'    ZLTipo(1 to NL).lLBLFSz are passed the texts, colors and sizes of the
+'    labels that you want to write in correspondence of each line of level.
 '
-'   Page e' il Picture Box sul quale si vuole disegnare: puo' essere,
-'   anziche' un PictureBox, qualsiasi oggetto che supporti il metodo
-'   Line.
+'   Page is the Picture Box on which you want to draw: it can be, instead of a
+'    PictureBox, any object that supports the Line method.
 '
-'   Msg$ viene ritornata vuota se CONREC non ha trovato errori,
-'   altrimenti contiene la descrizione dell' errore.
+'   Msg$ is returned empty if CONREC did not find errors, otherwise it contains
+'    the description of the error.
 '
-'   La variabile fStop puo' essere impostata a True, nel programma
-'   chiamante, per interrompere il tracciamento delle curve di livello.
+'   The variable fStop can be set to True, in the calling program, to stop the
+'    tracing of the level curves.
 '
-'   Nota:   La presente versione di CONREC (CONREC_pK) e' stata
-'           modificata, rispetto all' originale, con precedenza
-'           all' esplorazione per livello rispetto all' esplorazione
-'           per casella.  Questo mi ha permesso di costruire, quando
-'           necessario, un vettore ordinato contenente la successione
-'           delle coordinate dei punti rappresentanti una (o piu')
-'           curve di un certo livello.  A solo titolo di riferimento
-'           e' riportata la routine Ordina che esegue quanto sopra.
+'   Note:   The present version of CONREC (CONREC_pK) has been modified, with
+'            respect to the original, with precedence to the exploration by
+'            level with respect to the exploration by box.
+'           This allowed me to construct, when necessary, an ordered vector
+'            containing the succession of the coordinates of the points
+'            representing one (or more) curves of a certain level.
+'           For reference purposes only, the Sort routine that performs the
+'            above is reported.
 '
-'   Nota:   Tutti i vettori e le matrici di queste routines
-'           iniziano dall' indice 1.
+'   Note:   All the vectors and matrices of these routines start from index 1.
 '
 Option Explicit
 '
-' Impostazioni modificabili:
-Private Const lblFNm$ = "Courier New"   ' Font delle etichette.
-Private Const lblFTr As Boolean = True  ' Fondo delle etichette trasparente.
-Private Const lblFBl As Boolean = True  ' Testo delle etichette "Bold".
+' Editable settings:
+Private Const lblFNm$ = "Courier New"   ' Fonts of the labels.
+Private Const lblFTr As Boolean = True  ' Transparent labels background.
+Private Const lblFBl As Boolean = True  ' Text of the "Bold" labels.
 '
-' Struttura delle informazioni relative
-' alle linee di livello da disegnare (CONREC_pK):
+' Structure of the information related to the level lines to be drawn
+'  (CONREC_pK):
 Public Type LineaLivello_Type
-    dLinVal As Double      ' Valore   della linea di livello.
-    lLinCol As Long        ' Colore     "     "    "    " (default = vbBlack).
-    lLinSps As Long        ' Spessore   "     "    "    " (default = 1 [Pixel]).
-    sLblTes As String      ' Testo    dell' etichetta.
-    lLblCol As Long        ' Colore     "      "  (default = vbBlack).
-    lLblFSz As Long        ' Font size  "      "  (default = 8 [Points]).
+    dLinVal As Double      ' Value     of the level line.
+    lLinCol As Long        ' Color     "   "    "    " (default = vbBlack).
+    lLinSps As Long        ' Thickness "   "    "    " (default = 1 [Pixel]).
+    sLblTes As String      ' Text      of   the label.
+    lLblCol As Long        ' Color     "       "  (default = vbBlack).
+    lLblFSz As Long        ' Font size "       "  (default = 8 [Points]).
 End Type
 '
-' Struttura di appoggio per scrivere
-' le etichette dei livelli (CONREC_pK):
+' Support structure for writing layer labels (CONREC_pK):
 Private Type zLbl_Type
-    LblW As Double  ' Larghezza dell' etichetta.
-    LblH As Double  ' Altezza   dell' etichetta.
-    x1 As Single    ' Posizioni degli angoli
-    x2 As Single    ' dell' area impegnata
-    y1 As Single    ' dall' etichetta.
+    LblW As Double  ' Width of the label.
+    LblH As Double  ' Height of the label.
+    x1 As Single    ' Positions of the corners
+    x2 As Single    '  of the area engaged
+    y1 As Single    '  by the label.
     y2 As Single    '
 End Type
 '
 '----------------------------------------------------------------------------------
-'   Dichiarazioni per Ordina:
+'   Declarations for Order:
 Private Type SegOrg_Type
-    NS As Boolean   ' Segmento ancora da selezionare.
-    x1 As Long      ' Coordinate dei segmenti: devono
-    y1 As Long      ' essere trasformate da UserScale
-    x2 As Long      ' (usata da CONREC_pK) a Pixels.
+    NS As Boolean   ' Segment still to be selected.
+    x1 As Long      ' Segment coordinates: they must be
+    y1 As Long      '  transformed by UserScale
+    x2 As Long      '  (used by CONREC_pK) to Pixels.
     y2 As Long      '
 End Type
-Dim PO() As SegOrg_Type ' Vettore dei segmenti disordinati
-                        ' come disegnati, per un certo
-                        ' livello, da CONREC_pK.
+Dim PO() As SegOrg_Type ' Vector of the disordered segments
+                        '  as designed, for a certain level,
+                        '  by CONREC_pK.
 '
 Private Type SegOrd_Type
-    NC As Long      ' N?della curva di appartenenza.
+    NC As Long      ' Number of the curve of belonging.
     x1 As Long
     y1 As Long
     x2 As Long
     y2 As Long
 End Type
-Dim PT() As SegOrd_Type ' Vettore dei segmenti ordinati in
-                        ' successione e per curva.
+Dim PT() As SegOrd_Type ' Vector of segments ordered in
+                        '  succession and by curve.
 
 Private Sub Ordina()
 '
 '
     Dim I&, I1&, NPi&, NPu&, NCu&, NPO&
-    Dim SegDisp As Boolean  ' Ci sono ancora segmenti disponibili.
-    Dim SegForL As Boolean  ' Sono stati utilizzati dei segmenti nel ciclo For.
+    Dim SegDisp As Boolean  ' There are still segments available.
+    Dim SegForL As Boolean  ' Segments were used in the For loop.
 '
-    ' Sceglie i segmenti consecutivi:
+    ' Choose consecutive segments:
     I1 = 0
     NCu = 0
     NPu = 0
     NPO = UBound(PO)
     Do
-        ' Cerca il primo segmento ancora disponibile in PO():
+        ' Search for the first segment still available in PO():
         I1 = PrimoDisponibile(PO(), I1 + 1, NPO)
 '
-        NCu = NCu + 1   ' N?della curva corrente.
-        NPu = NPu + 1   ' Puntatore in PT() all' ultimo segmento nella curva corrente.
-        NPi = NPu       ' Puntatore in PT() al primo segmento nella curva corrente.
+        NCu = NCu + 1   ' Number of the current curve.
+        NPu = NPu + 1   ' Pointer in PT () to the last segment in the current curve.
+        NPi = NPu       ' Pointer in PT () to the first segment in the current curve.
         ReDim Preserve PT(1 To NPu)
         PT(NPi).x1 = PO(I1).x1
         PT(NPi).y1 = PO(I1).y1
@@ -147,7 +143,7 @@ Private Sub Ordina()
             SegForL = False
             For I = I1 + 1 To NPO
                 If PO(I).NS Then
-                    ' Cerca i segmenti da aggiungere in coda alla curva corrente:
+                    ' Search for segments to add at the end of the current curve:
                     If (PT(NPu).x2 = PO(I).x1) And (PT(NPu).y2 = PO(I).y1) Then
                         GoSub Coda
                         PT(NPu).x1 = PO(I).x1
@@ -161,7 +157,7 @@ Private Sub Ordina()
                         PT(NPu).x2 = PO(I).x1
                         PT(NPu).y2 = PO(I).y1
 '
-                    ' Cerca i segmenti da aggiungere in testa alla curva corrente:
+                    ' Search for segments to add at the top of the current curve:
                     ElseIf (PT(NPi).x1 = PO(I).x2) And (PT(NPi).y1 = PO(I).y2) Then
                         GoSub Testa
                         PT(NPi).x1 = PO(I).x1
@@ -176,15 +172,15 @@ Private Sub Ordina()
                         PT(NPi).y2 = PO(I).y1
 '
                     Else
-                        SegDisp = True   ' C' e' ancora almeno un segmento disponibile.
+                        SegDisp = True   ' There is still at least one segment available.
                     End If
                 End If
             Next I
-        Loop While (SegDisp And SegForL) ' Ci sono ancora segmenti disponibili
-                                         ' ed il ciclo For non e' andato a vuoto?
+        Loop While (SegDisp And SegForL) ' Are there still any segments available and
+                                         '  the For loop has not failed?
 '
-    Loop While SegDisp  ' Il ciclo For e' andato a vuoto ma
-                        ' ci sono ancora segmenti disponibili?
+    Loop While SegDisp  ' The For loop has failed but there are
+                        '  still segments available?
 '
     Exit Sub
 '
@@ -209,10 +205,10 @@ Coda:
 '
 '
 End Sub
+
 Private Sub FaiSpazio(Seg() As SegOrd_Type, ByVal II&, ByVal Iu&)
 '
-'   Crea uno spazio libero nel vettore Seg(1 To Iu)
-'   alla posizione Ii:
+'   Create a free space in the vector Seg(1 To Iu) at the Ii location:
 '
     Dim I&
 '
@@ -223,11 +219,12 @@ Private Sub FaiSpazio(Seg() As SegOrd_Type, ByVal II&, ByVal Iu&)
 '
 '
 End Sub
+
 Private Function PrimoDisponibile(Seg() As SegOrg_Type _
     , ByVal I1&, ByVal I2&) As Long
 '
-'   Ritorna la posizione del primo segmento di Seg(),
-'   con indice >= I1, avente il flag NS = True:
+'   Returns the position of the first segment of Seg (),
+'    with index> = I1, having the flag NS = True:
 '
     Dim I&
 '
@@ -308,7 +305,7 @@ Public Sub CONREC_pK(ByVal Page As PictureBox, D#(), X#(), Y#(), _
     Next K
 '
     ' Calculate the length in [Characters] of the labels and,
-    ' if necessary, display them:
+    '  if necessary, display them:
     ReDim zLbl(1 To NL) As zLbl_Type
     For K = 1 To NL
         zLbl(K).LblW = Len(Trim(ZLTipo(K).sLblTes))
@@ -321,7 +318,7 @@ Public Sub CONREC_pK(ByVal Page As PictureBox, D#(), X#(), Y#(), _
     PageDW = Page.DrawWidth
     If fzLbl Then   ' We want to write the values of the levels.
         ' Save the current settings, assign the new ones and calculate
-        ' the position parameters:
+        '  the position parameters:
         PageFN$ = Page.FontName
         PageFS = Page.FontSize
         PageFC = Page.ForeColor
@@ -334,7 +331,7 @@ Public Sub CONREC_pK(ByVal Page As PictureBox, D#(), X#(), Y#(), _
             If ZLTipo(K).lLblFSz < 8 Then ZLTipo(K).lLblFSz = 8
             Page.FontSize = ZLTipo(K).lLblFSz
             ' Calculate the width and height of the label in [ScaleUnits] and
-            ' use it's FontSize:
+            '  use it's FontSize:
             zLbl(K).LblW = Page.TextWidth("O") * zLbl(K).LblW
             zLbl(K).LblH = Abs(Page.TextHeight("O"))
         Next K
@@ -455,8 +452,8 @@ DRAWIT:
 '
                     ' Level line labels:
                     If zLbl(K).LblW > 0 Then    ' Try writing the value of the
-                                                ' level line K to position
-                                                ' x2, y2.
+                                                '  level line K to position
+                                                '  x2, y2.
                         ' Discard the out-of-square positions:
                         If (X(IUB) < x2 + zLbl(K).LblW) _
                         Or (y2 - zLbl(K).LblH < Y(1)) Then GoTo CASE0
@@ -471,10 +468,10 @@ DRAWIT:
 '
                         ' The position x2, y2 is OK:
                         zLbl(K).x1 = x2                 ' Area
-                        zLbl(K).x2 = x2 + zLbl(K).LblW  ' occupied
-                        zLbl(K).y1 = y2 - zLbl(K).LblH  ' by the
-                        zLbl(K).y2 = y2                 ' K label.
-                        zLbl(K).LblW = 0                ' K-level labeled.
+                        zLbl(K).x2 = x2 + zLbl(K).LblW  '  occupied
+                        zLbl(K).y1 = y2 - zLbl(K).LblH  '  by the
+                        zLbl(K).y2 = y2                 '  K label.
+                        zLbl(K).LblW = 0                '  K-level labeled.
 '
                         Page.ForeColor = ZLTipo(K).lLblCol
                         Page.FontSize = ZLTipo(K).lLblFSz

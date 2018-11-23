@@ -452,27 +452,26 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '=============================================================
-' Descrizione.....: Form di prova per le routines di "Surface
-'                   Fitting".
-' Nome dei Files..: frmSurFit.frm, frmSurFit.frx
-'                   frmSettings.frm, frmSettings.frx
-'                   frm3D.frm, frm3D.frx
-'                   frmInstr.frm, frmInstr.frx
-'                   InfoCr.frm, InfoCr.frx
-'                   modKTB2D.bas, modMASUB.bas, modQSHEP2D
-'                   modGradiente2D.bas, Layers.bas
-'                   modUtility.bas
-' Data............: 21/9/2001
-' Versione........: 1.0 a 32 bits.
-' Sistema.........: VB6 sotto Windows NT.
-' Scritto da......: F. Languasco
-' E-Mail..........: MC7061@mclink.it
-' DownLoads a.....: http://members.xoom.virgilio.it/flanguasco/
-'                   http://www.flanguasco.org
+' Description......: Test form for "Surface Fitting" routines.
+' Name of the Files: frmSurFit.frm, frmSurFit.frx
+'                    frmSettings.frm, frmSettings.frx
+'                    frm3D.frm, frm3D.frx
+'                    frmInstr.frm, frmInstr.frx
+'                    InfoCr.frm, InfoCr.frx
+'                    modKTB2D.bas, modMASUB.bas, modQSHEP2D
+'                    modGradiente2D.bas, modLayers.bas
+'                    modUtility.bas
+' Date.............: 21/9/2001
+' Version..........: 1.0 at 32 bits.
+' System...........: VB6 under Windows NT.
+' Written by.......: F. Languasco
+' E-Mail...........: MC7061@mclink.it
+' Download by......: http://members.xoom.virgilio.it/flanguasco/
+'                    http://www.flanguasco.org
 '=============================================================
 '
-'   Nota:   Tutti i vettori e le matrici di queste routines
-'           iniziano dall' indice 1 (ZCol() escluso).
+'   Note:   All the vectors and matrices of these routines start from
+'            index 1 (ZCol() excluded).
 '
 Option Explicit
 '

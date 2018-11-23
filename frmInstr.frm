@@ -34,16 +34,16 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '================================================================
-' Descrizione.....: Form, di uso generale, per la visualizzazione
-'                   di un File di istruzioni.
-' Nome dei Files..: frmInstr.frm, frmInstr.frx
-' Data............: 15/9/1999
-' Versione........: 1.0 a 32 bits.
-' Sistema.........: Visual Basic 6.0 sotto Windows NT 4.0
-' Scritto da......: F. Languasco 
-' E-Mail..........: MC7061@mclink.it
-' DownLoads a.....: http://members.xoom.it/flanguasco/
-'                   http://www.flanguasco.org
+' Description......: Form, of general use, for displaying an
+'                     instruction file.
+' Name of the Files: frmInstr.frm, frmInstr.frx
+' Date.............: 15/9/1999
+' Version..........: 1.0 at 32 bits.
+' System...........: Visual Basic 6.0 under Windows NT 4.0
+' Written by.......: F. Languasco
+' E-Mail...........: MC7061@mclink.it
+' Download by......: http://members.xoom.it/flanguasco/
+'                    http://www.flanguasco.org
 '================================================================
 '
 '   Nel Form di origine usare il codice:

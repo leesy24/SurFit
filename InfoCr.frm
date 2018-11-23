@@ -94,7 +94,7 @@ Begin VB.Form frmCopyright
       Alignment       =   2  'Center
       BackColor       =   &H00FFFF00&
       BorderStyle     =   1  'Fixed Single
-      Caption         =   "  ©"
+      Caption         =   "  ?
       BeginProperty Font 
          Name            =   "Arial"
          Size            =   18
@@ -227,17 +227,17 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '==============================================================
-' Descrizione.....: Form, di uso generale, per la
-'                   visualizzazione delle informazioni
-'                   sul programma e sul sistema.
-' Nome dei Files..: InfoCr.frm, InfoCr.frx
-' Data............: 27/2/1998
-' Versione........: 2.0 a 32 bits
-' Sistema.........: Visual Basic 6.0 sotto Windows NT.
-' Scritto da......: F. Languasco ®
-' E-Mail..........: MC7061@mclink.it
-' DownLoads a.....: http://members.xoom.virgilio.it/flanguasco/
-'                   http://www.flanguasco.org
+' Description......: Form, of general use, for displaying
+'                     information on the program and on the
+'                     system.
+' Name of the Files: InfoCr.frm, InfoCr.frx
+' Date.............: 27/2/1998
+' Version..........: 2.0 at 32 bits
+' System...........: Visual Basic 6.0 under Windows NT.
+' Written by.......: F. Languasco
+' E-Mail...........: MC7061@mclink.it
+' Download by......: http://members.xoom.virgilio.it/flanguasco/
+'                    http://www.flanguasco.org
 '==============================================================
 '
 '   Nel Form di origine usare il codice:

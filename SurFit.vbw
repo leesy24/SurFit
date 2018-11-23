@@ -1,5 +1,5 @@
 frmSurFit = 0, 0, 770, 741, C, 68, 10, 769, 544, C
-modLivelli = 0, 0, 770, 495, C
+modLayers = 0, 0, 770, 495, C
 modMASUB = 0, 0, 770, 495, C
 modQSHEP2D = 0, 0, 770, 495, C
 modGradient = 0, 0, 770, 495, C

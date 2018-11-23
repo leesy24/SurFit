@@ -1,22 +1,22 @@
 Attribute VB_Name = "modKTB2D"
 '==============================================================
-' Descrizione.....: Routines per l' interpolazione di superfici
-'                   da punti dati sparpagliati.
-' Nome dei Files..: modKTB2D.bas
-' Data............: 12/10/2001
-' Versione........: 1.0 a 32 bits.
-' Sistema.........: VB6 sotto Windows NT.
-' Scritto da......: F. Languasco ®
-' E-Mail..........: MC7061@mclink.it
-' DownLoads a.....: http://members.xoom.it/flanguasco/
-'                   http://www.flanguasco.org
+' Description......: Routines for interpolating surfaces from
+'                     scattered data points.
+' Name of the Files: modKTB2D.bas
+' Date.............: 12/10/2001
+' Version..........: 1.0 at 32 bits.
+' System...........: VB6 under Windows NT.
+' Written by.......: F. Languasco
+' E-Mail...........: MC7061@mclink.it
+' Download by......: http://members.xoom.it/flanguasco/
+'                    http://www.flanguasco.org
 '==============================================================
 '
 '   Routine di ingresso: KTB2D (vedere nella routine e nella
 '                               definizione del tipo Par la
 '                               descrizione dei parametri)
 '
-'   Nota:   Tutti i vettori e le matrici di queste routines
+'   Note:   Tutti i vettori e le matrici di queste routines
 '           iniziano dall' indice 1.
 '
 '   Tradotto dal programma FORTRAN:

@@ -521,18 +521,18 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '===============================================================
-' Descrizione.....: Form per l' impostazione dei parametri delle
-'                   routines di "Surface Fitting".
-' Nome dei Files..: frmSurFit.frm, frmSurFit.frx
-'                   frmSettings.frm, frmSettings.frx
-'                   modUtility.bas
-' Data............: 21/9/2001
-' Versione........: 1.0 a 32 bits.
-' Sistema.........: VB6 sotto Windows NT.
-' Scritto da......: F. Languasco 
-' E-Mail..........: MC7061@mclink.it
-' DownLoads a.....: http://members.xoom.it/flanguasco/
-'                   http://www.flanguasco.org
+' Description......: Form for setting the parameters of the
+'                     "Surface Fitting" routines.
+' Name of the Files: frmSurFit.frm, frmSurFit.frx
+'                    frmSettings.frm, frmSettings.frx
+'                    modUtility.bas
+' Date.............: 21/9/2001
+' Version..........: 1.0 at 32 bits.
+' System...........: VB6 under Windows NT.
+' Written by.......: F. Languasco
+' E-Mail...........: MC7061@mclink.it
+' Download by......: http://members.xoom.it/flanguasco/
+'                    http://www.flanguasco.org
 '===============================================================
 '
 Option Explicit

@@ -547,53 +547,52 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '===================================================================
-' Descrizione.....: Form, per la rappresentazione in 3D, di
-'                   punti o di superfici (vista assonometrica).
-' Nome dei Files..: frm3D.frm, fr3D.frx
-'                   modUtility.bas
-' Data............: 10/12/2001
-' Aggiornamento...: 1/2/2002  (aggiunta la rappresentazione a punti).
-' Aggiornamento...: 17/3/2002 (sistemate alcune incongruenze di
-'                              rappresentazione).
-' Aggiornamento...: 21/3/2002 (aggiunta la rotazione).
-' Versione........: 1.1 a 32 bits (provvisoria, in via di sviluppo).
-' Sistema.........: VB6 sotto Windows NT.
-' Scritto da......: F. Languasco
-' E-Mail..........: MC7061@mclink.it
-' DownLoads a.....: http://members.xoom.virgilio.it/flanguasco/
-'                   http://www.flanguasco.org
+' Description......: Form, for the 3D representation of points or
+'                     surfaces (axonometric view).
+' Name of the Files: frm3D.frm, fr3D.frx
+'                    modUtility.bas
+' Date.............: 10/12/2001
+' Update...........: 1/2/2002  (added point representation).
+' Update...........: 17/3/2002 (arrange some inconsistencies of
+'                     representation).
+' Update...........: 21/3/2002 (rotation added).
+' Version..........: 1.1 at 32 bits (provisional, developing).
+' System...........: VB6 under Windows NT.
+' Written by.......: F. Languasco
+' E-Mail...........: MC7061@mclink.it
+' Download by......: http://members.xoom.virgilio.it/flanguasco/
+'                    http://www.flanguasco.org
 '===================================================================
 '
-'   Routines di ingresso:
+'   Entry routines:
 '
 '    frm3D.Points XD#(), YD#(), ZD#() [, Title$ = ""] [, IC& = 1] _
 '                [, bAutoScale as Boolean = True] _
 '                [, XMin#, XMax#, YMin#, YMax#, ZMin#, ZMax#]
-'     XD():       vettore contenente le ascisse  dei punti da rappresentare.
-'     YD():          "        "       " ordinate  "    "    "      ".
-'     ZD():          "        "       " altezze   "    "    "      ".
-'     Title$:    titolo del quadro (opzionale).
-'     IC:         se IC <= 1 il Form viene messo in primo piano (opzionale).
+'     XD():       vector containing the abscissas of the points to represent.
+'     YD():         "        "       "  ordinates "   "    "      ".
+'     ZD():         "        "       "  altitude  "   "    "      ".
+'     Title$:     title of the panel (optional).
+'     IC:         if IC <= 1 the Form is put in the foreground (optional).
 '     bAutoScale: if False must also pass the values Min and Max to be used
 '                  as extremes of the three axes.
 '
 '    frm3D.Surface XI#(), YI#(), ZI#() [, Title$ = ""] [, IC& = 1]
-'     XI():     vettore contenente le ascisse  della superficie da rappresentare.
-'     YI():        "        "       " ordinate   "       "       "      ".
-'     ZI():     matrice     "       i livelli    "       "       "      ".
-'     Title$:  titolo del quadro (opzionale).
-'     IC:       se IC <= 1 il Form viene messo in primo piano (opzionale).
+'     XI():   vector containing the abscissas of the surface to be represented.
+'     YI():     "        "       "  ordinates "         "       "      ".
+'     ZI():   matrix     "       "  levels    "         "       "      ".
+'     Title$: title of the panel (optional).
+'     IC:     if IC <= 1 the Form is put in the foreground (optional).
 '
-'   Nota:   Per Sub Points:
-'            i vettori XD(1 to ND), YD(1 to ND) e ZD(1 To ND) devono avere
-'            le stesse dimensioni; in caso contrario viene usata la dimensione
-'            piu' piccola.
-'           Per Sub Surface:
-'            se le dimensioni dei vettori sono XI(1 to NXI) e YI(1 to NYI),
-'            la matrice deve essere dimensionata come ZI(1 to NXI, 1 to NYI).
+'   Note:   For Sub Points:
+'            the XD (1 to ND), YD (1 to ND) and ZD (1 To ND) vectors must have
+'             the same dimensions; otherwise the smaller size is used.
+'           For Sub Surface:
+'            if the dimensions of the vectors are XI(1 to NXI) and YI(1 to NYI),
+'            the matrix must be sized as ZI (1 to NXI, 1 to NYI).
 '
-'   Nota:   Tutti i vettori e le matrici di queste routines
-'           iniziano dall' indice 1 (TCol() escluso).
+'   Note:   All vectors and matrices of these routines start from index 1
+'            (TCol() excluded).
 '
 Option Explicit
 '
@@ -606,20 +605,20 @@ Dim Title$
 Dim fPoints As Boolean  ' If True, draw points;
                         ' if False, draw a surface.
 '
-Dim NV&             ' N?di valori nei vettori XV(), YV() e ZV().
+Dim NV&             ' Number of values in the XV(), YV() and ZV() vectors.
 '
-Dim NXV&, NYV&      ' N?di valori nei vettori XV(), YV() e
-                    ' di colonne e righe nella matrice ZV().
+Dim NXV&, NYV&      ' Number of values in the XV(), YV(), and column and row
+                    '  vectors in the ZV () array.
 '
-Dim XMin!, XMax!    ' Valori minimi
-Dim YMin!, YMax!    ' e massimi
-Dim ZMin!, ZMax!    ' dei dati in ingresso.
+Dim XMin!, XMax!    ' Minimum
+Dim YMin!, YMax!    '  and maximum values
+Dim ZMin!, ZMax!    '  of incoming data.
 '
-Dim XRMin!, XRMax!  ' Valori minimi e massimi su gli assi del quadro:
-Dim YRMin!, YRMax!  ' servono ad evitare, in questa particolare applicazione, che
-Dim ZRMin!, ZRMax!  ' chiamate successive a Picture3D cambino le scale degli assi.
-                    ' Inoltre il cambio vista pilotato dal Mouse, richiede i veri
-                    ' valori di XRMin, XRMax e ZRMin.
+Dim XRMin!, XRMax!  ' Minimum and maximum values on the axis of the frame:
+Dim YRMin!, YRMax!  ' they are used to avoid, in this particular application,
+Dim ZRMin!, ZRMax!  '  that subsequent calls to Picture3D change the axis scales.
+                    ' In addition, the view change driven by the mouse requires
+                    '  the true values of XRMin, XRMax and ZRMin.
 Dim AsseX!          ' XRMax - XRMin.
 Dim sUX$            ' Label of the units of the X axis.
 Dim XEsp&           ' X scale reduction factor
@@ -628,32 +627,32 @@ Dim YEsp&           ' Y scale reduction factor
 Dim sUZ$            ' Label of the units of the Z axis.
 Dim ZEsp&           ' Z scale reduction factor
 '
-Dim Ax!, Bx!        ' Coefficienti di
-Dim Ay!, By!        ' conversione scale
-Dim Az!, Bz!        ' da vbUser a Pixels.
+Dim Ax!, Bx!        ' Scale conversion
+Dim Ay!, By!        '  coefficients from
+Dim Az!, Bz!        '  vbUser to Pixels.
 '
-Dim RAyx!           ' Rapporto lunghezza asse Y in [Pixels] su lunghezza asse X in [Pixels].
-Dim ALFA!           ' Angolo dell' asse Y rispetto all' asse X [Rad].
-Dim SinA!, CosA!    ' Sin(ALFA) e Cos(ALFA) calcolati solo dopo un cambio vista.
+Dim RAyx!           ' Y-axis length ratio in [Pixels] to X-axis length in [Pixels].
+Dim ALFA!           ' Angle of the Y axis with respect to the X axis [Rad].
+Dim SinA!, CosA!    ' Sin(ALFA) and Cos(ALFA) calculated only after a change of view.
 '
-' Costanti e variabili per la rotazione:
-Dim THETA!              ' Angolo corrente di rotazione [Radianti].
-Const dth! = PI / 180#  ' Incremento dell' angolo di rotazione [Radianti].
-Dim X0r#, Y0r#          ' Coordinate del centro di rotazione.
-Dim SemiAsseX!          ' Misure degli assi del disegno.
-Dim SemiAsseY!          '   "      "     "   "     "
-Dim AsseZ!              '   "      "     "   "     "
-Dim TrRotX!, TrRotY!    ' Coeff. di trasformazione delle coordinate durante la rotazione.
+' Constants and variables for rotation:
+Dim THETA!              ' Rotation current angle [Radians].
+Const dth! = PI / 180#  ' Increment of the rotation angle [Radians].
+Dim X0r#, Y0r#          ' Coordinates of the rotation center.
+Dim SemiAsseX!          ' Measurements of the axes of the drawing.
+Dim SemiAsseY!          '      "       "     "     "     "
+Dim AsseZ!              '      "       "     "     "     "
+Dim TrRotX!, TrRotY!    ' Coeff. transformation of the coordinates during rotation.
 Dim bPause As Boolean   ' Flag for rotation paused.
-'Const RFCL& = &H8000&   ' Colore di assi e griglie di riferimento durante la rotazione.
-Const RFCL& = &H404080  ' Colore di assi e griglie di riferimento durante la rotazione.
+'Const RFCL& = &H8000&   ' Color of axes and reference grids during rotation.
+Const RFCL& = &H404080  ' Color of axes and reference grids during rotation.
 '
 Dim TCol&()         ' Table of colors.
-Const NTCol& = 1280 ' Number of colors available in TCol ().
+Const NTCol& = 1280 ' Number of colors available in TCol().
 Dim ZCol&()         ' Vector or array of colors to be used.
 '
 Const Log10# = 2.30258509299405
-Const RadToGrd# = 180# / PI ' Fattore di conversione da [Rad] a [Grd].
+Const RadToGrd# = 180# / PI ' Conversion factor from [Rad] to [Grd].
 '
 Private Type POINTAPI
      X As Long          ' [Pixels].
@@ -666,24 +665,24 @@ Dim PRv() As POINTAPI       ' Vector of the points or matrix of the vertices of 
                             '  (it is also used by the Subs DrawSup_BN and DrawSurface).
 Const lRP& = 4              ' Dot drawing radius [Pixels].
 '
-' Variabili per la Sub DisegnaSup_BN:
-Dim NPoli&                  ' N?di quadrilateri in una riga.
-Dim lpPoint() As POINTAPI   ' Vettore dei vertici di una riga.
-Dim lpVertici&()            ' Vettore del N?di vertici di ogni poligono.
+' Variables for the Sub DrawSup_BN:
+Dim NPoli&                  ' Number of quadrilaterals in a row.
+Dim lpPoint() As POINTAPI   ' Vector of the vertices of a row.
+Dim lpVertici&()            ' Vector of the number of vertices of each polygon.
 '
 ' Variables for the Sub DrawSurface:
 Dim lpPoint_C() As POINTAPI ' Vector of the vertices of a quadrilateral.
 '
-' Costanti per la ricerca della posizione 3D:
-Const shpIndOffx& = lRP + 2 ' Offset orizzontale e verticale del cerchio
-Const shpIndOffy& = lRP + 2 ' di evidenziazione.
-Const PCHL& = &HC0FFFF      ' Colore di evidenza per le etichette di posizione cursore.
+' Constants for finding the 3D position:
+Const shpIndOffx& = lRP + 2 ' Horizontal and vertical offset
+Const shpIndOffy& = lRP + 2 '  of the highlight circle.
+Const PCHL& = &HC0FFFF      ' Color of evidence for the cursor position labels.
 '
 Dim bRotate As Boolean      ' Flag for Rotation in progress.
-Dim bLoaded As Boolean      ' Flag di Form inizializzato.
+Dim bLoaded As Boolean      ' Flag for Form initialized.
 '
 '-------------------------------------------------------------------------------------
-'   API grafiche:
+'   Graphic APIs:
 '
 Private Declare Function Ellipse Lib "gdi32" (ByVal hdc As Long, ByVal x1 As Long, _
     ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long) As Long
@@ -804,7 +803,7 @@ Private Function Picture3D(ByVal Sheet As PictureBox, _
 '-------------------------------------------------------------------------------------
 '   Calculation of the grating step of the three axes.
 '
-    Dim DZMin!                      ' Ampiezza min. della scala Z.
+    Dim DZMin!                      ' Min. Width of the Z scale
     Const Log10! = 2.30258509299405 ' Log(10#)
 '
     ' Calculates the spacing of the values written on the X axis:
@@ -1373,28 +1372,28 @@ Private Sub DrawSurface(ByVal bCol As Boolean)
 '
 End Sub
 
-Private Sub DisegnaSup_BN()
+Private Sub DrawSurface_BW()
 '
-'   NON USATA.
+'   NOT USED.
 '
-'   Disegna, con API, le righe di quadrilateri.  Disegnando le righe dall' ultima
-'   indietro fino alla prima (i.e. muovendosi verso l' osservatore), ogni quadri-
-'   latero nasconde la parte di immagine da lui coperta.
+'  Draw, with API, the rows of quadrilaterals. Drawing the lines from the last
+'   back to the first (moving towards the observer), each picture - latero
+'   hides the part of the image he covers.
 '
-'   Schema dei quadrilateri utilizzati dal vettore lpPoint():
+'   Schema of quadrilaterals used by the lpPoint() vector:
 '  2 _____ 3  6 _____ 7
-'   |     |    |     | .... In tutte le righe coincidono i vertici 3 con 6,
-'   |     |    |     | .... 4 con 5, 7 con 10, 8 con 9, etc...
-'   |_____|    |_____| .... Nelle righe J < NYV coincidono i vertici
-'  1       4  5       8     2 con 1 della riga J + 1, 4 con 3 della riga J + 1 , etc...
+'   |     |    |     | .... In all the lines the vertices 3 coincide with 6,
+'   |     |    |     | ....  4 with 5, 7 with 10, 8 with 9, etc ...
+'   |_____|    |_____| .... In lines J <NYV, vertices 2 coincide with 1 of
+'  1       4  5       8      line J + 1, 4 with 3 of line J + 1, etc ...
 '
-'   Questa routine e' riportata solo per curiosita': La Sub DrawSurface,
-'   infatti, offre la stessa funzionalita'.  La curiosita' sta' nel fatto che,
-'   usando l' API PolyPolygon, i poligoni successivi, definiti in lpPoint(),
-'   NON nascondono quelli precedentemente definiti nello stesso vettore.
-'   Disegnando i quadrilateri riga per riga l' effetto non e' molto evidente:
-'   se invece si volessero mettere in  lpPoint() TUTTI i quadrilateri che
-'   formano la superficie il risultato sarebbe disastroso.
+'   This routine is reported only for curiosity: The Sub DrawSurface, in fact,
+'    offers the same functionality. The curiosity lies in the fact that, using
+'    the PolyPolygon API, the following polygons, defined in lpPoint(),
+'   DO NOT hide those previously defined in the same vector.
+'   Drawing the quadrilaterals line by line the effect is not very evident:
+'   if instead you want to put in lpPoint() ALL the quadrilaterals that form
+'    the surface the result would be disastrous.
 '
     Dim I&, J&, NP&, hPen&, hPen_O&, hBrush&, hBrush_O&, lR1&
     Dim Xr#, Yr#
@@ -1404,8 +1403,8 @@ Private Sub DisegnaSup_BN()
     hBrush = CreateSolidBrush(&H808080) 'pic3D.BackColor)
     hBrush_O = SelectObject(pic3D.hdc, hBrush)
 '
-    ' Calcolo la matrice dei vertici dei quadrilateri
-    ' proiettati sul piano di rappresentazione:
+    ' Calculating the matrix of the vertices of the quadrilaterals projected on
+    '  the representation plane:
     For J = 1 To NYV
         For I = 1 To NXV
             If bRotate Then
@@ -1419,7 +1418,7 @@ Private Sub DisegnaSup_BN()
         Next I
     Next J
 '
-    ' Disegno le righe di quadrilateri:
+    ' Draw the lines of quadrilaterals:
     For J = NYV - 1 To 1 Step -1
         For I = 1 To NXV - 1
             NP = 4 * (I - 1)
@@ -1603,7 +1602,7 @@ Private Sub Form_Load()
     ' Initial values:
     'RAyx = 1!       ' Y axis length ratio to X axis length.
     'ALFA = PI / 6!  ' Angle of the Y axis with respect to the X axis: 30 [Grd]
-    RAyx = 0.5       ' Y axis length ratio to X axis length.
+    RAyx = 0.5      ' Y axis length ratio to X axis length.
     ALFA = PI / 3!  ' Angle of the Y axis with respect to the X axis: 60 [Grd].
 '
     lblRAyx = Format$(RAyx, "#0.000")
@@ -2039,7 +2038,7 @@ Private Sub QuickSort1Double1POINTAPI1Long( _
 '
                 If I < J Then
                     ' We haven't reached the pivot element; it means that two
-                    ' elements on either side are out of order, so swap them:
+                    '  elements on either side are out of order, so swap them:
                     'SWAP ValTab(i), ValTab(J)
                     ' Main Vector:
                     DoubleValTemp = ValTab(I)
@@ -2072,7 +2071,7 @@ Private Sub QuickSort1Double1POINTAPI1Long( _
             ValTab2(High) = LongValTemp
 '
             ' Recursively call the QuickSort1Double1POINTAPI1Long procedure (pass the smaller
-            ' subdivision first to use less stack space):
+            '  subdivision first to use less stack space):
             If (I - Low) < (High - I) Then
                 QuickSort1Double1POINTAPI1Long ValTab(), ValTab1(), ValTab2(), Low, I - 1, OrderDir
                 QuickSort1Double1POINTAPI1Long ValTab(), ValTab1(), ValTab2(), I + 1, High, OrderDir
@@ -2176,7 +2175,7 @@ Private Sub Draw(Optional ByVal bChangeView As Boolean = False)
     t0 = Timer
 '
     XRMin = XMin: XRMax = XMax ' Minimum and maximum values
-    YRMin = YMin: YRMax = YMax ' on the axes of the switchboard.
+    YRMin = YMin: YRMax = YMax '  on the axes of the switchboard.
     ZRMin = ZMin: ZRMax = ZMax '
 '
     ' Set the graphic:
@@ -2365,6 +2364,7 @@ Private Sub Timer1_Timer()
 '
 '
 End Sub
+
 Private Sub updTheta_Change()
 '
 '
@@ -2379,6 +2379,7 @@ Private Sub updTheta_Change()
 '
 '
 End Sub
+
 Private Sub DrawAxisRot()
 '
 '
@@ -2386,16 +2387,16 @@ Private Sub DrawAxisRot()
 '
     pic3D.ForeColor = vbGreen
 '
-    ' Coordinate, in [vbUser], del centro di rotazione:
+    ' Coordinates, in [vbUser], of the rotation center:
     X0 = X0r + (Y0r - YRMin) * TrRotX
     Y0 = ZRMin + (Y0r - YRMin) * TrRotY
 '
-    ' Coordinate, in [vbUser], dell' estremita' dell' asse di rotazione:
+    ' Coordinates, in [vbUser], of the end of the rotation axis:
     y1 = Y0 + AsseZ
     pic3D.DrawStyle = vbDashDot
     pic3D.Line (X0, Y0)-(X0, y1)
 '
-    ' Coordinate, in [vbUser], dell' estremita' dell' asse X in rotazione:
+    ' Coordinates, in [vbUser], of the end of the rotating X axis:
     x2 = X0r + SemiAsseX * Cos(THETA)
     y2 = Y0r + SemiAsseY * Sin(THETA)
     x1 = x2 + (y2 - YRMin) * TrRotX

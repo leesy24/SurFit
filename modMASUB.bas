@@ -1,24 +1,23 @@
 Attribute VB_Name = "modMASUB"
 '=============================================================
-' Descrizione.....: Routine per l' interpolazione di superfici
-'                   da punti dati sparpagliati.
-' Nome dei Files..: modMASUB.bas
-' Data............: 21/9/2001
-' Versione........: 1.0 a 32 bits.
-' Sistema.........: VB6 sotto Windows NT.
-' Scritto da......: F. Languasco 
-' E-Mail..........: MC7061@mclink.it
-' DownLoads a.....: http://members.xoom.it/flanguasco/
-'                   http://www.flanguasco.org
+' Description......: Routines for interpolating surfaces from
+'                     scattered data points.
+' Name of the Files: modMASUB.bas
+' Date.............: 21/9/2001
+' Version..........: 1.0 at 32 bits.
+' System...........: VB6 under Windows NT.
+' Written by.......: F. Languasco
+' E-Mail...........: MC7061@mclink.it
+' Download by......: http://members.xoom.it/flanguasco/
+'                    http://www.flanguasco.org
 '=============================================================
 '
-'   Routine di ingresso: MASUB (vedere nella routine la
-'                               descrizione dei parametri)
+'   Input routine: MASUB (see the parameter description
+'                          in the routine)
 '
-'   Nota:   Tutti i vettori e le matrici di queste routines
-'           iniziano dall' indice 1.
+'   Note:   All the vectors and matrices of these routines start from index 1.
 '
-'   Tradotto dal programma FORTRAN:
+'   Translated from the FORTRAN program:
 '      ALGORITHM 677, COLLECTED ALGORITHMS FROM ACM.
 '      THIS WORK PUBLISHED IN TRANSACTIONS ON MATHEMATICAL SOFTWARE,
 '      VOL. 15, NO. 4, PP. 365-374.
@@ -297,13 +296,13 @@ End Sub
 
 Private Function IF_ARI(ByVal vX As Variant) As Long
 '
-'   Da usare come:      On IF_ARI(vX) GoTo Ln1, Ln2, Ln3
-'   Per implementare:   If (vX) Ln1, Ln2, Ln3
-'                       che e' l' IF aritmetico del FORTRAN.
+'   To be used as:      On IF_ARI(vX) GoTo Ln1, Ln2, Ln3
+'   To implement:       If (vX) Ln1, Ln2, Ln3
+'                       which is the arithmetic IF of FORTRAN.
 '
-'   ATTENZIONE: nel programma chiamante NON USARE il :
-'   dopo i numeri di linea, altrimenti si ottiene un
-'   errore fatale "Unreferenced Memory Call at ...".
+'   CAUTION: in the calling program DO NOT USE the :
+'   after the line numbers, otherwise you get a fatal error
+'    "Unreferenced Memory Call at ...".
 '
     If vX < 0 Then
         IF_ARI = 1
@@ -938,6 +937,7 @@ Private Sub CTANG(ByVal NDP&, XD#(), YD#(), ByRef NT&, _
 '
 '
 End Sub
+
 Private Function SIDE(ByVal U1#, ByVal V1#, ByVal U2#, ByVal V2#, _
     ByVal U3#, ByVal V3#) As Double
 '
@@ -1011,6 +1011,7 @@ Private Function MAXMN(X#(), Y#(), ByVal I1&, ByVal I2&, ByVal I3&, ByVal I4&) A
 '
 '
 End Function
+
 Private Sub ADJAC(ByVal NT&, IPT&(), ByVal N&, _
     ByRef IADVE&(), ByRef NADVE&())
 '
@@ -1077,6 +1078,7 @@ Private Sub ADJAC(ByVal NT&, IPT&(), ByVal N&, _
 '
 '
 End Sub
+
 Private Function PDSTE(ByVal N&, X#(), Y#(), Z#(), ByVal NT&, _
     IPT&(), ByRef PD#(), ByRef IPD&()) As Boolean
 '
@@ -1159,6 +1161,7 @@ PDSTE_ERR:
 '
 '
 End Function
+
 Private Function PDMIN(ByVal SRELPR#, ByVal N&, X#(), Y#(), Z#(), _
     IADVE&(), NADVE&(), ByRef INDEX&(), _
     ByVal TP#, ByRef PD#(), _
