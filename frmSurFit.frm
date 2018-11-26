@@ -435,13 +435,13 @@ Begin VB.Form frmSurFit
    End
    Begin VB.Menu mnuQM 
       Caption         =   "&Help"
-      Begin VB.Menu mnuIstruzioni 
+      Begin VB.Menu mnuInstructions 
          Caption         =   "I&nstructions"
       End
       Begin VB.Menu zSep01 
          Caption         =   "-"
       End
-      Begin VB.Menu mnuInformazioni 
+      Begin VB.Menu mnuInformation 
          Caption         =   "&About SurFit"
       End
    End
@@ -1109,11 +1109,10 @@ End Sub
 Private Sub mnuImpostazioni_Click()
 '
 '
-    If frmSettings.Apri(ND, NXI, NYI, NLiv, Par, NQ, NW, NR, TP) Then
+    If frmSettings.OpenForm(ND, NXI, NYI, NLiv, Par, NQ, NW, NR, TP) Then
         Screen.MousePointer = vbHourglass
     '
-        ' Chiama la routine di interpolazione
-        ' con i parametri modificati:
+        ' Call the interpolation routine with the modified parameters:
         If optKTB2D Then
             Test_KTB2D
         ElseIf optMASUB Then
@@ -1129,17 +1128,18 @@ Private Sub mnuImpostazioni_Click()
 '
 End Sub
 
-Private Sub mnuInformazioni_Click()
+Private Sub mnuInformation_Click()
 '
 '
-    frmCopyright.Apri Me
+    frmCopyright.OpenForm Me
 '
 '
 End Sub
-Private Sub mnuIstruzioni_Click()
+
+Private Sub mnuInstructions_Click()
 '
 '
-    frmInstructions.Apri App.Path & "\Instr.rtf"
+    frmInstructions.OpenForm App.Path & "\Instr.rtf"
 '
 '
 '

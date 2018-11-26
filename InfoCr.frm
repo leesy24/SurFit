@@ -241,7 +241,7 @@ Attribute VB_Exposed = False
 '==============================================================
 '
 '   Nel Form di origine usare il codice:
-'    frmCopyright.Apri [IconForm as Form] [,Stile] [,TApp]
+'    frmCopyright.OpenForm [IconForm as Form] [,Stile] [,TApp]
 '     IconForm: Form da cui si vuole copiare
 '               l' Icona di programma [opzionale].
 '     Stile:    Modo di rappresentazione di frmCopyright;
@@ -505,9 +505,7 @@ Private Sub Form_Unload(Cancel As Integer)
 '
 End Sub
 
-
-
-Public Sub Apri(Optional ByVal IconForm As Form = Nothing _
+Public Sub OpenForm(Optional ByVal IconForm As Form = Nothing _
     , Optional ByVal Stile& = vbModal, Optional ByVal TApp& = 0)
 '
 '
@@ -523,6 +521,7 @@ Public Sub Apri(Optional ByVal IconForm As Form = Nothing _
 '
 '
 End Sub
+
 Private Sub Timer1_Timer()
 '
 '

@@ -542,34 +542,35 @@ Dim NXI&, NYI&      ' Number of columns and rows in the
                     ' interpolated points grid.
 Dim NLiv&           ' Number of levels for CONREC.
 '
-Dim Par As ParType  ' Parametri di KTB2D.
+Dim Par As ParType  ' Parameters of KTB2D.
 '
-Dim NQ&, NW&, NR&   ' Parametri di QSHEP2D.
+Dim NQ&, NW&, NR&   ' Parameters of QSHEP2D.
 '
 Dim TP#             ' Parameters of MASUB.
 '
-Dim RS1&            ' Posizionamenti
-Dim CS1&            ' per l' "editing"
-Dim RS1_O&          ' dei valori dei punti
-Dim CS1_O&          ' nella tabella.
+Dim RS1&            ' Placements for
+Dim CS1&            '  the "editing" of
+Dim RS1_O&          '  the values of
+Dim CS1_O&          '  the points in the table.
 '
-Dim grdNstPar_Left& ' Posizioni all' interno
-Dim grdNstPar_Top&  ' della tabella grdNst.
+Dim grdNstPar_Left& ' Positions within
+Dim grdNstPar_Top&  '  the grdNst table.
 '
 Dim fOK As Boolean
 Dim grdMouseDown As Boolean
-Friend Function Apri(ByVal ND_I&, ByRef NXI_I&, ByRef NYI_I&, ByRef NLiv_I&, _
+
+Friend Function OpenForm(ByVal ND_I&, ByRef NXI_I&, ByRef NYI_I&, ByRef NLiv_I&, _
     Par_I As ParType, ByRef NQ_I&, ByRef NW_I&, ByRef NR_I&, ByRef TP_I#) As Boolean
 '
 '
     ND = ND_I
 '
-    ' Per griglia:
+    ' For grid:
     NXI = NXI_I
     NYI = NYI_I
     NLiv = NLiv_I
 '
-    ' Per routines di interpolazione:
+    ' For interpolation routines:
     Par = Par_I ' KTB2D.
     NQ = NQ_I   ' QSHEP2D.
     NW = NW_I   '    "
@@ -578,9 +579,9 @@ Friend Function Apri(ByVal ND_I&, ByRef NXI_I&, ByRef NYI_I&, ByRef NLiv_I&, _
 '
     Me.Show vbModal
 '
-    Apri = fOK
+    OpenForm = fOK
     If fOK Then
-        ' Ritorna i parametri modificati:
+        ' Returns the modified parameters:
         NXI_I = NXI
         NYI_I = NYI
         NLiv_I = NLiv
@@ -594,6 +595,7 @@ Friend Function Apri(ByVal ND_I&, ByRef NXI_I&, ByRef NYI_I&, ByRef NLiv_I&, _
 '
 '
 End Function
+
 Private Sub cmdChiudi_Click()
 '
 '
@@ -628,6 +630,7 @@ Private Sub cmdOK_Click()
 '
 '
 End Sub
+
 Private Sub Form_Load()
 '
 '
@@ -639,7 +642,7 @@ Private Sub Form_Load()
 '
     lblND = ND
 '
-    ' Griglia:
+    ' Grid:
     txtNXI = NXI
     txtNYI = NYI
     txtNLiv = NLiv
@@ -675,6 +678,7 @@ Private Sub Form_Load()
 '
 '
 End Sub
+
 Private Sub Form_Unload(Cancel As Integer)
 '
 '
@@ -701,6 +705,7 @@ Private Sub grdNstPar_MouseDown(Button As Integer, Shift As Integer, X As Single
 '
 '
 End Sub
+
 Private Sub grdNstPar_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 '
 '
@@ -728,6 +733,7 @@ Private Sub grdNstPar_MouseUp(Button As Integer, Shift As Integer, X As Single, 
 '
 '
 End Sub
+
 Private Sub txtC0_KeyPress(KeyAscii As Integer)
 '
 '
@@ -736,6 +742,7 @@ Private Sub txtC0_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtEditPunti_Change()
 '
 '
@@ -756,12 +763,12 @@ Private Sub txtEditPunti_KeyPress(KeyAscii As Integer)
 '
         Case vbKeyReturn
         KeyAscii = 0
-        ' Aggiorna i valori con l' evento LostFocus:
+        ' Update values with the LostFocus event:
         txtEditPunti.Visible = False
 '
         Case vbKeyTab
         KeyAscii = 0
-        ' Aggiorna i valori con l' evento LostFocus:
+        ' Update values with the LostFocus event:
         txtEditPunti.Visible = False
 '
         Case Else
@@ -801,6 +808,7 @@ Private Sub txtEditPunti_LostFocus()
 '
 '
 End Sub
+
 Private Sub txtKtype_KeyPress(KeyAscii As Integer)
 '
 '
@@ -809,6 +817,7 @@ Private Sub txtKtype_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtNdmax_KeyPress(KeyAscii As Integer)
 '
 '
@@ -817,6 +826,7 @@ Private Sub txtNdmax_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtNdmin_KeyPress(KeyAscii As Integer)
 '
 '
@@ -825,6 +835,7 @@ Private Sub txtNdmin_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtNLiv_KeyPress(KeyAscii As Integer)
 '
 '
@@ -833,6 +844,7 @@ Private Sub txtNLiv_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtNQ_KeyPress(KeyAscii As Integer)
 '
 '
@@ -841,6 +853,7 @@ Private Sub txtNQ_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtNR_KeyPress(KeyAscii As Integer)
 '
 '
@@ -849,6 +862,7 @@ Private Sub txtNR_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtNst_KeyPress(KeyAscii As Integer)
 '
 '
@@ -863,6 +877,7 @@ Private Sub txtNst_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtNW_KeyPress(KeyAscii As Integer)
 '
 '
@@ -871,6 +886,7 @@ Private Sub txtNW_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtNxdis_KeyPress(KeyAscii As Integer)
 '
 '
@@ -879,6 +895,7 @@ Private Sub txtNxdis_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtNXI_KeyPress(KeyAscii As Integer)
 '
 '
@@ -887,6 +904,7 @@ Private Sub txtNXI_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtNydis_KeyPress(KeyAscii As Integer)
 '
 '
@@ -895,6 +913,7 @@ Private Sub txtNydis_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtNYI_KeyPress(KeyAscii As Integer)
 '
 '
@@ -903,6 +922,7 @@ Private Sub txtNYI_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtRadius_KeyPress(KeyAscii As Integer)
 '
 '
@@ -911,6 +931,7 @@ Private Sub txtRadius_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtSkmean_KeyPress(KeyAscii As Integer)
 '
 '
@@ -919,6 +940,7 @@ Private Sub txtSkmean_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtTMax_KeyPress(KeyAscii As Integer)
 '
 '
@@ -927,6 +949,7 @@ Private Sub txtTMax_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtTMin_KeyPress(KeyAscii As Integer)
 '
 '
@@ -935,6 +958,7 @@ Private Sub txtTMin_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Sub txtTP_KeyPress(KeyAscii As Integer)
 '
 '
@@ -943,16 +967,17 @@ Private Sub txtTP_KeyPress(KeyAscii As Integer)
 '
 '
 End Sub
+
 Private Function Verifica() As Boolean
 '
-'   Verifica i valori scritti nelle TextBoxes
-'   e li assegna alle variabili di ritorno:
+'   Check the values written in the TextBoxes and
+'    assign them to the return variables:
 '
     Dim N&, M$
 '
     On Error Resume Next
 '
-    ' Controlli per i parametri della griglia:
+    ' Checks for grid parameters:
     If CLng(txtNXI) < 3 Then
         M$ = M$ & "Must be NXI >= 3" & vbNewLine
     Else
@@ -971,7 +996,7 @@ Private Function Verifica() As Boolean
         NLiv = CLng(txtNLiv)
     End If
 '
-    ' Controlli per i parametri di KTB2D:
+    ' Checks for KTB2D parameters:
     If CDbl(txtTMax) <= CDbl(txtTMin) Then
         M$ = M$ & "Must be tmin < tmax" & vbNewLine
     Else
@@ -1050,14 +1075,14 @@ Private Function Verifica() As Boolean
         Next N
     End If
 '
-    ' Controlli per i parametri di MASUB:
+    ' Checks for the MASUB parameters:
     If CDbl(txtTP) < 0 Then
         M$ = M$ & "Must be TP >= 0" & vbNewLine
     Else
         TP = CDbl(txtTP)
     End If
 '
-    ' Controlli per i parametri di QSHEP2D:
+    ' Checks for QSHEP2D parameters:
     If (CLng(txtNQ) < 5) Or (MIN0(40, ND - 1) < CLng(txtNQ)) Then
         M$ = M$ & "Must be 5 <= NQ <= " & MIN0(40, ND - 1) _
                 & " = MIN(40, ND - 1)" & vbNewLine
@@ -1087,6 +1112,7 @@ Private Function Verifica() As Boolean
 '
 '
 End Function
+
 Private Sub AggiornaTabellaNst()
 '
 '

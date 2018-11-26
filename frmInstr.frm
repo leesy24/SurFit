@@ -47,7 +47,7 @@ Attribute VB_Exposed = False
 '================================================================
 '
 '   Nel Form di origine usare il codice:
-'    frmInstructions.Apri FileIstruzioni$ [, Title$] [, Posizione&] [, SForm as Form]
+'    frmInstructions.OpenForm FileIstruzioni$ [, Title$] [, Posizione&] [, SForm as Form]
 '
 '     FileIstruzioni$:    Nome, completo di path e di tipo .txt o .rtf,
 '                         con le istruzioni da visualizzare.
@@ -175,9 +175,7 @@ Private Sub Form_Resize()
 '
 End Sub
 
-
-
-Public Sub Apri(ByVal NFileIstruzioni$, Optional ByVal Title$ = "Instructions", _
+Public Sub OpenForm(ByVal NFileIstruzioni$, Optional ByVal Title$ = "Instructions", _
     Optional ByVal NPosizione& = 2, Optional ByVal NSform As Form)
 '
 '
