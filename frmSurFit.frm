@@ -1350,7 +1350,7 @@ Private Sub DefaultParameters()
 '
     ' Parameter setting for MASUB:
     'IEX = 1     ' Extrapolation is required.
-    TP = 10#    ' Surface tension (TP >= 0).
+    TP = 100#    ' Surface tension (TP >= 0).
 '
     ' Setting the parameters for QSHEP2:
     NQ = 13  ' 5 <= NQ <= MIN(40,ND-1)
