@@ -1325,12 +1325,11 @@ End Sub
 
 Private Sub DefaultParameters()
 '
-'   Attribuisce i valori di default ai parametri delle
-'   routines di interpolazione.  Questa routine viene
-'   richiamata ogni volta che si generano nuovi dati
-'   casuali o si leggono i dati di un file.
+'   It assigns the default values to the parameters of interpolation routines.
+'   This routine is invoked whenever you generate new random data or read data
+'    from a file.
 '
-    ' Tabella dei parametri di KTB2D:
+    ' Table of KTB2D parameters:
     Par.tmin = -1E+21   ' Par.tmin < Par.tmax
     Par.tmax = 1E+21    ' Par.tmin < Par.tmax
     Par.nxdis = 1       ' 1 <= Par.nxdis <= 64/Par.nydis
@@ -1346,14 +1345,14 @@ Private Sub DefaultParameters()
     Par.It(1) = 1
     Par.cc(1) = 8#
     Par.ang(1) = 0#     ' 0 <= Par.ang < 360
-    Par.AA(1) = 1#      ' Se Par.It(I) = 4 deve essere 0 < Par.AA(I) < 2
+    Par.AA(1) = 1#      ' If Par.It(I) = 4 must be 0 < Par.AA(I) < 2
     Par.a2(1) = 1#
 '
-    ' Impostazione parametri per MASUB:
-    'IEX = 1     ' E' richiesta l' estrapolazione.
-    TP = 10#    ' Tensione della superficie (TP >= 0).
+    ' Parameter setting for MASUB:
+    'IEX = 1     ' Extrapolation is required.
+    TP = 10#    ' Surface tension (TP >= 0).
 '
-    ' Impostazione dei parametri per QSHEP2:
+    ' Setting the parameters for QSHEP2:
     NQ = 13  ' 5 <= NQ <= MIN(40,ND-1)
     NW = 19  ' 1 <= NW <= MIN(40,ND-1)
     NR = MAX0(1, Sqr(ND / 3))       ' 1 <= NR
