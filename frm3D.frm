@@ -696,6 +696,9 @@ Const PCHL& = &HC0FFFF      ' Color of evidence for the cursor position labels.
 Dim bRotate As Boolean      ' Flag for Rotation in progress.
 Dim bLoaded As Boolean      ' Flag for Form initialized.
 '
+Dim Mouse_X_Prev As Single
+Dim Mouse_Y_Prev As Single
+'
 '-------------------------------------------------------------------------------------
 '   Graphic APIs:
 '
@@ -1594,9 +1597,9 @@ Private Sub Form_Load()
     bRotate = False
     bPause = False
     lblTheta = "0.0"
-    lblstructions = "The view can be changed by moving" & vbCrLf & _
-                    " (with the left mouse button pressed)" & vbCrLf & _
-                    " to the end of the Y axis."
+    lblstructions = "Rotate by left mouse buttion at center." & vbCrLf & _
+                    "View change by right mouse button at" & vbCrLf & _
+                    "the end of Y axis."
 '
     bLoaded = True
 '
@@ -1870,7 +1873,12 @@ End Sub
 Private Sub pic3D_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 '
 '
-    If Button = vbLeftButton Then
+    If Button = vbLeftButton Or Button = vbRightButton Then
+        If Button = vbLeftButton Then
+            Mouse_X_Prev = X
+            Mouse_Y_Prev = Y
+        End If
+'
         pic3D.MousePointer = vbCustom
 '
         shpInd.Visible = False
@@ -1889,11 +1897,18 @@ Private Sub pic3D_MouseMove(Button As Integer, Shift As Integer, X As Single, Y 
 '
     Dim I&, J&, N&, LAxPx!, LxPx!, LyPx!, LPx As POINTAPI
 '
-    If (Button = vbLeftButton) Then
-        ' Sposta la vista:
-        LAxPx = Ax * AsseX      ' Lunghezza asse X [Pixels].
-        LxPx = Ax * (X - XRMin) ' Posizione orizzontale del cursore [Pixels dall' asse Z].
-        LyPx = Az * (ZRMin - Y) ' Posizione verticale del cursore [Pixels dall' asse X].
+    If (Button = vbRightButton) Then
+        If (X < XRMin) Then
+            X = XRMin
+        End If
+        If (Y < ZRMin) Then
+            Y = ZRMin
+        End If
+'
+        ' Move the view:
+        LAxPx = Ax * AsseX      ' X axis length [Pixels].
+        LxPx = Ax * (X - XRMin) ' Horizontal position of the cursor [Pixels from the Z axis].
+        LyPx = Az * (ZRMin - Y) ' Vertical position of the cursor [Pixels from the X axis].
 '
         ALFA = DATAN2(LyPx, LxPx)
         RAyx = Sqr(LxPx * LxPx + LyPx * LyPx) / LAxPx
@@ -1903,6 +1918,48 @@ Private Sub pic3D_MouseMove(Button As Integer, Shift As Integer, X As Single, Y 
 '
         lblRAyx = Format$(RAyx, "#0.000")
         lblAlfa = Format$(RadToGrd * ALFA, "#0.000")
+'
+    ElseIf (Button = vbLeftButton) Then
+        If (bRotate = False) Or (bPause = False) Then
+            bRotate = True
+            bPause = True
+            
+            cmdRotate.Enabled = False
+            cmdRotate.Caption = "&Stop"
+            cmdPause.Enabled = True
+            cmdPause.Caption = "Co&nt."
+            updTheta.Enabled = True
+'
+            Timer1.Enabled = False
+        End If
+'
+        If Y > (ZRMin + (Y0r - YRMin) * TrRotY) Then
+            If (X - Mouse_X_Prev) < 0 Then
+                THETA = THETA + dth * 4
+            ElseIf (X - Mouse_X_Prev) > 0 Then
+                THETA = THETA - dth * 4
+            End If
+        Else
+            If (X - Mouse_X_Prev) > 0 Then
+                THETA = THETA + dth * 4
+            ElseIf (X - Mouse_X_Prev) < 0 Then
+                THETA = THETA - dth * 4
+            End If
+        End If
+'
+        If THETA >= PI2 Then
+            THETA = THETA - PI2
+        ElseIf THETA < 0 Then
+            THETA = PI2 + THETA
+        End If
+'
+        Mouse_X_Prev = X
+        Mouse_Y_Prev = Y
+'
+        shpInd.Visible = False
+        Draw
+'
+        lblTheta = Format(RadToGrd * THETA, "#0.0")
 '
     Else
         MeasureSpace3D
