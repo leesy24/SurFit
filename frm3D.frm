@@ -17,8 +17,8 @@ Begin VB.Form frm3D
       Caption         =   "Rotation:"
       Height          =   615
       Left            =   2160
-      TabIndex        =   23
-      Top             =   0
+      TabIndex        =   24
+      Top             =   45
       Width           =   3435
       Begin VB.CommandButton cmdPause 
          Caption         =   "&Pause"
@@ -34,7 +34,7 @@ Begin VB.Form frm3D
          EndProperty
          Height          =   240
          Left            =   840
-         TabIndex        =   4
+         TabIndex        =   5
          Top             =   240
          Width           =   555
       End
@@ -51,14 +51,14 @@ Begin VB.Form frm3D
          EndProperty
          Height          =   240
          Left            =   120
-         TabIndex        =   3
+         TabIndex        =   4
          Top             =   240
          Width           =   615
       End
       Begin MSComCtl2.UpDown updTheta 
          Height          =   255
          Left            =   2895
-         TabIndex        =   5
+         TabIndex        =   6
          Top             =   240
          Width           =   420
          _ExtentX        =   741
@@ -91,7 +91,7 @@ Begin VB.Form frm3D
          EndProperty
          Height          =   195
          Left            =   1440
-         TabIndex        =   25
+         TabIndex        =   26
          Top             =   270
          Width           =   915
       End
@@ -108,7 +108,7 @@ Begin VB.Form frm3D
          EndProperty
          Height          =   255
          Left            =   2400
-         TabIndex        =   24
+         TabIndex        =   25
          Top             =   240
          Width           =   495
       End
@@ -117,11 +117,11 @@ Begin VB.Form frm3D
       Caption         =   "Views:"
       Height          =   615
       Left            =   240
-      TabIndex        =   22
-      Top             =   0
+      TabIndex        =   23
+      Top             =   45
       Width           =   1755
-      Begin VB.CheckBox chkZY 
-         Caption         =   "Z - &Y"
+      Begin VB.CommandButton cmdDef 
+         Caption         =   "&Def"
          BeginProperty Font 
             Name            =   "Small Fonts"
             Size            =   6.75
@@ -132,15 +132,32 @@ Begin VB.Form frm3D
             Strikethrough   =   0   'False
          EndProperty
          Height          =   240
-         Left            =   1200
-         Style           =   1  'Graphical
-         TabIndex        =   2
+         Left            =   60
+         TabIndex        =   0
+         ToolTipText     =   "Default view "
+         Top             =   240
+         Width           =   375
+      End
+      Begin VB.CommandButton cmdZY 
+         Caption         =   "Z-&Y"
+         BeginProperty Font 
+            Name            =   "Small Fonts"
+            Size            =   6.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   240
+         Left            =   1320
+         TabIndex        =   3
          ToolTipText     =   "Side view "
          Top             =   240
-         Width           =   435
+         Width           =   375
       End
-      Begin VB.CheckBox chkZX 
-         Caption         =   "&Z - X"
+      Begin VB.CommandButton cmdZX 
+         Caption         =   "&Z-X"
          BeginProperty Font 
             Name            =   "Small Fonts"
             Size            =   6.75
@@ -151,15 +168,14 @@ Begin VB.Form frm3D
             Strikethrough   =   0   'False
          EndProperty
          Height          =   240
-         Left            =   660
-         Style           =   1  'Graphical
-         TabIndex        =   1
+         Left            =   900
+         TabIndex        =   2
          ToolTipText     =   "Front view "
          Top             =   240
-         Width           =   435
+         Width           =   375
       End
-      Begin VB.CheckBox chkXY 
-         Caption         =   "&X - Y"
+      Begin VB.CommandButton cmdXY 
+         Caption         =   "&X-Y"
          BeginProperty Font 
             Name            =   "Small Fonts"
             Size            =   6.75
@@ -170,12 +186,11 @@ Begin VB.Form frm3D
             Strikethrough   =   0   'False
          EndProperty
          Height          =   240
-         Left            =   120
-         Style           =   1  'Graphical
-         TabIndex        =   0
+         Left            =   480
+         TabIndex        =   1
          ToolTipText     =   "Plan view "
          Top             =   240
-         Width           =   435
+         Width           =   375
       End
    End
    Begin VB.Timer Timer1 
@@ -193,7 +208,7 @@ Begin VB.Form frm3D
       ScaleHeight     =   500
       ScaleMode       =   3  'Pixel
       ScaleWidth      =   600
-      TabIndex        =   9
+      TabIndex        =   10
       TabStop         =   0   'False
       Top             =   720
       Width           =   9060
@@ -204,7 +219,7 @@ Begin VB.Form frm3D
          MousePointer    =   1  'Arrow
          Picture         =   "frm3D.frx":0454
          Style           =   1  'Graphical
-         TabIndex        =   8
+         TabIndex        =   9
          ToolTipText     =   "Copy the image to the clipboard "
          Top             =   0
          UseMaskColor    =   -1  'True
@@ -217,7 +232,7 @@ Begin VB.Form frm3D
          Height          =   255
          Left            =   8160
          MousePointer    =   1  'Arrow
-         TabIndex        =   6
+         TabIndex        =   8
          Top             =   60
          Width           =   735
       End
@@ -259,7 +274,7 @@ Begin VB.Form frm3D
       EndProperty
       Height          =   195
       Left            =   1200
-      TabIndex        =   29
+      TabIndex        =   30
       Top             =   8400
       Width           =   555
    End
@@ -277,7 +292,7 @@ Begin VB.Form frm3D
       EndProperty
       Height          =   240
       Left            =   1800
-      TabIndex        =   28
+      TabIndex        =   29
       Top             =   8370
       Width           =   615
    End
@@ -295,7 +310,7 @@ Begin VB.Form frm3D
       EndProperty
       Height          =   240
       Left            =   600
-      TabIndex        =   27
+      TabIndex        =   28
       Top             =   8370
       Width           =   615
    End
@@ -314,7 +329,7 @@ Begin VB.Form frm3D
       EndProperty
       Height          =   195
       Left            =   240
-      TabIndex        =   26
+      TabIndex        =   27
       Top             =   8400
       Width           =   315
    End
@@ -332,7 +347,7 @@ Begin VB.Form frm3D
       EndProperty
       Height          =   240
       Left            =   4320
-      TabIndex        =   21
+      TabIndex        =   22
       Top             =   8370
       Width           =   615
    End
@@ -351,7 +366,7 @@ Begin VB.Form frm3D
       EndProperty
       Height          =   195
       Left            =   4080
-      TabIndex        =   20
+      TabIndex        =   21
       Top             =   8400
       Width           =   195
    End
@@ -369,7 +384,7 @@ Begin VB.Form frm3D
       EndProperty
       Height          =   240
       Left            =   2640
-      TabIndex        =   19
+      TabIndex        =   20
       Top             =   8370
       Width           =   615
    End
@@ -388,7 +403,7 @@ Begin VB.Form frm3D
       EndProperty
       Height          =   195
       Left            =   2400
-      TabIndex        =   18
+      TabIndex        =   19
       Top             =   8400
       Width           =   195
    End
@@ -406,7 +421,7 @@ Begin VB.Form frm3D
       EndProperty
       Height          =   240
       Left            =   3480
-      TabIndex        =   17
+      TabIndex        =   18
       Top             =   8370
       Width           =   615
    End
@@ -425,7 +440,7 @@ Begin VB.Form frm3D
       EndProperty
       Height          =   195
       Left            =   3240
-      TabIndex        =   16
+      TabIndex        =   17
       Top             =   8400
       Width           =   195
    End
@@ -447,7 +462,7 @@ Begin VB.Form frm3D
       ForeColor       =   &H80000008&
       Height          =   195
       Left            =   7560
-      TabIndex        =   15
+      TabIndex        =   16
       Top             =   8460
       Width           =   1620
    End
@@ -464,7 +479,7 @@ Begin VB.Form frm3D
       EndProperty
       Height          =   615
       Left            =   5760
-      TabIndex        =   14
+      TabIndex        =   15
       Top             =   60
       Width           =   3495
    End
@@ -483,7 +498,7 @@ Begin VB.Form frm3D
       EndProperty
       Height          =   195
       Left            =   6240
-      TabIndex        =   13
+      TabIndex        =   14
       Top             =   8400
       Width           =   615
    End
@@ -502,7 +517,7 @@ Begin VB.Form frm3D
       EndProperty
       Height          =   195
       Left            =   4920
-      TabIndex        =   12
+      TabIndex        =   13
       Top             =   8400
       Width           =   495
    End
@@ -519,7 +534,7 @@ Begin VB.Form frm3D
       EndProperty
       Height          =   240
       Left            =   5400
-      TabIndex        =   11
+      TabIndex        =   12
       Top             =   8370
       Width           =   795
    End
@@ -536,7 +551,7 @@ Begin VB.Form frm3D
       EndProperty
       Height          =   240
       Left            =   6840
-      TabIndex        =   10
+      TabIndex        =   11
       Top             =   8370
       Width           =   795
    End
@@ -1492,96 +1507,64 @@ Private Sub cmdRotate_Click()
 '
 End Sub
 
-Private Sub chkXY_Click()
+Private Sub cmdXY_Click()
 '
-    If chkXY.Tag <> "" Then Exit Sub
 '
-    If chkXY.Value = vbChecked Then
-        chkXY.Font.Bold = True
-        chkZX.Tag = "NoClick"
-        chkZX.Value = vbUnchecked
-        chkZX.Tag = ""
-        chkZX.Font.Bold = False
-        chkZY.Tag = "NoClick"
-        chkZY.Value = vbUnchecked
-        chkZY.Tag = ""
-        chkZY.Font.Bold = False
-'
-        RAyx = 1#
-        ALFA = PI / 2!
-    Else
-        chkXY.Font.Bold = False
-'
-        RAyx = 0.5      ' Y axis length ratio to X axis length.
-        ALFA = PI / 3!  ' Angle of the Y axis with respect to the X axis: 60 [Grd].
-    End If
+    RAyx = 1!
+    ALFA = CSng(PI / 2#)
 '
     lblRAyx = Format$(RAyx, "#0.000")
     lblAlfa = Format$(RadToGrd * ALFA, "#0.000")
 '
     Draw True
+'
+'
 '
 End Sub
 
-Private Sub chkZX_Click()
+Private Sub cmdDef_Click()
+
 '
-    If chkZX.Tag <> "" Then Exit Sub
 '
-    If chkZX.Value = vbChecked Then
-        chkZX.Font.Bold = True
-        chkXY.Tag = "NoClick"
-        chkXY.Value = vbUnchecked
-        chkXY.Tag = ""
-        chkXY.Font.Bold = False
-        chkZY.Tag = "NoClick"
-        chkZY.Value = vbUnchecked
-        chkZY.Tag = ""
-        chkZY.Font.Bold = False
-'
-        RAyx = 0!
-        ALFA = PI / 2!
-    Else
-        chkZX.Font.Bold = False
-'
-        RAyx = 0.5      ' Y axis length ratio to X axis length.
-        ALFA = PI / 3!  ' Angle of the Y axis with respect to the X axis: 60 [Grd].
-    End If
+    RAyx = 0.5      ' Y axis length ratio to X axis length.
+    ALFA = PI / 3!  ' Angle of the Y axis with respect to the X axis: 60 [Grd].
 '
     lblRAyx = Format$(RAyx, "#0.000")
     lblAlfa = Format$(RadToGrd * ALFA, "#0.000")
 '
     Draw True
+'
+'
 '
 End Sub
 
-Private Sub chkZY_Click()
+Private Sub cmdZX_Click()
 '
-    If chkZY.Tag <> "" Then Exit Sub
 '
-    If chkZY.Value = vbChecked Then
-        chkZY.Font.Bold = True
-        chkXY.Tag = "NoClick"
-        chkXY.Value = vbUnchecked
-        chkXY.Tag = ""
-        chkXY.Font.Bold = False
-        chkZX.Tag = "NoClick"
-        chkZX.Value = vbUnchecked
-        chkZX.Tag = ""
-        chkZX.Font.Bold = False
-'
-        RAyx = 1000!
-        ALFA = 0!
-    Else
-        chkZY.Font.Bold = False
-'
-        RAyx = 0.5      ' Y axis length ratio to X axis length.
-        ALFA = PI / 3!  ' Angle of the Y axis with respect to the X axis: 60 [Grd].
-    End If
+    RAyx = 0!
+    ALFA = CSng(PI / 2#)
 '
     lblRAyx = Format$(RAyx, "#0.000")
     lblAlfa = Format$(RadToGrd * ALFA, "#0.000")
 '
     Draw True
+'
+'
+'
+End Sub
+
+Private Sub cmdZY_Click()
+'
+'
+    RAyx = 1000!
+    ALFA = 0!
+'
+    lblRAyx = Format$(RAyx, "#0.000")
+    lblAlfa = Format$(RadToGrd * ALFA, "#0.000")
+'
+    Draw True
+'
+'
 '
 End Sub
 
@@ -1907,25 +1890,6 @@ Private Sub pic3D_MouseMove(Button As Integer, Shift As Integer, X As Single, Y 
     Dim I&, J&, N&, LAxPx!, LxPx!, LyPx!, LPx As POINTAPI
 '
     If (Button = vbLeftButton) Then
-        If (chkXY.Value = vbChecked) Then
-            chkXY.Tag = "NoClick"
-            chkXY.Value = vbUnchecked
-            chkXY.Font.Bold = False
-            chkXY.Tag = ""
-        End If
-        If (chkZX.Value = vbChecked) Then
-            chkZX.Tag = "NoClick"
-            chkZX.Value = vbUnchecked
-            chkZX.Font.Bold = False
-            chkZX.Tag = ""
-        End If
-        If (chkZY.Value = vbChecked) Then
-            chkZY.Tag = "NoClick"
-            chkZY.Value = vbUnchecked
-            chkZY.Font.Bold = False
-            chkZY.Tag = ""
-        End If
-'
         ' Sposta la vista:
         LAxPx = Ax * AsseX      ' Lunghezza asse X [Pixels].
         LxPx = Ax * (X - XRMin) ' Posizione orizzontale del cursore [Pixels dall' asse Z].
