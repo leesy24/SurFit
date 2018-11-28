@@ -94,7 +94,6 @@ Begin VB.Form frmCopyright
       Alignment       =   2  'Center
       BackColor       =   &H00FFFF00&
       BorderStyle     =   1  'Fixed Single
-      Caption         =   "  ?
       BeginProperty Font 
          Name            =   "Arial"
          Size            =   18
