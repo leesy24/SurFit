@@ -1477,7 +1477,7 @@ Private Sub cmdPause_Click()
     bPause = Not bPause
 '
     cmdPause.Caption = IIf(bPause, "Co&nt.", "&Pause")
-    cmdRotate.Enabled = Not bPause
+    'cmdRotate.Enabled = Not bPause
     updTheta.Enabled = bPause
 '
     Timer1.Enabled = Not bPause
@@ -1925,7 +1925,7 @@ Private Sub pic3D_MouseMove(Button As Integer, Shift As Integer, X As Single, Y 
             bRotate = True
             bPause = True
             
-            cmdRotate.Enabled = False
+            'cmdRotate.Enabled = False
             cmdRotate.Caption = "&Stop"
             cmdPause.Enabled = True
             cmdPause.Caption = "Co&nt."
