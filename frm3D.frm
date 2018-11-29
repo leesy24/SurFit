@@ -1590,13 +1590,14 @@ Private Sub Form_Load()
     'ALFA = PI / 6!  ' Angle of the Y axis with respect to the X axis: 30 [Grd]
     RAyx = 0.5      ' Y axis length ratio to X axis length.
     ALFA = PI / 3!  ' Angle of the Y axis with respect to the X axis: 60 [Grd].
+    THETA = 0!
 '
     lblRAyx = Format$(RAyx, "#0.000")
     lblAlfa = Format$(RadToGrd * ALFA, "#0.000")
 '
     bRotate = False
     bPause = False
-    lblTheta = "0.0"
+    lblTheta = Format(RadToGrd * THETA, "#0.0")
     lblstructions = "Rotate by left mouse buttion at center." & vbCrLf & _
                     "View change by right mouse button at" & vbCrLf & _
                     "the end of Y axis."
