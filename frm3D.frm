@@ -1496,6 +1496,12 @@ Private Sub cmdRotate_Click()
     lblTheta = Format(RadToGrd * THETA, "#0.0")
 '
     cmdPause.Enabled = bRotate
+'
+    bPause = False
+    cmdPause.Caption = "&Pause"
+'
+    updTheta.Enabled = False
+'
     shpInd.Visible = False
     UpdateCursorPositions lblAPhi, "", lblATheta, "", lblX, "", lblY, "", lblZ, ""
 '
