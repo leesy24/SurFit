@@ -1941,32 +1941,29 @@ Private Sub pic3D_MouseMove(Button As Integer, Shift As Integer, X As Single, Y 
         End If
 '
         If Y > (ZRMin + (Y0r - YRMin) * TrRotY) Then
-            If (X - Mouse_X_Prev) < 0 Then
-                THETA = THETA + dth * 4
-            ElseIf (X - Mouse_X_Prev) > 0 Then
-                THETA = THETA - dth * 4
+            If (X - Mouse_X_Prev) <> 0 Then
+                THETA = THETA - dth * CInt((X - Mouse_X_Prev) * 10!)
             End If
         Else
-            If (X - Mouse_X_Prev) > 0 Then
-                THETA = THETA + dth * 4
-            ElseIf (X - Mouse_X_Prev) < 0 Then
-                THETA = THETA - dth * 4
+            If (X - Mouse_X_Prev) <> 0 Then
+                THETA = THETA + dth * CInt((X - Mouse_X_Prev) * 10!)
             End If
         End If
 '
-        If THETA >= PI2 Then
-            THETA = THETA - PI2
+        If THETA > (PI2 - dth) Then
+            THETA = 0
         ElseIf THETA < 0 Then
             THETA = PI2 + THETA
         End If
 '
-        Mouse_X_Prev = X
-        Mouse_Y_Prev = Y
-'
         shpInd.Visible = False
+        'UpdateCursorPositions lblAPhi, "", lblATheta, THETA, lblX, X, lblY, Y, lblZ, (X - Mouse_X_Prev)
         Draw
 '
         lblTheta = Format(RadToGrd * THETA, "#0.0")
+'
+        Mouse_X_Prev = X
+        Mouse_Y_Prev = Y
 '
     Else
         MeasureSpace3D
